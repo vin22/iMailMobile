@@ -1,8 +1,10 @@
 package com.application.imail.model;
 
 import java.util.ArrayList;
+import com.application.imail.model.listcontact;
 
 public class User {
+    public listcontact listcontact;
     public String username;
     public String Name;
     public String Email;
@@ -24,6 +26,14 @@ public class User {
         this.nohp = nohp;
         this.norek=norek;
         this.saldo=saldo;
+    }
+
+    public listcontact getListcontact() {
+        return listcontact;
+    }
+
+    public void setListcontact(listcontact listcontact) {
+        this.listcontact = listcontact;
     }
 
     public String getMessage() {

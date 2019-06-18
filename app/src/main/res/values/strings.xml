@@ -65,7 +65,7 @@
     <string name="error_message_digitnohp">No Hp range 9 to 13 digits</string>
     <string name="error_message_digitpin">PIN must only 6 digits</string>
     <string name="hint_norek">Account Number</string>
-
+    <string name="error_message_akunalternatif">Enter Email Account Alternative</string>
     <string name="error_message_norek">Enter Nomor Rekening</string>
     <string name="error_valid_message_norektujuan">Enter No Rekening Tujuan yang valid</string>
     <string name="error_valid_message_othernorektujuan">Dilarang menginput No Rek Sendiri</string>
