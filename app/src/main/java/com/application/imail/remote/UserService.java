@@ -30,6 +30,11 @@ public interface UserService {
     Call<User> changepassword(@Field("Email") String email, @Field("OldPassword") String oldpassword, @Field("NewPassword") String newpassword);
 
     @FormUrlEncoded
+    @POST("registeralternatif/")
+    Call<User> addakunalternatif(@Field("Email") String email, @Field("Password") String password, @Field("Alternate_Email") String alternate_email);
+
+
+    @FormUrlEncoded
     @POST("ceksaldo/")
     Call<User> ceksaldo(@Field("pin") String pin, @Field("norekening") String norekening);
 

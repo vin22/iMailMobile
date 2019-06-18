@@ -95,43 +95,34 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
 //                    emptyInputEditText();
 //                }
                 else {
-//                    Call<User> call = userService.login(textInputEditTextUsername.getText().toString(), textInputEditTextPassword.getText().toString());
-//                    call.enqueue(new Callback<User>() {
-//                        @Override
-//                        public void onResponse(Call<User> call, Response<User> response) {
-//                            if(response.isSuccessful()){
-//                                SessionManager sessionManager = SessionManager.with(AkunAlternatifActivity.this);
-//                                String status=response.body().getStatus();
-//    //                            int statuscode = response.code();
-//                                String statusmessage=response.body().getMessage();
-//                                if (status.equals("true")) {
-//                                    Toast.makeText(AkunAlternatifActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
-//                                    user.setEmail(response.body().getEmail());
-//    //                                user.setUsername(response.body().getName());
-//                                    user.setName(response.body().getName());
-//                                    sessionManager.createsession(user);
-//    //                                user.setPassword("vincent");
-//    //                                userConfig.writeNorekening(response.body().getNorekening());
-//    //                                userConfig.writeNama(response.body().getNama());
-//    //                                userConfig.writeSaldo(response.body().getSaldo());
-//                                    startActivity(new Intent(AkunAlternatifActivity.this, InboxActivity.class));
-//                                    finish();
-//                                    emptyInputEditText();
-//
-//                                } else {
-//                                    Toast.makeText(AkunAlternatifActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
-//                                }
-//                            }
-//                                else{
-//                                Toast.makeText(AkunAlternatifActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onFailure(Call<User> call, Throwable t) {
-//                            Log.e("USER ACTIVITY ERROR", t.getMessage());
-//                        }
-//                    });
+                    SessionManager sessionManager = SessionManager.with(AkunAlternatifActivity.this);
+                    Call<User> call = userService.addakunalternatif(sessionManager.getuserloggedin().getEmail(), textInputEditTextPassword.getText().toString(),textInputEditTextAkunAlternatif.getText().toString());
+                    call.enqueue(new Callback<User>() {
+                        @Override
+                        public void onResponse(Call<User> call, Response<User> response) {
+                            if(response.isSuccessful()){
+                                String status=response.body().getStatus();
+    //                            int statuscode = response.code();
+                                String statusmessage=response.body().getMessage();
+                                if (status.equals("true")) {
+                                    Toast.makeText(AkunAlternatifActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                    finish();
+                                    emptyInputEditText();
+
+                                } else {
+                                    Toast.makeText(AkunAlternatifActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                                else{
+                                Toast.makeText(AkunAlternatifActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<User> call, Throwable t) {
+                            Log.e("USER ACTIVITY ERROR", t.getMessage());
+                        }
+                    });
 //                    if (textInputEditTextUsername.getText().toString().equals("vincent@email.com") || textInputEditTextUsername.getText().toString().equals("vin_22") && textInputEditTextPassword.getText().toString().equals("vincent")) {
 //                        Log.e("Login", "Masuk");
 //                        SessionManager sessionManager = SessionManager.with(this);

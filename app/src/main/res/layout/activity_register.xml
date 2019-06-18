@@ -38,7 +38,7 @@
                 android:textColorHint="@android:color/white"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:maxLength="20"
+                android:maxLength="50"
                 android:textColor="@android:color/white" />
         </android.support.design.widget.TextInputLayout>
         <android.support.design.widget.TextInputLayout
@@ -57,7 +57,8 @@
                 android:textColorHint="@android:color/white"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:maxLength="20"
+                android:maxLength="50"
+                android:inputType="textEmailAddress"
                 android:textColor="@android:color/white" />
         </android.support.design.widget.TextInputLayout>
 
@@ -80,7 +81,7 @@
                 android:textColorHint="@android:color/white"
                 android:inputType="textPassword"
                 android:maxLines="1"
-                android:maxLength="20"
+                android:maxLength="50"
                 android:textColor="@android:color/white" />
         </android.support.design.widget.TextInputLayout>
 
@@ -103,7 +104,7 @@
                 android:textColorHint="@android:color/white"
                 android:inputType="textPassword"
                 android:maxLines="1"
-                android:maxLength="20"
+                android:maxLength="50"
                 android:textColor="@android:color/white" />
         </android.support.design.widget.TextInputLayout>
 

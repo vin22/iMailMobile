@@ -269,24 +269,24 @@ public class InboxActivity extends AppCompatActivity
             }
         });
 
-        ArrayList<String> ar = new ArrayList<String>();
-        String s1 ="Google";
-        String s2 ="Facebook";
-        String s3 ="Instagram";
-        String s4 ="Line";
-        String s5 ="Whatsapp";
-        ar.add(s1);
-        ar.add(s2);
-        ar.add(s3);
-        ar.add(s4);
-        ar.add(s5);
-        String[] arrays=new String[]{"A","B"};
-        String[] arrays1=new String[]{"A","B"};
-        for (int i=0;i<arrays.length;i++){
-            arrays1[i]=arrays[i];
-        }
-        String[] stockArr = new String[ar.size()];
-        stockArr = ar.toArray(stockArr);
+//        ArrayList<String> ar = new ArrayList<String>();
+//        String s1 ="Google";
+//        String s2 ="Facebook";
+//        String s3 ="Instagram";
+//        String s4 ="Line";
+//        String s5 ="Whatsapp";
+//        ar.add(s1);
+//        ar.add(s2);
+//        ar.add(s3);
+//        ar.add(s4);
+//        ar.add(s5);
+//        String[] arrays=new String[]{"A","B"};
+//        String[] arrays1=new String[]{"A","B"};
+//        for (int i=0;i<arrays.length;i++){
+//            arrays1[i]=arrays[i];
+//        }
+//        String[] stockArr = new String[ar.size()];
+//        stockArr = ar.toArray(stockArr);
     }
 
     public void setEmailInbox(){
@@ -671,6 +671,20 @@ public class InboxActivity extends AppCompatActivity
                 itemscontact.add(listcontact);
             }
         }
+        if(adapter_contact!=null){
+            adapter_contact.notifyDataSetChanged();
+            if(recyclerView_contact.getLayoutManager()==null) {
+                recyclerView_contact.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
+                recyclerView_contact.setHasFixedSize(true);
+            }
+            recyclerView_contact.setAdapter(adapter_contact);
+        }
+        else{
+            adapter_contact=new AdapterListContact(InboxActivity.this,itemscontact);
+            recyclerView_contact.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
+            recyclerView_contact.setHasFixedSize(true);
+            recyclerView_contact.setAdapter(adapter_contact);
+        }
         if(swipecontact.isRefreshing()){
             swipecontact.setRefreshing(false);
         }
@@ -780,11 +794,12 @@ public class InboxActivity extends AppCompatActivity
                 return false;
             }
         });
-        SessionManager sessionManager=SessionManager.with(InboxActivity.this);
-        String[] stockArr = new String[sessionManager.getuserloggedin().getListcontacts().size()];
-        stockArr = sessionManager.getuserloggedin().getListcontacts().toArray(stockArr);
-
-        searchView.setSuggestions(stockArr);
+//        SessionManager sessionManager=SessionManager.with(InboxActivity.this);
+//        String[] stockArr = new String[sessionManager.getuserloggedin().getListcontacts().size()];
+//        List<String>temp=new ArrayList<>();
+//        stockArr = sessionManager.getuserloggedin().listcontacts.ge.toArray(stockArr);
+//
+//        searchView.setSuggestions(stockArr);
         return true;
     }
 
