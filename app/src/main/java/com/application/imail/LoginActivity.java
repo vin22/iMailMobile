@@ -136,10 +136,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     listcontact.setSaved(true);
                                     listcontact.setSuggestion(true);
                                     listcontact.setDelete(false);
-//                                    itemscontact.add(listcontact);
-                                    user.setListcontact(listcontact);
+                                    itemscontact.add(listcontact);
 
-                                    itemscontact = new ArrayList<listcontact>();
                                     listcontact = new listcontact();
                                     listcontact.setAddressbookid("2");
                                     listcontact.setUserid("2");
@@ -151,8 +149,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     listcontact.setSaved(true);
                                     listcontact.setSuggestion(true);
                                     listcontact.setDelete(false);
-//                                    itemscontact.add(listcontact);
-                                    user.setListcontact(listcontact);
+                                    itemscontact.add(listcontact);
 
                                     itemscontact = new ArrayList<listcontact>();
                                     listcontact = new listcontact();
@@ -166,8 +163,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     listcontact.setSaved(true);
                                     listcontact.setSuggestion(true);
                                     listcontact.setDelete(false);
-//                                    itemscontact.add(listcontact);
-                                    user.setListcontact(listcontact);
+                                    itemscontact.add(listcontact);
 
                                     itemscontact = new ArrayList<listcontact>();
                                     listcontact = new listcontact();
@@ -181,10 +177,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     listcontact.setSaved(true);
                                     listcontact.setSuggestion(true);
                                     listcontact.setDelete(false);
-//                                    itemscontact.add(listcontact);
-                                    user.setListcontact(listcontact);
+                                    itemscontact.add(listcontact);
 
-                                    itemscontact = new ArrayList<listcontact>();
                                     listcontact = new listcontact();
                                     listcontact.setAddressbookid("5");
                                     listcontact.setUserid("5");
@@ -196,8 +190,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     listcontact.setSaved(true);
                                     listcontact.setSuggestion(true);
                                     listcontact.setDelete(false);
-//                                    itemscontact.add(listcontact);
-                                    user.setListcontact(listcontact);
+                                    itemscontact.add(listcontact);
+
+                                    user.setListcontacts(itemscontact);
+
                                     user.setEmail(response.body().getEmail());
     //                                user.setUsername(response.body().getName());
                                     user.setName(response.body().getName());

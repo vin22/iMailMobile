@@ -690,28 +690,29 @@ public class InboxActivity extends AppCompatActivity
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
             } else {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-                dialog.setMessage("Apakah Anda yakin untuk logout dari iMail?");
-                dialog.setCancelable(false);
-                //final Integer nama=username.getText().toString().length();
-                dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent intent=new Intent(InboxActivity.this, LoginActivity.class);
-                        intent.addCategory(Intent.CATEGORY_HOME);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        SessionManager sessionManager = SessionManager.with(InboxActivity.this);
-                        sessionManager.clearsession();
-                        startActivity(intent);
-                    }
-                });
-                dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                });
-                dialog.show();
+                super.onBackPressed();
+//                AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+//                dialog.setMessage("Apakah Anda yakin untuk logout dari iMail?");
+//                dialog.setCancelable(false);
+//                //final Integer nama=username.getText().toString().length();
+//                dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        Intent intent=new Intent(InboxActivity.this, LoginActivity.class);
+//                        intent.addCategory(Intent.CATEGORY_HOME);
+//                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                        SessionManager sessionManager = SessionManager.with(InboxActivity.this);
+//                        sessionManager.clearsession();
+//                        startActivity(intent);
+//                    }
+//                });
+//                dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        dialogInterface.dismiss();
+//                    }
+//                });
+//                dialog.show();
             }
         }
     }
@@ -779,23 +780,9 @@ public class InboxActivity extends AppCompatActivity
                 return false;
             }
         });
-        ArrayList<String> ar = new ArrayList<String>();
-        String s1 ="Test1";
-        String s2 ="Test2";
-        String s3 ="Test3";
-        ar.add(s1);
-        ar.add(s2);
-        ar.add(s3);
-
-        String s4 ="Test4";
-        ar.add(s4);
-        String[] arrays=new String[]{"A","B"};
-        String[] arrays1=new String[]{"A","B"};
-        for (int i=0;i<arrays.length;i++){
-            arrays1[i]=arrays[i];
-        }
-        String[] stockArr = new String[ar.size()];
-        stockArr = ar.toArray(stockArr);
+        SessionManager sessionManager=SessionManager.with(InboxActivity.this);
+        String[] stockArr = new String[sessionManager.getuserloggedin().getListcontacts().size()];
+        stockArr = sessionManager.getuserloggedin().getListcontacts().toArray(stockArr);
 
         searchView.setSuggestions(stockArr);
         return true;
@@ -832,6 +819,7 @@ public class InboxActivity extends AppCompatActivity
             swipesent.setVisibility(View.GONE);
             swipetrash.setVisibility(View.GONE);
             swipedraft.setVisibility(View.GONE);
+            swipecontact.setVisibility(View.GONE);
             setEmailInbox();
         } else if (id == R.id.nav_sent) {
             folder="Sent";
@@ -842,6 +830,7 @@ public class InboxActivity extends AppCompatActivity
             swipesent.setVisibility(View.VISIBLE);
             swipetrash.setVisibility(View.GONE);
             swipedraft.setVisibility(View.GONE);
+            swipecontact.setVisibility(View.GONE);
             setEmailSent();
         } else if (id == R.id.nav_favorit) {
             folder="Starred";
@@ -852,6 +841,7 @@ public class InboxActivity extends AppCompatActivity
             swipesent.setVisibility(View.GONE);
             swipetrash.setVisibility(View.GONE);
             swipedraft.setVisibility(View.GONE);
+            swipecontact.setVisibility(View.GONE);
             setEmailStarred();
         } else if (id == R.id.nav_spam) {
             folder="Spam";
@@ -862,6 +852,7 @@ public class InboxActivity extends AppCompatActivity
             swipesent.setVisibility(View.GONE);
             swipetrash.setVisibility(View.GONE);
             swipedraft.setVisibility(View.GONE);
+            swipecontact.setVisibility(View.GONE);
             setEmailSpam();
         } else if (id == R.id.nav_draft) {
             folder="Draft";
@@ -872,6 +863,7 @@ public class InboxActivity extends AppCompatActivity
             swipesent.setVisibility(View.GONE);
             swipetrash.setVisibility(View.GONE);
             swipedraft.setVisibility(View.VISIBLE);
+            swipecontact.setVisibility(View.GONE);
             setEmailDraft();
         } else if (id == R.id.nav_trash) {
             folder="Trash";
@@ -882,6 +874,7 @@ public class InboxActivity extends AppCompatActivity
             swipesent.setVisibility(View.GONE);
             swipetrash.setVisibility(View.VISIBLE);
             swipedraft.setVisibility(View.GONE);
+            swipecontact.setVisibility(View.GONE);
             setEmailTrash();
         } else if (id == R.id.nav_contact) {
             folder="Contact";
@@ -892,6 +885,7 @@ public class InboxActivity extends AppCompatActivity
             swipesent.setVisibility(View.GONE);
             swipetrash.setVisibility(View.GONE);
             swipedraft.setVisibility(View.GONE);
+            swipecontact.setVisibility(View.VISIBLE);
             setContact();
         }else if (id == R.id.nav_settings) {
             Intent intent=new Intent(InboxActivity.this,SettingActivity.class);
