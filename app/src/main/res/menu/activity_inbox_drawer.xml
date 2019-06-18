@@ -34,10 +34,6 @@
     <item android:title="Other">
         <menu>
             <item
-                android:id="@+id/nav_create"
-                android:icon="@drawable/ic_create_new_folder"
-                android:title="@string/create_folder" />
-            <item
                 android:id="@+id/nav_contact"
                 android:icon="@drawable/ic_contact_mail_black_24dp"
                 android:title="@string/contact" />

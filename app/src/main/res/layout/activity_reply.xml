@@ -74,29 +74,15 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_gravity="center"
                     android:layout_width="48dp"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="@dimen/dp8"
                     android:text="To"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
                     android:textColor="@color/grey_60" />
-                <!--<com.tylersuehr.chips.ChipsInputLayout-->
-                    <!--android:id="@+id/chips_input"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="42dp"-->
-                    <!--android:hint="Receiver Email Address"-->
-                    <!--android:textColorHint="#000000"-->
-                    <!--android:textColor="#212121"-->
-                    <!--app:chip_showDetails="true"/>-->
-                <com.pchmn.materialchips.ChipsInput
-                    android:id="@+id/chips_input"
-                    android:layout_width="match_parent"
-                    android:layout_height="42dp"
-                    app:hint="Enter a name" />
+
                 <EditText
                     android:id="@+id/edittext_to"
-                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/dp8"
@@ -168,14 +154,42 @@
                 android:layout_margin="@dimen/dp4"
                 android:background="@color/grey_60"/>
 
+            <LinearLayout
+                android:layout_margin="@dimen/dp4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="48dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/dp8"
+                    android:text="Re"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:textColor="@color/grey_60" />
+
+                <EditText
+                    android:id="@+id/edittext_re"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/dp8"
+                    android:background="@android:color/transparent"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:textColor="@color/grey_90" />
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_margin="@dimen/dp4"
+                android:background="@color/grey_60"/>
 
             <EditText
-                android:id="@+id/edittext_subject"
+                android:id="@+id/edittext_lastmessage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
                 android:textColor="@color/grey_90"
-                android:hint="Subject" />
+                android:hint="Last Message" />
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"

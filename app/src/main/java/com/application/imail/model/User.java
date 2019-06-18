@@ -1,6 +1,7 @@
 package com.application.imail.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class User {
     public String username;
@@ -13,6 +14,7 @@ public class User {
     public String message, status;
     public static ArrayList<User> users = new ArrayList<>();
     public static ArrayList<String> paket=new ArrayList<>();
+    public static List<listcontact> listcontacts=new ArrayList<>();
     public User(){
 
     }
@@ -24,6 +26,14 @@ public class User {
         this.nohp = nohp;
         this.norek=norek;
         this.saldo=saldo;
+    }
+
+    public static List<listcontact> getListcontacts() {
+        return listcontacts;
+    }
+
+    public static void setListcontacts(List<listcontact> listcontacts) {
+        User.listcontacts = listcontacts;
     }
 
     public String getMessage() {

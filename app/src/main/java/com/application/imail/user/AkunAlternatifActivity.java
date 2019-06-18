@@ -32,20 +32,19 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
     UserService userService;
     private NestedScrollView nestedScrollView;
 
-    private TextInputLayout textInputLayoutUsername;
+    private TextInputLayout textInputLayoutAkunAlternatif;
     private TextInputLayout textInputLayoutPassword;
 
-    private TextInputEditText textInputEditTextUsername;
+    private TextInputEditText textInputEditTextAkunAlternatif;
     private TextInputEditText textInputEditTextPassword;
 
-    private AppCompatButton appCompatButtonLogin;
-    TextView registernow;
+    private AppCompatButton appCompatButtonAdd;
     ProgressDialog progress;
     InputValidation inputValidation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_akun_alternatif);
         initViews();
         initListeners();
         initObjects();
@@ -55,19 +54,17 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
      */
     private void initViews() {
         nestedScrollView = (NestedScrollView) findViewById(R.id.nestedScrollView);
-        textInputLayoutUsername = (TextInputLayout) findViewById(R.id.textInputLayoutUsername);
+        textInputLayoutAkunAlternatif = (TextInputLayout) findViewById(R.id.textInputLayoutAkunAlternatif);
         textInputLayoutPassword = (TextInputLayout) findViewById(R.id.textInputLayoutPassword);
-        textInputEditTextUsername = (TextInputEditText) findViewById(R.id.textInputEditTextUsername);
+        textInputEditTextAkunAlternatif = (TextInputEditText) findViewById(R.id.textInputEditTextAkunAlternatif);
         textInputEditTextPassword = (TextInputEditText) findViewById(R.id.textInputEditTextPassword);
-        appCompatButtonLogin = (AppCompatButton) findViewById(R.id.appCompatButtonLogin);
-        registernow=findViewById(R.id.registernow);
+        appCompatButtonAdd = (AppCompatButton) findViewById(R.id.appCompatButtonAdd);
     }
 //    /**
 //     * This method is to initialize listeners
 //     */
     private void initListeners() {
-        appCompatButtonLogin.setOnClickListener(this);
-        registernow.setOnClickListener(this);
+        appCompatButtonAdd.setOnClickListener(this);
         userConfig = new SessionManager(this);
         userService = APIUtils.getUserService();
         inputValidation = new InputValidation(this);
@@ -88,7 +85,7 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
         switch (v.getId()) {
             //jika klik button login akan melakukan proses validasi
             case R.id.appCompatButtonLogin:
-                if (!inputValidation.isInputEditTextFilled(textInputEditTextUsername, textInputLayoutUsername, getString(R.string.error_message_email_username))) {
+                if (!inputValidation.isInputEditTextFilled(textInputEditTextAkunAlternatif, textInputLayoutAkunAlternatif, getString(R.string.error_message_akunalternatif))) {
                     return;
                 }
                 if (!inputValidation.isInputEditTextFilled(textInputEditTextPassword, textInputLayoutPassword,getString(R.string.error_message_passwordkosong))) {
@@ -98,45 +95,43 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
 //                    emptyInputEditText();
 //                }
                 else {
-                    Log.e("POST",textInputEditTextUsername.getText().toString());
-                    Log.e("POST",textInputEditTextPassword.getText().toString());
-                    Call<User> call = userService.login(textInputEditTextUsername.getText().toString(), textInputEditTextPassword.getText().toString());
-                    call.enqueue(new Callback<User>() {
-                        @Override
-                        public void onResponse(Call<User> call, Response<User> response) {
-                            if(response.isSuccessful()){
-                                SessionManager sessionManager = SessionManager.with(AkunAlternatifActivity.this);
-                                String status=response.body().getStatus();
-    //                            int statuscode = response.code();
-                                String statusmessage=response.body().getMessage();
-                                if (status.equals("true")) {
-                                    Toast.makeText(AkunAlternatifActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
-                                    user.setEmail(response.body().getEmail());
-    //                                user.setUsername(response.body().getName());
-                                    user.setName(response.body().getName());
-                                    sessionManager.createsession(user);
-    //                                user.setPassword("vincent");
-    //                                userConfig.writeNorekening(response.body().getNorekening());
-    //                                userConfig.writeNama(response.body().getNama());
-    //                                userConfig.writeSaldo(response.body().getSaldo());
-                                    startActivity(new Intent(AkunAlternatifActivity.this, InboxActivity.class));
-                                    finish();
-                                    emptyInputEditText();
-
-                                } else {
-                                    Toast.makeText(AkunAlternatifActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                                else{
-                                Toast.makeText(AkunAlternatifActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<User> call, Throwable t) {
-                            Log.e("USER ACTIVITY ERROR", t.getMessage());
-                        }
-                    });
+//                    Call<User> call = userService.login(textInputEditTextUsername.getText().toString(), textInputEditTextPassword.getText().toString());
+//                    call.enqueue(new Callback<User>() {
+//                        @Override
+//                        public void onResponse(Call<User> call, Response<User> response) {
+//                            if(response.isSuccessful()){
+//                                SessionManager sessionManager = SessionManager.with(AkunAlternatifActivity.this);
+//                                String status=response.body().getStatus();
+//    //                            int statuscode = response.code();
+//                                String statusmessage=response.body().getMessage();
+//                                if (status.equals("true")) {
+//                                    Toast.makeText(AkunAlternatifActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+//                                    user.setEmail(response.body().getEmail());
+//    //                                user.setUsername(response.body().getName());
+//                                    user.setName(response.body().getName());
+//                                    sessionManager.createsession(user);
+//    //                                user.setPassword("vincent");
+//    //                                userConfig.writeNorekening(response.body().getNorekening());
+//    //                                userConfig.writeNama(response.body().getNama());
+//    //                                userConfig.writeSaldo(response.body().getSaldo());
+//                                    startActivity(new Intent(AkunAlternatifActivity.this, InboxActivity.class));
+//                                    finish();
+//                                    emptyInputEditText();
+//
+//                                } else {
+//                                    Toast.makeText(AkunAlternatifActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+//                                }
+//                            }
+//                                else{
+//                                Toast.makeText(AkunAlternatifActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onFailure(Call<User> call, Throwable t) {
+//                            Log.e("USER ACTIVITY ERROR", t.getMessage());
+//                        }
+//                    });
 //                    if (textInputEditTextUsername.getText().toString().equals("vincent@email.com") || textInputEditTextUsername.getText().toString().equals("vin_22") && textInputEditTextPassword.getText().toString().equals("vincent")) {
 //                        Log.e("Login", "Masuk");
 //                        SessionManager sessionManager = SessionManager.with(this);
@@ -167,11 +162,6 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
 //                verifyFromSQLite();
                     break;
                 }
-            case R.id.registernow:
-                Intent intent=new Intent(this,RegisterActivity.class);
-                startActivity(intent);
-                emptyInputEditText();
-                break;
         }
     }
 //    /**
@@ -244,7 +234,7 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
 //     * This method is to empty all input edit text
 //     */
     private void emptyInputEditText() {
-        textInputEditTextUsername.setText(null);
+        textInputEditTextAkunAlternatif.setText(null);
         textInputEditTextPassword.setText(null);
     }
 }

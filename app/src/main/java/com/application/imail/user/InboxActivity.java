@@ -31,8 +31,10 @@ import android.widget.TextView;
 
 import com.application.imail.LoginActivity;
 import com.application.imail.R;
+import com.application.imail.adapter.AdapterListContact;
 import com.application.imail.adapter.AdapterListEmail;
 import com.application.imail.config.SessionManager;
+import com.application.imail.model.listcontact;
 import com.application.imail.model.listemail;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
@@ -41,17 +43,21 @@ import java.util.List;
 
 public class InboxActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    AdapterListContact adapter_contact;
     AdapterListEmail adapter_inbox,adapter_spam, adapter_starred, adapter_sent, adapter_trash, adapter_draft;
-    RecyclerView recyclerView_inbox, recyclerView_spam, recyclerView_starred, recyclerView_sent, recyclerView_trash, recyclerView_draft;
-    SwipeRefreshLayout swipeinbox, swipespam, swipestarred, swipesent, swipetrash, swipedraft;
+    RecyclerView recyclerView_inbox, recyclerView_spam, recyclerView_starred, recyclerView_sent, recyclerView_trash, recyclerView_draft, recyclerView_contact;
+    SwipeRefreshLayout swipeinbox, swipespam, swipestarred, swipesent, swipetrash, swipedraft, swipecontact;
     CoordinatorLayout parent_view;
     listemail listemail;
     List<listemail> items;
+    List<listcontact> itemscontact;
     Toolbar toolbar;
     MaterialSearchView searchView;
     SessionManager sessionManager;
     TextView name, Email;
     LinearLayout linear;
+    String folder="Inbox";
+    listcontact listcontact;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +75,7 @@ public class InboxActivity extends AppCompatActivity
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.setStatusBarColor(InboxActivity.this.getResources().getColor(R.color.colorPrimary));
         }
-        initToolbar("Inbox");
+        initToolbar(folder);
         parent_view=findViewById(R.id.parent_view);
         swipeinbox=findViewById(R.id.swipeinbox);
         swipespam=findViewById(R.id.swipespam);
@@ -77,6 +83,7 @@ public class InboxActivity extends AppCompatActivity
         swipesent=findViewById(R.id.swipesent);
         swipetrash=findViewById(R.id.swipetrash);
         swipedraft=findViewById(R.id.swipedraft);
+        swipecontact=findViewById(R.id.swipecontact);
 
         recyclerView_inbox=findViewById(R.id.recyclerView_inbox);
         recyclerView_spam=findViewById(R.id.recyclerView_spam);
@@ -84,6 +91,7 @@ public class InboxActivity extends AppCompatActivity
         recyclerView_sent=findViewById(R.id.recyclerView_sent);
         recyclerView_trash=findViewById(R.id.recyclerView_trash);
         recyclerView_draft=findViewById(R.id.recyclerView_draft);
+        recyclerView_contact=findViewById(R.id.recyclerView_contact);
 
         searchView=(MaterialSearchView)findViewById(R.id.searchView);
         setEmailInbox();
@@ -91,8 +99,13 @@ public class InboxActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(InboxActivity.this, ComposeMessageActivity.class);
-                startActivity(intent);
+                if(folder.equals("Contact")){
+
+                }
+                else {
+                    Intent intent = new Intent(InboxActivity.this, ComposeMessageActivity.class);
+                    startActivity(intent);
+                }
             }
         });
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -234,6 +247,46 @@ public class InboxActivity extends AppCompatActivity
                 swipedraft.setEnabled(topRowVerticalPosition >= 0);
             }
         });
+
+        swipecontact.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if(itemscontact!=null){
+                    itemscontact.clear();
+                }
+                else{
+                    itemscontact=new ArrayList<>();
+                }
+                setContact();
+            }
+        });
+
+        recyclerView_contact.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                int topRowVerticalPosition = (recyclerView == null || recyclerView.getChildCount() == 0) ? 0 : recyclerView.getChildAt(0).getTop();
+                swipecontact.setEnabled(topRowVerticalPosition >= 0);
+            }
+        });
+
+        ArrayList<String> ar = new ArrayList<String>();
+        String s1 ="Google";
+        String s2 ="Facebook";
+        String s3 ="Instagram";
+        String s4 ="Line";
+        String s5 ="Whatsapp";
+        ar.add(s1);
+        ar.add(s2);
+        ar.add(s3);
+        ar.add(s4);
+        ar.add(s5);
+        String[] arrays=new String[]{"A","B"};
+        String[] arrays1=new String[]{"A","B"};
+        for (int i=0;i<arrays.length;i++){
+            arrays1[i]=arrays[i];
+        }
+        String[] stockArr = new String[ar.size()];
+        stockArr = ar.toArray(stockArr);
     }
 
     public void setEmailInbox(){
@@ -578,6 +631,51 @@ public class InboxActivity extends AppCompatActivity
         }
     }
 
+    public void setContact(){
+        if(itemscontact!=null){
+            itemscontact.clear();
+        }
+        else{
+            itemscontact=new ArrayList<>();
+        }
+        if(adapter_contact!=null){
+            adapter_contact.notifyDataSetChanged();
+        }
+        for(int i=0;i<10;i++){
+            if(i%2==0) {
+                listcontact = new listcontact();
+                listcontact.setAddressbookid(String.valueOf(i));
+                listcontact.setUserid(String.valueOf(i));
+                listcontact.setName(getResources().getString(R.string.user_pertama));
+                listcontact.setEmail(getResources().getString(R.string.user_email_pertama));
+                listcontact.setPhone("");
+                listcontact.setBirth_date("1997-01-01");
+                listcontact.setGender("Laki-laki");
+                listcontact.setSaved(true);
+                listcontact.setSuggestion(false);
+                listcontact.setDelete(false);
+                itemscontact.add(listcontact);
+            }
+            else{
+                listcontact = new listcontact();
+                listcontact.setAddressbookid(String.valueOf(i));
+                listcontact.setUserid(String.valueOf(i));
+                listcontact.setName(getResources().getString(R.string.user_kedua));
+                listcontact.setEmail(getResources().getString(R.string.user_email_kedua));
+                listcontact.setPhone("");
+                listcontact.setBirth_date("1997-01-01");
+                listcontact.setGender("Laki-laki");
+                listcontact.setSaved(true);
+                listcontact.setSuggestion(false);
+                listcontact.setDelete(false);
+                itemscontact.add(listcontact);
+            }
+        }
+        if(swipecontact.isRefreshing()){
+            swipecontact.setRefreshing(false);
+        }
+    }
+
     private void initToolbar(String folder) {
         getSupportActionBar().setTitle(folder);
     }
@@ -592,28 +690,29 @@ public class InboxActivity extends AppCompatActivity
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
             } else {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-                dialog.setMessage("Apakah Anda yakin untuk logout dari iMail?");
-                dialog.setCancelable(false);
-                //final Integer nama=username.getText().toString().length();
-                dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent intent=new Intent(InboxActivity.this, LoginActivity.class);
-                        intent.addCategory(Intent.CATEGORY_HOME);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        SessionManager sessionManager = SessionManager.with(InboxActivity.this);
-                        sessionManager.clearsession();
-                        startActivity(intent);
-                    }
-                });
-                dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                });
-                dialog.show();
+                super.onBackPressed();
+//                AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+//                dialog.setMessage("Apakah Anda yakin untuk logout dari iMail?");
+//                dialog.setCancelable(false);
+//                //final Integer nama=username.getText().toString().length();
+//                dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        Intent intent=new Intent(InboxActivity.this, LoginActivity.class);
+//                        intent.addCategory(Intent.CATEGORY_HOME);
+//                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                        SessionManager sessionManager = SessionManager.with(InboxActivity.this);
+//                        sessionManager.clearsession();
+//                        startActivity(intent);
+//                    }
+//                });
+//                dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        dialogInterface.dismiss();
+//                    }
+//                });
+//                dialog.show();
             }
         }
     }
@@ -647,6 +746,10 @@ public class InboxActivity extends AppCompatActivity
                 if(adapter_draft!=null) {
                     adapter_draft.getFilter().filter(query);
                 }
+                if(adapter_contact!=null) {
+                    adapter_contact.getFilter().filter(query);
+                }
+
                 return false;
             }
 
@@ -671,9 +774,17 @@ public class InboxActivity extends AppCompatActivity
                 if(adapter_draft!=null) {
                     adapter_draft.getFilter().filter(query);
                 }
+                if(adapter_contact!=null) {
+                    adapter_contact.getFilter().filter(query);
+                }
                 return false;
             }
         });
+        SessionManager sessionManager=SessionManager.with(InboxActivity.this);
+        String[] stockArr = new String[sessionManager.getuserloggedin().getListcontacts().size()];
+        stockArr = sessionManager.getuserloggedin().getListcontacts().toArray(stockArr);
+
+        searchView.setSuggestions(stockArr);
         return true;
     }
 
@@ -700,63 +811,82 @@ public class InboxActivity extends AppCompatActivity
 
         if (id == R.id.nav_inbox) {
             // Handle the camera action
-            initToolbar("Inbox");
+            folder="Inbox";
+            initToolbar(folder);
             swipeinbox.setVisibility(View.VISIBLE);
             swipespam.setVisibility(View.GONE);
             swipestarred.setVisibility(View.GONE);
             swipesent.setVisibility(View.GONE);
             swipetrash.setVisibility(View.GONE);
             swipedraft.setVisibility(View.GONE);
+            swipecontact.setVisibility(View.GONE);
             setEmailInbox();
         } else if (id == R.id.nav_sent) {
-            initToolbar("Sent");
+            folder="Sent";
+            initToolbar(folder);
             swipeinbox.setVisibility(View.GONE);
             swipespam.setVisibility(View.GONE);
             swipestarred.setVisibility(View.GONE);
             swipesent.setVisibility(View.VISIBLE);
             swipetrash.setVisibility(View.GONE);
             swipedraft.setVisibility(View.GONE);
+            swipecontact.setVisibility(View.GONE);
             setEmailSent();
         } else if (id == R.id.nav_favorit) {
-            initToolbar("Starred");
+            folder="Starred";
+            initToolbar(folder);
             swipeinbox.setVisibility(View.GONE);
             swipespam.setVisibility(View.GONE);
             swipestarred.setVisibility(View.VISIBLE);
             swipesent.setVisibility(View.GONE);
             swipetrash.setVisibility(View.GONE);
             swipedraft.setVisibility(View.GONE);
+            swipecontact.setVisibility(View.GONE);
             setEmailStarred();
         } else if (id == R.id.nav_spam) {
-            initToolbar("Spam");
+            folder="Spam";
+            initToolbar(folder);
             swipeinbox.setVisibility(View.GONE);
             swipespam.setVisibility(View.VISIBLE);
             swipestarred.setVisibility(View.GONE);
             swipesent.setVisibility(View.GONE);
             swipetrash.setVisibility(View.GONE);
             swipedraft.setVisibility(View.GONE);
+            swipecontact.setVisibility(View.GONE);
             setEmailSpam();
         } else if (id == R.id.nav_draft) {
-            initToolbar("Draft");
+            folder="Draft";
+            initToolbar(folder);
             swipeinbox.setVisibility(View.GONE);
             swipespam.setVisibility(View.GONE);
             swipestarred.setVisibility(View.GONE);
             swipesent.setVisibility(View.GONE);
             swipetrash.setVisibility(View.GONE);
             swipedraft.setVisibility(View.VISIBLE);
+            swipecontact.setVisibility(View.GONE);
             setEmailDraft();
         } else if (id == R.id.nav_trash) {
-            initToolbar("Trash");
+            folder="Trash";
+            initToolbar(folder);
             swipeinbox.setVisibility(View.GONE);
             swipespam.setVisibility(View.GONE);
             swipestarred.setVisibility(View.GONE);
             swipesent.setVisibility(View.GONE);
             swipetrash.setVisibility(View.VISIBLE);
             swipedraft.setVisibility(View.GONE);
+            swipecontact.setVisibility(View.GONE);
             setEmailTrash();
-        } else if (id == R.id.nav_create) {
-
         } else if (id == R.id.nav_contact) {
-
+            folder="Contact";
+            initToolbar(folder);
+            swipeinbox.setVisibility(View.GONE);
+            swipespam.setVisibility(View.GONE);
+            swipestarred.setVisibility(View.GONE);
+            swipesent.setVisibility(View.GONE);
+            swipetrash.setVisibility(View.GONE);
+            swipedraft.setVisibility(View.GONE);
+            swipecontact.setVisibility(View.VISIBLE);
+            setContact();
         }else if (id == R.id.nav_settings) {
             Intent intent=new Intent(InboxActivity.this,SettingActivity.class);
             startActivity(intent);

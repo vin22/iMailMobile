@@ -16,10 +16,14 @@ import android.widget.Toast;
 
 import com.application.imail.config.SessionManager;
 import com.application.imail.model.User;
+import com.application.imail.model.listcontact;
 import com.application.imail.remote.APIUtils;
 import com.application.imail.remote.UserService;
 import com.application.imail.user.InboxActivity;
 import com.application.imail.utils.InputValidation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -42,6 +46,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     TextView registernow;
     ProgressDialog progress;
     InputValidation inputValidation;
+    listcontact listcontact;
+    List<listcontact> itemscontact;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,6 +124,76 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 String statusmessage=response.body().getMessage();
                                 if (status.equals("true")) {
                                     Toast.makeText(LoginActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                    itemscontact = new ArrayList<listcontact>();
+                                    listcontact = new listcontact();
+                                    listcontact.setAddressbookid("1");
+                                    listcontact.setUserid("1");
+                                    listcontact.setName(getResources().getString(R.string.user_pertama));
+                                    listcontact.setEmail(getResources().getString(R.string.user_email_pertama));
+                                    listcontact.setPhone("");
+                                    listcontact.setBirth_date("1997-01-01");
+                                    listcontact.setGender("Laki-laki");
+                                    listcontact.setSaved(true);
+                                    listcontact.setSuggestion(true);
+                                    listcontact.setDelete(false);
+                                    itemscontact.add(listcontact);
+
+                                    listcontact = new listcontact();
+                                    listcontact.setAddressbookid("2");
+                                    listcontact.setUserid("2");
+                                    listcontact.setName(getResources().getString(R.string.user_kedua));
+                                    listcontact.setEmail(getResources().getString(R.string.user_email_kedua));
+                                    listcontact.setPhone("");
+                                    listcontact.setBirth_date("1997-01-01");
+                                    listcontact.setGender("Laki-laki");
+                                    listcontact.setSaved(true);
+                                    listcontact.setSuggestion(true);
+                                    listcontact.setDelete(false);
+                                    itemscontact.add(listcontact);
+
+                                    itemscontact = new ArrayList<listcontact>();
+                                    listcontact = new listcontact();
+                                    listcontact.setAddressbookid("3");
+                                    listcontact.setUserid("3");
+                                    listcontact.setName("Danny");
+                                    listcontact.setEmail("danny@email.com");
+                                    listcontact.setPhone("");
+                                    listcontact.setBirth_date("1997-01-01");
+                                    listcontact.setGender("Laki-laki");
+                                    listcontact.setSaved(true);
+                                    listcontact.setSuggestion(true);
+                                    listcontact.setDelete(false);
+                                    itemscontact.add(listcontact);
+
+                                    itemscontact = new ArrayList<listcontact>();
+                                    listcontact = new listcontact();
+                                    listcontact.setAddressbookid("4");
+                                    listcontact.setUserid("4");
+                                    listcontact.setName("Steven");
+                                    listcontact.setEmail("steven@email.com");
+                                    listcontact.setPhone("");
+                                    listcontact.setBirth_date("1997-01-01");
+                                    listcontact.setGender("Laki-laki");
+                                    listcontact.setSaved(true);
+                                    listcontact.setSuggestion(true);
+                                    listcontact.setDelete(false);
+                                    itemscontact.add(listcontact);
+
+                                    listcontact = new listcontact();
+                                    listcontact.setAddressbookid("5");
+                                    listcontact.setUserid("5");
+                                    listcontact.setName("Tester");
+                                    listcontact.setEmail("tester@email.com");
+                                    listcontact.setPhone("");
+                                    listcontact.setBirth_date("1997-01-01");
+                                    listcontact.setGender("Laki-laki");
+                                    listcontact.setSaved(true);
+                                    listcontact.setSuggestion(true);
+                                    listcontact.setDelete(false);
+                                    itemscontact.add(listcontact);
+
+                                    user.setListcontacts(itemscontact);
+
                                     user.setEmail(response.body().getEmail());
     //                                user.setUsername(response.body().getName());
                                     user.setName(response.body().getName());
