@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_inbox"
+            android:icon="@drawable/ic_inbox"
+            android:title="@string/inbox" />
+        <item
+            android:id="@+id/nav_sent"
+            android:icon="@drawable/ic_menu_send"
+            android:title="@string/sent" />
+        <item
+            android:id="@+id/nav_favorit"
+            android:icon="@drawable/ic_star"
+            android:title="@string/favorit" />
+        <item
+            android:id="@+id/nav_spam"
+            android:icon="@drawable/ic_inbox"
+            android:title="@string/spam" />
+        <item
+            android:id="@+id/nav_draft"
+            android:icon="@drawable/ic_drafts"
+            android:title="Draft" />
+        <item
+            android:id="@+id/nav_trash"
+            android:icon="@drawable/ic_trash"
+            android:title="@string/trash" />
+
+    </group>
+
+    <item android:title="Other">
+        <menu>
+            <item
+                android:id="@+id/nav_create"
+                android:icon="@drawable/ic_create_new_folder"
+                android:title="@string/create_folder" />
+            <item
+                android:id="@+id/nav_contact"
+                android:icon="@drawable/ic_contact_mail_black_24dp"
+                android:title="@string/contact" />
+            <item
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/ic_settings"
+                android:title="Settings" />
+        </menu>
+    </item>
+
+</menu>

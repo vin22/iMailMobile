@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout android:id="@+id/parent_view"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <FrameLayout
+            android:id="@+id/toolbar_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@android:color/white"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
+        </FrameLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_margin="@dimen/dp8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/subject"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    android:fontFamily="@font/opensans_bold"
+                    android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec molestie sapien urna, et tempor lorem feugiat vitae. Mauris vestibulum, nisi a sagittis faucibus, urna nibh tincidunt ligula, ut aliquet massa dui ut tortor. Fusce ex felis, hendrerit at dui et, egestas volutpat tortor. Cras maximus dolor ipsum, in vestibulum augue vehicula in. Sed commodo dapibus diam eget tempus." />
+                <ImageButton
+                    android:id="@+id/starred"
+                    android:layout_gravity="right|bottom"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/ic_star_border"
+                    style="@style/Widget.AppCompat.Button.Borderless"/>
+            </LinearLayout>
+            <TextView
+                android:id="@+id/labels"
+                android:layout_margin="@dimen/dp8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dp4"
+                android:background="@drawable/border_bg_white"
+                android:text="Inbox"
+                android:textColor="@color/grey_90"/>
+
+
+            <LinearLayout
+                android:id="@+id/lyt_parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dp8"
+                android:layout_margin="@dimen/dp8"
+                android:background="@drawable/border_bg_white"
+                android:clickable="true"
+                android:orientation="vertical">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="48dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/dp8"
+                        android:text="From"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                        android:textColor="@color/grey_60" />
+
+                    <TextView
+                        android:id="@+id/from"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="From"
+                        android:fontFamily="@font/opensans_bold"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                        android:textColor="@color/grey_90" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="48dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/dp8"
+                        android:text="To"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                        android:textColor="@color/grey_60" />
+
+                    <TextView
+                        android:id="@+id/to"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="To"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                        android:textColor="@color/grey_90" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="48dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/dp8"
+                        android:text="Date"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                        android:textColor="@color/grey_60" />
+
+                    <TextView
+                        android:id="@+id/date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Date"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                        android:textColor="@color/grey_90" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_margin="@dimen/dp8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:id="@+id/message"
+                    android:layout_height="wrap_content"
+                    android:text="@string/short_lorem_ipsum"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@color/grey_90"
+                    android:visibility="visible" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_margin="@dimen/dp8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec molestie sapien urna, et tempor lorem feugiat vitae. Mauris vestibulum, nisi a sagittis faucibus, urna nibh tincidunt ligula, ut aliquet massa dui ut tortor. Fusce ex felis, hendrerit at dui et, egestas volutpat tortor. Cras maximus dolor ipsum, in vestibulum augue vehicula in. Sed commodo dapibus diam eget tempus."
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_margin="@dimen/dp8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec molestie sapien urna, et tempor lorem feugiat vitae. Mauris vestibulum, nisi a sagittis faucibus, urna nibh tincidunt ligula, ut aliquet massa dui ut tortor. Fusce ex felis, hendrerit at dui et, egestas volutpat tortor. Cras maximus dolor ipsum, in vestibulum augue vehicula in. Sed commodo dapibus diam eget tempus."
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginBottom="@dimen/dp16"
+                android:layout_gravity="end"
+                android:gravity="center_horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/reply"
+                    android:text="Reply"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:drawableStart="@drawable/ic_reply"
+                    android:background="@drawable/border_bg_white"
+                    android:layout_marginRight="@dimen/dp8"/>
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/forward"
+                    android:text="Forward"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:drawableStart="@drawable/ic_forward"
+                    android:background="@drawable/border_bg_white"
+                    android:layout_marginLeft="@dimen/dp8"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+</android.support.design.widget.CoordinatorLayout>

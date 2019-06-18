@@ -1,0 +1,90 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorHint">@android:color/white</item>
+        <item name="colorControlNormal">@android:color/white</item>
+        <item name="colorControlActivated">@android:color/white</item>
+        <item name="colorControlHighlight">@android:color/white</item>
+        <item name="android:textViewStyle">@style/TextView</item>
+        <item name="android:textAppearanceMedium">@style/MediumTextView</item>
+        <item name="android:buttonStyle">@style/Button</item>
+        <item name="android:editTextStyle">@style/EditText</item>
+        <item name="editTextStyle">@style/EditText</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.Splash">
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <style name="Button" parent="@style/Widget.AppCompat.Button">
+        <item name="android:fontFamily">@font/opensans_regular</item>
+    </style>
+
+    <style name="TextView" parent="@style/TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/opensans_regular</item>
+    </style>
+
+    <style name="MediumTextView" parent="@style/TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/opensans_bold</item>
+    </style>
+
+    <style name="EditText" parent="@style/Widget.AppCompat.EditText">
+        <item name="android:fontFamily">@font/opensans_regular</item>
+        <!--<item name="android:background">@android:drawable/editbox_background_normal</item>-->
+        <!--<item name="colorControlNormal">@android:color/black</item>-->
+        <!--<item name="colorControlActivated">@android:color/black</item>-->
+        <!--<item name="colorControlHighlight">@android:color/black</item>-->
+        <item name="android:textCursorDrawable">@drawable/ic_cursor_drawable</item>
+        <item name="android:background">?attr/editTextBackground</item>
+        <item name="android:textColor">?attr/editTextColor</item>
+        <item name="android:textColorHint">@color/grey_60</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMediumInverse</item>
+        <!--<item name="android:textCursorDrawable">@drawable/abc_text_cursor_material</item>-->
+        <!--<item name="colorControlNormal">@color/colorAccent</item>-->
+        <!--<item name="colorControlActivated">@color/colorAccent</item>-->
+        <!--<item name="colorControlHighlight">@color/colorAccent</item>-->
+    </style>
+
+    <!--style for ripple library-->
+    <style name="RippleStyleWhite">
+        <item name="mrl_rippleOverlay">true</item>
+        <item name="mrl_rippleColor">#80FFFFFF</item>
+        <item name="mrl_rippleHover">true</item>
+        <item name="mrl_rippleAlpha">0.2</item>
+    </style>
+    <style name="RippleStyleBlack" parent="RippleStyleWhite">
+        <item name="mrl_rippleColor">#8096989A</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="MaterialSearchViewStyle">
+        <!-- Background for the search bar -->
+        <item name="searchBackground">@color/grey_5</item>
+
+        <!-- Change clear text icon -->
+        <item name="searchCloseIcon">@drawable/ic_close_black</item>
+
+        <!-- Change up icon -->
+        <item name="searchBackIcon">@drawable/ic_arrow_back_black</item>
+
+        <!-- Hint for edit text color-->
+        <item name="android:textColorHint">@color/overlay_dark_80</item>
+
+        <!-- Hint for edit text -->
+        <item name="android:hint">@string/search_hint</item>
+    </style>
+</resources>
