@@ -74,21 +74,29 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:layout_gravity="center"
                     android:layout_width="48dp"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="@dimen/dp8"
                     android:text="To"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
                     android:textColor="@color/grey_60" />
-
-                <EditText
-                    android:id="@+id/edittext_to"
+                <com.tylersuehr.chips.ChipsInputLayout
+                    android:id="@+id/chips_to"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/dp8"
-                    android:background="@android:color/transparent"
-                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-                    android:textColor="@color/grey_90" />
+                    android:layout_height="42dp"
+                    android:hint=""
+                    android:textColor="#212121"
+                    app:maxRows="3"
+                    app:chip_showDetails="true"/>
+                <!--<EditText-->
+                    <!--android:id="@+id/edittext_to"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:padding="@dimen/dp8"-->
+                    <!--android:background="@android:color/transparent"-->
+                    <!--android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"-->
+                    <!--android:textColor="@color/grey_90" />-->
             </LinearLayout>
             <View
                 android:layout_width="match_parent"
@@ -103,21 +111,29 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:layout_gravity="center"
                     android:layout_width="48dp"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="@dimen/dp8"
                     android:text="Cc"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
                     android:textColor="@color/grey_60" />
-
-                <EditText
-                    android:id="@+id/edittext_cc"
+                <com.tylersuehr.chips.ChipsInputLayout
+                    android:id="@+id/chips_cc"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/dp8"
-                    android:background="@android:color/transparent"
-                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-                    android:textColor="@color/grey_90" />
+                    android:layout_height="42dp"
+                    android:hint=""
+                    android:textColor="#212121"
+                    app:maxRows="3"
+                    app:chip_showDetails="true"/>
+                <!--<EditText-->
+                    <!--android:id="@+id/edittext_cc"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:padding="@dimen/dp8"-->
+                    <!--android:background="@android:color/transparent"-->
+                    <!--android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"-->
+                    <!--android:textColor="@color/grey_90" />-->
             </LinearLayout>
             <View
                 android:layout_width="match_parent"
@@ -132,21 +148,29 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:layout_gravity="center"
                     android:layout_width="48dp"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="@dimen/dp8"
                     android:text="Bcc"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
                     android:textColor="@color/grey_60" />
-
-                <EditText
-                    android:id="@+id/edittext_bcc"
+                <com.tylersuehr.chips.ChipsInputLayout
+                    android:id="@+id/chips_bcc"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/dp8"
-                    android:background="@android:color/transparent"
-                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-                    android:textColor="@color/grey_90" />
+                    android:layout_height="42dp"
+                    android:hint=""
+                    android:textColor="#212121"
+                    app:maxRows="3"
+                    app:chip_showDetails="true"/>
+                <!--<EditText-->
+                    <!--android:id="@+id/edittext_bcc"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:padding="@dimen/dp8"-->
+                    <!--android:background="@android:color/transparent"-->
+                    <!--android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"-->
+                    <!--android:textColor="@color/grey_90" />-->
             </LinearLayout>
             <View
                 android:layout_width="match_parent"

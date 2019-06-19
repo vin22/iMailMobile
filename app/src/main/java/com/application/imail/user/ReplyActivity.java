@@ -1,7 +1,11 @@
 package com.application.imail.user;
 
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,12 +18,18 @@ import android.widget.TextView;
 import com.application.imail.R;
 import com.application.imail.config.SessionManager;
 import com.jaredrummler.materialspinner.MaterialSpinner;
+import com.tylersuehr.chips.Chip;
+import com.tylersuehr.chips.ChipsInputLayout;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ReplyActivity extends AppCompatActivity {
     CoordinatorLayout parent_view;
     MaterialSpinner spinnerfrom;
     TextView to, bcc, cc, re, lastmessage, message;
+    ChipsInputLayout chips_to, chips_bcc, chips_cc ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,7 +37,7 @@ public class ReplyActivity extends AppCompatActivity {
         initToolbar();
         initComponent();
         initListener();
-        setEmail();
+//        setEmail();
     }
 
     private void initToolbar() {
@@ -52,8 +62,144 @@ public class ReplyActivity extends AppCompatActivity {
         message=findViewById(R.id.edittext_message);
         spinnerfrom=findViewById(R.id.spinnerfrom);
         to=findViewById(R.id.edittext_to);
-        bcc=findViewById(R.id.edittext_bcc);
-        cc=findViewById(R.id.edittext_cc);
+//        bcc=findViewById(R.id.edittext_bcc);
+//        cc=findViewById(R.id.edittext_cc);
+
+        chips_to = (ChipsInputLayout)findViewById(R.id.chips_to);
+        chips_bcc = (ChipsInputLayout)findViewById(R.id.chips_bcc);
+        chips_cc = (ChipsInputLayout)findViewById(R.id.chips_cc);
+
+        List<Chip> contactList = new ArrayList<>();
+        contactList.add(new Chip() {
+            @Nullable
+            @Override
+            public Object getId() {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public String getTitle() {
+                return "Tes1";
+            }
+
+            @Nullable
+            @Override
+            public String getSubtitle() {
+                return "tes1@email.com";
+            }
+
+            @Nullable
+            @Override
+            public Uri getAvatarUri() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public Drawable getAvatarDrawable() {
+                return null;
+            }
+        });
+        contactList.add(new Chip() {
+            @Nullable
+            @Override
+            public Object getId() {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public String getTitle() {
+                return "Tes2";
+            }
+
+            @Nullable
+            @Override
+            public String getSubtitle() {
+                return "tes2@email.com";
+            }
+
+            @Nullable
+            @Override
+            public Uri getAvatarUri() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public Drawable getAvatarDrawable() {
+                return null;
+            }
+        });
+
+        List<Chip> contactList1 = new ArrayList<>();
+        contactList1.add(new Chip() {
+            @Nullable
+            @Override
+            public Object getId() {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public String getTitle() {
+                return "Subjek1";
+            }
+
+            @Nullable
+            @Override
+            public String getSubtitle() {
+                return "subjek1@email.com";
+            }
+
+            @Nullable
+            @Override
+            public Uri getAvatarUri() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public Drawable getAvatarDrawable() {
+                return null;
+            }
+        });
+        contactList1.add(new Chip() {
+            @Nullable
+            @Override
+            public Object getId() {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public String getTitle() {
+                return "Subjek2";
+            }
+
+            @Nullable
+            @Override
+            public String getSubtitle() {
+                return "subjek2@email.com";
+            }
+
+            @Nullable
+            @Override
+            public Uri getAvatarUri() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public Drawable getAvatarDrawable() {
+                return null;
+            }
+        });
+
+        chips_to.setFilterableChipList(contactList);
+        chips_bcc.setFilterableChipList(contactList);
+        chips_cc.setFilterableChipList(contactList);
     }
 
     private void initListener(){

@@ -1,5 +1,6 @@
 package com.application.imail.user;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,8 +9,11 @@ import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -100,7 +104,19 @@ public class InboxActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 if(folder.equals("Contact")){
+                    final Dialog dialog=new Dialog(InboxActivity.this);
+                    dialog.setCancelable(true);
+                    dialog.setContentView(R.layout.dialog_add_contact);
+                    dialog.show();
 
+                    TextInputLayout textInputLayoutEmail = (TextInputLayout) dialog.findViewById(R.id.textInputLayoutEmail);
+                    TextInputLayout textInputLayoutName = (TextInputLayout) dialog.findViewById(R.id.textInputLayoutName);
+                    TextInputLayout textInputLayoutPassword = (TextInputLayout) dialog.findViewById(R.id.textInputLayoutPassword);
+                    TextInputEditText textInputEditTextEmail = (TextInputEditText) dialog.findViewById(R.id.textInputEditTextEmail);
+                    TextInputEditText textInputEditTextName = (TextInputEditText) dialog.findViewById(R.id.textInputEditTextName);
+                    TextInputEditText textInputEditTextPassword = (TextInputEditText) dialog.findViewById(R.id.textInputEditTextPassword);
+                    AppCompatButton appCompatButtonAdd = (AppCompatButton) dialog.findViewById(R.id.appCompatButtonAdd);
+                    AppCompatButton appCompatButtonCancel = (AppCompatButton) dialog.findViewById(R.id.appCompatButtonCancel);
                 }
                 else {
                     Intent intent = new Intent(InboxActivity.this, ComposeMessageActivity.class);
