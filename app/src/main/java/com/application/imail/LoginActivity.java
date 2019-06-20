@@ -124,76 +124,77 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 String statusmessage=response.body().getMessage();
                                 if (status.equals("true")) {
                                     Toast.makeText(LoginActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
-                                    itemscontact = new ArrayList<listcontact>();
-                                    listcontact = new listcontact();
-                                    listcontact.setAddressbookid("1");
-                                    listcontact.setUserid("1");
-                                    listcontact.setName(getResources().getString(R.string.user_pertama));
-                                    listcontact.setEmail(getResources().getString(R.string.user_email_pertama));
-                                    listcontact.setPhone("");
-                                    listcontact.setBirth_date("1997-01-01");
-                                    listcontact.setGender("Laki-laki");
-                                    listcontact.setSaved(true);
-                                    listcontact.setSuggestion(true);
-                                    listcontact.setDelete(false);
-                                    itemscontact.add(listcontact);
+//                                    itemscontact = new ArrayList<listcontact>();
+//                                    listcontact = new listcontact();
+//                                    listcontact.setAddressbookid("1");
+//                                    listcontact.setUserid("1");
+//                                    listcontact.setName(getResources().getString(R.string.user_pertama));
+//                                    listcontact.setEmail(getResources().getString(R.string.user_email_pertama));
+//                                    listcontact.setPhone("");
+//                                    listcontact.setBirth_date("1997-01-01");
+//                                    listcontact.setGender("Laki-laki");
+//                                    listcontact.setSaved(true);
+//                                    listcontact.setSuggestion(true);
+//                                    listcontact.setDelete(false);
+//                                    itemscontact.add(listcontact);
+//
+//                                    listcontact = new listcontact();
+//                                    listcontact.setAddressbookid("2");
+//                                    listcontact.setUserid("2");
+//                                    listcontact.setName(getResources().getString(R.string.user_kedua));
+//                                    listcontact.setEmail(getResources().getString(R.string.user_email_kedua));
+//                                    listcontact.setPhone("");
+//                                    listcontact.setBirth_date("1997-01-01");
+//                                    listcontact.setGender("Laki-laki");
+//                                    listcontact.setSaved(true);
+//                                    listcontact.setSuggestion(true);
+//                                    listcontact.setDelete(false);
+//                                    itemscontact.add(listcontact);
+//
+//                                    itemscontact = new ArrayList<listcontact>();
+//                                    listcontact = new listcontact();
+//                                    listcontact.setAddressbookid("3");
+//                                    listcontact.setUserid("3");
+//                                    listcontact.setName("Danny");
+//                                    listcontact.setEmail("danny@email.com");
+//                                    listcontact.setPhone("");
+//                                    listcontact.setBirth_date("1997-01-01");
+//                                    listcontact.setGender("Laki-laki");
+//                                    listcontact.setSaved(true);
+//                                    listcontact.setSuggestion(true);
+//                                    listcontact.setDelete(false);
+//                                    itemscontact.add(listcontact);
+//
+//                                    itemscontact = new ArrayList<listcontact>();
+//                                    listcontact = new listcontact();
+//                                    listcontact.setAddressbookid("4");
+//                                    listcontact.setUserid("4");
+//                                    listcontact.setName("Steven");
+//                                    listcontact.setEmail("steven@email.com");
+//                                    listcontact.setPhone("");
+//                                    listcontact.setBirth_date("1997-01-01");
+//                                    listcontact.setGender("Laki-laki");
+//                                    listcontact.setSaved(true);
+//                                    listcontact.setSuggestion(true);
+//                                    listcontact.setDelete(false);
+//                                    itemscontact.add(listcontact);
+//
+//                                    listcontact = new listcontact();
+//                                    listcontact.setAddressbookid("5");
+//                                    listcontact.setUserid("5");
+//                                    listcontact.setName("Tester");
+//                                    listcontact.setEmail("tester@email.com");
+//                                    listcontact.setPhone("");
+//                                    listcontact.setBirth_date("1997-01-01");
+//                                    listcontact.setGender("Laki-laki");
+//                                    listcontact.setSaved(true);
+//                                    listcontact.setSuggestion(true);
+//                                    listcontact.setDelete(false);
+//                                    itemscontact.add(listcontact);
+//
+//                                    user.setListcontacts(itemscontact);
 
-                                    listcontact = new listcontact();
-                                    listcontact.setAddressbookid("2");
-                                    listcontact.setUserid("2");
-                                    listcontact.setName(getResources().getString(R.string.user_kedua));
-                                    listcontact.setEmail(getResources().getString(R.string.user_email_kedua));
-                                    listcontact.setPhone("");
-                                    listcontact.setBirth_date("1997-01-01");
-                                    listcontact.setGender("Laki-laki");
-                                    listcontact.setSaved(true);
-                                    listcontact.setSuggestion(true);
-                                    listcontact.setDelete(false);
-                                    itemscontact.add(listcontact);
-
-                                    itemscontact = new ArrayList<listcontact>();
-                                    listcontact = new listcontact();
-                                    listcontact.setAddressbookid("3");
-                                    listcontact.setUserid("3");
-                                    listcontact.setName("Danny");
-                                    listcontact.setEmail("danny@email.com");
-                                    listcontact.setPhone("");
-                                    listcontact.setBirth_date("1997-01-01");
-                                    listcontact.setGender("Laki-laki");
-                                    listcontact.setSaved(true);
-                                    listcontact.setSuggestion(true);
-                                    listcontact.setDelete(false);
-                                    itemscontact.add(listcontact);
-
-                                    itemscontact = new ArrayList<listcontact>();
-                                    listcontact = new listcontact();
-                                    listcontact.setAddressbookid("4");
-                                    listcontact.setUserid("4");
-                                    listcontact.setName("Steven");
-                                    listcontact.setEmail("steven@email.com");
-                                    listcontact.setPhone("");
-                                    listcontact.setBirth_date("1997-01-01");
-                                    listcontact.setGender("Laki-laki");
-                                    listcontact.setSaved(true);
-                                    listcontact.setSuggestion(true);
-                                    listcontact.setDelete(false);
-                                    itemscontact.add(listcontact);
-
-                                    listcontact = new listcontact();
-                                    listcontact.setAddressbookid("5");
-                                    listcontact.setUserid("5");
-                                    listcontact.setName("Tester");
-                                    listcontact.setEmail("tester@email.com");
-                                    listcontact.setPhone("");
-                                    listcontact.setBirth_date("1997-01-01");
-                                    listcontact.setGender("Laki-laki");
-                                    listcontact.setSaved(true);
-                                    listcontact.setSuggestion(true);
-                                    listcontact.setDelete(false);
-                                    itemscontact.add(listcontact);
-
-                                    user.setListcontacts(itemscontact);
-
+                                    user.setUserID(response.body().getUserID());
                                     user.setEmail(response.body().getEmail());
     //                                user.setUsername(response.body().getName());
                                     user.setName(response.body().getName());
@@ -218,6 +219,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         @Override
                         public void onFailure(Call<User> call, Throwable t) {
                             Log.e("USER ACTIVITY ERROR", t.getMessage());
+                            Toast.makeText(LoginActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
                         }
                     });
 //                    if (textInputEditTextUsername.getText().toString().equals("vincent@email.com") || textInputEditTextUsername.getText().toString().equals("vin_22") && textInputEditTextPassword.getText().toString().equals("vincent")) {

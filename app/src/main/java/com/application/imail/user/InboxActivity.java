@@ -32,6 +32,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.application.imail.LoginActivity;
 import com.application.imail.R;
@@ -40,10 +41,19 @@ import com.application.imail.adapter.AdapterListEmail;
 import com.application.imail.config.SessionManager;
 import com.application.imail.model.listcontact;
 import com.application.imail.model.listemail;
+import com.application.imail.remote.APIUtils;
+import com.application.imail.remote.UserService;
+import com.application.imail.utils.InputValidation;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
+
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class InboxActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -62,6 +72,9 @@ public class InboxActivity extends AppCompatActivity
     LinearLayout linear;
     String folder="Inbox";
     listcontact listcontact;
+    InputValidation inputValidation;
+    SessionManager userConfig;
+    UserService userService;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +110,10 @@ public class InboxActivity extends AppCompatActivity
         recyclerView_draft=findViewById(R.id.recyclerView_draft);
         recyclerView_contact=findViewById(R.id.recyclerView_contact);
 
+        inputValidation = new InputValidation(this);
+        userConfig = new SessionManager(this);
+        userService = APIUtils.getUserService();
+
         searchView=(MaterialSearchView)findViewById(R.id.searchView);
         setEmailInbox();
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -111,12 +128,53 @@ public class InboxActivity extends AppCompatActivity
 
                     TextInputLayout textInputLayoutEmail = (TextInputLayout) dialog.findViewById(R.id.textInputLayoutEmail);
                     TextInputLayout textInputLayoutName = (TextInputLayout) dialog.findViewById(R.id.textInputLayoutName);
-                    TextInputLayout textInputLayoutPassword = (TextInputLayout) dialog.findViewById(R.id.textInputLayoutPassword);
+                    TextInputLayout textInputLayoutPhone = (TextInputLayout) dialog.findViewById(R.id.textInputLayoutPhoneNumber);
                     TextInputEditText textInputEditTextEmail = (TextInputEditText) dialog.findViewById(R.id.textInputEditTextEmail);
                     TextInputEditText textInputEditTextName = (TextInputEditText) dialog.findViewById(R.id.textInputEditTextName);
-                    TextInputEditText textInputEditTextPassword = (TextInputEditText) dialog.findViewById(R.id.textInputEditTextPassword);
+                    TextInputEditText textInputEditTextPhone = (TextInputEditText) dialog.findViewById(R.id.textInputEditTextPhoneNumber);
                     AppCompatButton appCompatButtonAdd = (AppCompatButton) dialog.findViewById(R.id.appCompatButtonAdd);
                     AppCompatButton appCompatButtonCancel = (AppCompatButton) dialog.findViewById(R.id.appCompatButtonCancel);
+
+                    if (!inputValidation.isInputEditTextFilled(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_email))) {
+                        return;
+                    }
+                    if (!inputValidation.isInputEditTextFilled(textInputEditTextName, textInputLayoutName, getString(R.string.error_message_name))) {
+                        return;
+                    }
+                    if (!inputValidation.isInputEditTextFilled(textInputEditTextPhone, textInputLayoutPhone,getString(R.string.error_message_passwordkosong))) {
+                        return;
+                    }
+                    else{
+                        SessionManager sessionManager = SessionManager.with(InboxActivity.this);
+                        Call<listcontact> call = userService.addcontact(sessionManager.getuserloggedin().getUserID(),textInputEditTextEmail.getText().toString(),textInputEditTextName.getText().toString(),textInputEditTextPhone.getText().toString());
+                        call.enqueue(new Callback<listcontact>() {
+                            @Override
+                            public void onResponse(Call<listcontact> call, Response<listcontact> response) {
+                                if(response.isSuccessful()){
+                                    String status=response.body().getStatus();
+                                    String statusmessage=response.body().getMessage();
+                                    if (status.equals("true")) {
+                                        Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                        dialog.dismiss();
+                                    } else {
+                                        Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                        dialog.dismiss();
+                                    }
+                                }
+                                else{
+                                    Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<listcontact> call, Throwable t) {
+                                Log.e("USER ACTIVITY ERROR", t.getMessage());
+                                Toast.makeText(InboxActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+                            }
+                        });
+                    }
                 }
                 else {
                     Intent intent = new Intent(InboxActivity.this, ComposeMessageActivity.class);
@@ -657,36 +715,82 @@ public class InboxActivity extends AppCompatActivity
         if(adapter_contact!=null){
             adapter_contact.notifyDataSetChanged();
         }
-        for(int i=0;i<10;i++){
-            if(i%2==0) {
-                listcontact = new listcontact();
-                listcontact.setAddressbookid(String.valueOf(i));
-                listcontact.setUserid(String.valueOf(i));
-                listcontact.setName(getResources().getString(R.string.user_pertama));
-                listcontact.setEmail(getResources().getString(R.string.user_email_pertama));
-                listcontact.setPhone("");
-                listcontact.setBirth_date("1997-01-01");
-                listcontact.setGender("Laki-laki");
-                listcontact.setSaved(true);
-                listcontact.setSuggestion(false);
-                listcontact.setDelete(false);
-                itemscontact.add(listcontact);
+        SessionManager sessionManager = SessionManager.with(InboxActivity.this);
+        Call<List<listcontact>> call = userService.getcontact(sessionManager.getuserloggedin().getUserID());
+        call.enqueue(new Callback<List<listcontact>>() {
+            @Override
+            public void onResponse(Call<List<listcontact>> call, Response<List<listcontact>> response) {
+                if(response.isSuccessful()){
+                    String status=response.body().get(0).getStatus();
+                    String statusmessage=response.body().get(0).getMessage();
+                    if (status.equals("true")) {
+                        for(int i=0;i<response.body().size();i++){
+                            listcontact = new listcontact();
+                            listcontact.setAddressbookid(response.body().get(i).getAddressbookid());
+                            listcontact.setUserid(response.body().get(i).getUserid());
+                            listcontact.setName(response.body().get(i).getName());
+                            listcontact.setEmail(response.body().get(i).getEmail());
+                            listcontact.setPhone(response.body().get(i).getPhone());
+                            if(response.body().get(i).getBirth_date().equals(null)){
+                                listcontact.setBirth_date("");
+                            }
+                            else {
+                                listcontact.setBirth_date(response.body().get(i).getBirth_date());
+                            }
+                            listcontact.setGender(response.body().get(i).getGender());
+                            listcontact.setSaved(response.body().get(i).isSaved());
+                            listcontact.setSuggestion(response.body().get(i).isSuggestion());
+                            listcontact.setDelete(response.body().get(i).isDelete());
+                            itemscontact.add(listcontact);
+                        }
+//                        Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+
+                    } else {
+                        Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+                else{
+                    Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                }
             }
-            else{
-                listcontact = new listcontact();
-                listcontact.setAddressbookid(String.valueOf(i));
-                listcontact.setUserid(String.valueOf(i));
-                listcontact.setName(getResources().getString(R.string.user_kedua));
-                listcontact.setEmail(getResources().getString(R.string.user_email_kedua));
-                listcontact.setPhone("");
-                listcontact.setBirth_date("1997-01-01");
-                listcontact.setGender("Laki-laki");
-                listcontact.setSaved(true);
-                listcontact.setSuggestion(false);
-                listcontact.setDelete(false);
-                itemscontact.add(listcontact);
+
+            @Override
+            public void onFailure(Call<List<listcontact>> call, Throwable t) {
+                Log.e("USER ACTIVITY ERROR", t.getMessage());
+                Toast.makeText(InboxActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
             }
-        }
+        });
+//        for(int i=0;i<10;i++){
+//            if(i%2==0) {
+//                listcontact = new listcontact();
+//                listcontact.setAddressbookid(String.valueOf(i));
+//                listcontact.setUserid(String.valueOf(i));
+//                listcontact.setName(getResources().getString(R.string.user_pertama));
+//                listcontact.setEmail(getResources().getString(R.string.user_email_pertama));
+//                listcontact.setPhone("");
+//                listcontact.setBirth_date("1997-01-01");
+//                listcontact.setGender("Laki-laki");
+//                listcontact.setSaved(true);
+//                listcontact.setSuggestion(false);
+//                listcontact.setDelete(false);
+//                itemscontact.add(listcontact);
+//            }
+//            else{
+//                listcontact = new listcontact();
+//                listcontact.setAddressbookid(String.valueOf(i));
+//                listcontact.setUserid(String.valueOf(i));
+//                listcontact.setName(getResources().getString(R.string.user_kedua));
+//                listcontact.setEmail(getResources().getString(R.string.user_email_kedua));
+//                listcontact.setPhone("");
+//                listcontact.setBirth_date("1997-01-01");
+//                listcontact.setGender("Laki-laki");
+//                listcontact.setSaved(true);
+//                listcontact.setSuggestion(false);
+//                listcontact.setDelete(false);
+//                itemscontact.add(listcontact);
+//            }
+//        }
         if(adapter_contact!=null){
             adapter_contact.notifyDataSetChanged();
             if(recyclerView_contact.getLayoutManager()==null) {

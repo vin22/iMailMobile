@@ -2,6 +2,7 @@ package com.application.imail.remote;
 
 
 import com.application.imail.model.User;
+import com.application.imail.model.listcontact;
 
 import java.util.List;
 
@@ -33,6 +34,17 @@ public interface UserService {
     @POST("registeralternatif/")
     Call<User> addakunalternatif(@Field("Email") String email, @Field("Password") String password, @Field("Alternate_Email") String alternate_email);
 
+    @FormUrlEncoded
+    @POST("getcontact/")
+    Call<List<listcontact>> getcontact(@Field("UserID") int UserID);
+
+    @FormUrlEncoded
+    @POST("addcontact/")
+    Call<listcontact> addcontact(@Field("UserID") int UserID, @Field("Email") String Email, @Field("Name") String Name, @Field("Phone") String Phone);
+
+    @FormUrlEncoded
+    @POST("deletecontact/")
+    Call<listcontact> deletecontact(@Field("UserID") int UserID, @Field("Email") String Email);
 
     @FormUrlEncoded
     @POST("ceksaldo/")

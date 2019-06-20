@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class User {
+    public int UserID;
     public String username;
     public String Name;
     public String Email;
@@ -34,6 +35,14 @@ public class User {
 
     public static void setListcontacts(List<listcontact> listcontacts) {
         User.listcontacts = listcontacts;
+    }
+
+    public int getUserID() {
+        return UserID;
+    }
+
+    public void setUserID(int userID) {
+        UserID = userID;
     }
 
     public String getMessage() {

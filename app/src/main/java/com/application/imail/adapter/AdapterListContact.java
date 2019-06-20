@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,20 +13,29 @@ import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.application.imail.R;
+import com.application.imail.config.SessionManager;
 import com.application.imail.model.listcontact;
 import com.application.imail.model.listemail;
+import com.application.imail.remote.APIUtils;
+import com.application.imail.remote.UserService;
+import com.application.imail.user.InboxActivity;
 import com.balysv.materialripple.MaterialRippleLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
     private List<listcontact> items = new ArrayList<>();
     private List<listcontact> itemsfilter = new ArrayList<>();
-
+    UserService userService = APIUtils.getUserService();;
     private Context ctx;
     private OnItemClickListener mOnItemClickListener;
 
@@ -87,9 +97,37 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
             view.delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AlertDialog.Builder dialog=new AlertDialog.Builder(ctx).setTitle("Delete Contact").setMessage("Are you sure to delete this contact?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    AlertDialog.Builder dialogs=new AlertDialog.Builder(ctx).setTitle("Delete Contact").setMessage("Are you sure to delete this contact?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(final DialogInterface dialog, int which) {
+                            SessionManager sessionManager = SessionManager.with(ctx);
+                            Call<listcontact> call = userService.deletecontact(sessionManager.getuserloggedin().getUserID(),p.getEmail());
+                            call.enqueue(new Callback<listcontact>() {
+                                @Override
+                                public void onResponse(Call<listcontact> call, Response<listcontact> response) {
+                                    if(response.isSuccessful()){
+                                        String status=response.body().getStatus();
+                                        String statusmessage=response.body().getMessage();
+                                        if (status.equals("true")) {
+                                            Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+                                            dialog.dismiss();
+                                        } else {
+                                            Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+                                            dialog.dismiss();
+                                        }
+                                    }
+                                    else{
+                                        Toast.makeText(ctx, "Response failed", Toast.LENGTH_SHORT).show();
+                                        dialog.dismiss();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<listcontact> call, Throwable t) {
+                                    Toast.makeText(ctx, "Response failure", Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+                                }
+                            });
                             dialog.dismiss();
                         }
                     }).setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -98,7 +136,7 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
                             dialog.dismiss();
                         }
                     });
-                    dialog.show();
+                    dialogs.show();
                 }
             });
         }

@@ -158,6 +158,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
                         @Override
                         public void onFailure(Call<User> call, Throwable t) {
                             Log.e("USER ACTIVITY ERROR", t.getMessage());
+                            Toast.makeText(ChangePasswordActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
                         }
                     });
 //                    if (textInputEditTextUsername.getText().toString().equals("vincent@email.com") || textInputEditTextUsername.getText().toString().equals("vin_22") && textInputEditTextPassword.getText().toString().equals("vincent")) {

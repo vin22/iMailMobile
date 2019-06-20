@@ -1,8 +1,16 @@
 package com.application.imail.model;
 
 public class listcontact {
-    public String addressbookid, userid, name, email, phone, birth_date, gender;
+    public String addressbookid, userid, name, email, phone, birth_date, gender, status, message;
     public boolean saved, suggestion, delete;
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getStatus() {
+        return status;
+    }
 
     public void setSaved(boolean saved) {
         this.saved = saved;
