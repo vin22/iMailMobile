@@ -1,94 +1,103 @@
 package com.application.imail.model;
 
 public class listcontact {
-    public String addressbookid, userid, name, email, phone, birth_date, gender, status, message;
-    public boolean saved, suggestion, delete;
+    public String AddressBookID, UserID, Name, Email, Phone, Birth_Date, Gender, status, message;
+    public boolean Saved, Suggestion, IsDelete;
 
     public String getMessage() {
         return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public String getStatus() {
         return status;
     }
 
-    public void setSaved(boolean saved) {
-        this.saved = saved;
-    }
-
-    public boolean isSaved() {
-        return saved;
-    }
-
-    public void setDelete(boolean delete) {
-        this.delete = delete;
-    }
-
-    public boolean isDelete() {
-        return delete;
-    }
-
-    public void setSuggestion(boolean suggestion) {
-        this.suggestion = suggestion;
-    }
-
-    public boolean isSuggestion() {
-        return suggestion;
-    }
-
-    public String getAddressbookid() {
-        return addressbookid;
-    }
-
-    public void setAddressbookid(String addressbookid) {
-        this.addressbookid = addressbookid;
-    }
-
-    public String getBirth_date() {
-        return birth_date;
-    }
-
-    public void setBirth_date(String birth_date) {
-        this.birth_date = birth_date;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getEmail() {
-        return email;
+        return Email;
     }
 
     public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
+        this.Email = email;
     }
 
     public String getName() {
-        return name;
+        return Name;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.Name = name;
+    }
+
+    public String getAddressBookID() {
+        return AddressBookID;
+    }
+
+    public void setAddressBookID(String addressBookID) {
+        AddressBookID = addressBookID;
     }
 
     public String getPhone() {
-        return phone;
+        return Phone;
     }
 
     public void setPhone(String phone) {
-        this.phone = phone;
+        Phone = phone;
     }
 
-    public String getUserid() {
-        return userid;
+    public String getGender() {
+        return Gender;
     }
 
-    public void setUserid(String userid) {
-        this.userid = userid;
+    public void setGender(String gender) {
+        Gender = gender;
     }
+
+    public String getBirth_Date() {
+        return Birth_Date;
+    }
+
+    public void setBirth_Date(String birth_Date) {
+        Birth_Date = birth_Date;
+    }
+
+    public String getUserID() {
+        return UserID;
+    }
+
+    public void setUserID(String userID) {
+        UserID = userID;
+    }
+
+    public boolean isSaved() {
+        return Saved;
+    }
+
+    public void setSaved(boolean saved) {
+        Saved = saved;
+    }
+
+    public boolean isSuggestion() {
+        return Suggestion;
+    }
+
+    public void setSuggestion(boolean suggestion) {
+        Suggestion = suggestion;
+    }
+
+    public boolean isDelete() {
+        return IsDelete;
+    }
+
+    public void setDelete(boolean delete) {
+        IsDelete = delete;
+    }
+
 }

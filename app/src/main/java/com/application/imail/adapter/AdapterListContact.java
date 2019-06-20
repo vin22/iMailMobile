@@ -3,6 +3,7 @@ package com.application.imail.adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -110,6 +111,35 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
                                         String statusmessage=response.body().getMessage();
                                         if (status.equals("true")) {
                                             Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+                                            SessionManager sessionManager = SessionManager.with(ctx);
+                                            Call<List<listcontact>> callget = userService.getcontact(sessionManager.getuserloggedin().getUserID());
+                                            callget.enqueue(new Callback<List<listcontact>>() {
+                                                @Override
+                                                public void onResponse(Call<List<listcontact>> call, Response<List<listcontact>> response) {
+                                                    if(response.isSuccessful()){
+                                                        String status=response.body().get(0).getStatus();
+                                                        String statusmessage=response.body().get(0).getMessage();
+                                                        if (status.equals("true")) {
+                                                            items = response.body();
+                                                            itemsfilter = response.body();
+                                                            notifyDataSetChanged();
+
+                                                        } else {
+                                                            Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+
+                                                        }
+                                                    }
+                                                    else{
+                                                        Toast.makeText(ctx, "Response failed", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onFailure(Call<List<listcontact>> call, Throwable t) {
+                                                    Log.e("USER ACTIVITY ERROR", t.getMessage());
+                                                    Toast.makeText(ctx, "Response failure", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
                                             dialog.dismiss();
                                         } else {
                                             Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();

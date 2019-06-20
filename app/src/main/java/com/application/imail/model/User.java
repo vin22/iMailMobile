@@ -5,28 +5,15 @@ import java.util.List;
 
 public class User {
     public int UserID;
-    public String username;
     public String Name;
     public String Email;
-    public String norek;
-    public String password;
-    public String nohp;
-    public String saldo;
+    public String Password;
     public String message, status;
     public static ArrayList<User> users = new ArrayList<>();
     public static ArrayList<String> paket=new ArrayList<>();
     public static List<listcontact> listcontacts=new ArrayList<>();
     public User(){
 
-    }
-    public User(String username, String norek, String name, String email, String password, String nohp, String saldo) {
-        this.username = username;
-        this.Name = name;
-        this.Email = email;
-        this.password = password;
-        this.nohp = nohp;
-        this.norek=norek;
-        this.saldo=saldo;
     }
 
     public static List<listcontact> getListcontacts() {
@@ -71,14 +58,6 @@ public class User {
         this.status = status;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public String getName() {
         return Name;
     }
@@ -95,35 +74,11 @@ public class User {
         this.Email = email;
     }
 
-    public String getNoRek() {
-        return norek;
-    }
-
-    public void setNoRek(String norek) {
-        this.norek = norek;
-    }
-
     public String getPassword() {
-        return password;
+        return Password;
     }
 
     public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getNohp() {
-        return nohp;
-    }
-
-    public void setNohp(String nohp) {
-        this.nohp = nohp;
-    }
-
-    public String getSaldo() {
-        return saldo;
-    }
-
-    public void setSaldo(String saldo) {
-        this.saldo = saldo;
+        Password = password;
     }
 }

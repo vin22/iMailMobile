@@ -47,6 +47,7 @@ import com.application.imail.utils.InputValidation;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -126,55 +127,67 @@ public class InboxActivity extends AppCompatActivity
                     dialog.setContentView(R.layout.dialog_add_contact);
                     dialog.show();
 
-                    TextInputLayout textInputLayoutEmail = (TextInputLayout) dialog.findViewById(R.id.textInputLayoutEmail);
-                    TextInputLayout textInputLayoutName = (TextInputLayout) dialog.findViewById(R.id.textInputLayoutName);
-                    TextInputLayout textInputLayoutPhone = (TextInputLayout) dialog.findViewById(R.id.textInputLayoutPhoneNumber);
-                    TextInputEditText textInputEditTextEmail = (TextInputEditText) dialog.findViewById(R.id.textInputEditTextEmail);
-                    TextInputEditText textInputEditTextName = (TextInputEditText) dialog.findViewById(R.id.textInputEditTextName);
-                    TextInputEditText textInputEditTextPhone = (TextInputEditText) dialog.findViewById(R.id.textInputEditTextPhoneNumber);
-                    AppCompatButton appCompatButtonAdd = (AppCompatButton) dialog.findViewById(R.id.appCompatButtonAdd);
-                    AppCompatButton appCompatButtonCancel = (AppCompatButton) dialog.findViewById(R.id.appCompatButtonCancel);
+                    final TextInputLayout textInputLayoutEmail = (TextInputLayout) dialog.findViewById(R.id.textInputLayoutEmail);
+                    final TextInputLayout textInputLayoutName = (TextInputLayout) dialog.findViewById(R.id.textInputLayoutName);
+                    final TextInputLayout textInputLayoutPhone = (TextInputLayout) dialog.findViewById(R.id.textInputLayoutPhoneNumber);
+                    final TextInputEditText textInputEditTextEmail = (TextInputEditText) dialog.findViewById(R.id.textInputEditTextEmail);
+                    final TextInputEditText textInputEditTextName = (TextInputEditText) dialog.findViewById(R.id.textInputEditTextName);
+                    final TextInputEditText textInputEditTextPhone = (TextInputEditText) dialog.findViewById(R.id.textInputEditTextPhoneNumber);
+                    final AppCompatButton appCompatButtonAdd = (AppCompatButton) dialog.findViewById(R.id.appCompatButtonAdd);
+                    final AppCompatButton appCompatButtonCancel = (AppCompatButton) dialog.findViewById(R.id.appCompatButtonCancel);
+                    appCompatButtonAdd.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (!inputValidation.isInputEditTextFilled(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_email))) {
+                                return;
+                            }
+                            if (!inputValidation.isInputEditTextFilled(textInputEditTextName, textInputLayoutName, getString(R.string.error_message_name))) {
+                                return;
+                            }
+                            if (!inputValidation.isInputEditTextFilled(textInputEditTextPhone, textInputLayoutPhone,getString(R.string.error_message_passwordkosong))) {
+                                return;
+                            }
+                            else{
+                                SessionManager sessionManager = SessionManager.with(InboxActivity.this);
+                                Call<listcontact> call = userService.addcontact(sessionManager.getuserloggedin().getUserID(),textInputEditTextEmail.getText().toString(),textInputEditTextName.getText().toString(),textInputEditTextPhone.getText().toString());
+                                call.enqueue(new Callback<listcontact>() {
+                                    @Override
+                                    public void onResponse(Call<listcontact> call, Response<listcontact> response) {
+                                        if(response.isSuccessful()){
+                                            String status=response.body().getStatus();
+                                            String statusmessage=response.body().getMessage();
+                                            if (status.equals("true")) {
+                                                Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                                setContact();
+                                                dialog.dismiss();
+                                            } else {
+                                                Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                                dialog.dismiss();
+                                            }
+                                        }
+                                        else{
+                                            Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                                            dialog.dismiss();
+                                        }
+                                    }
 
-                    if (!inputValidation.isInputEditTextFilled(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_email))) {
-                        return;
-                    }
-                    if (!inputValidation.isInputEditTextFilled(textInputEditTextName, textInputLayoutName, getString(R.string.error_message_name))) {
-                        return;
-                    }
-                    if (!inputValidation.isInputEditTextFilled(textInputEditTextPhone, textInputLayoutPhone,getString(R.string.error_message_passwordkosong))) {
-                        return;
-                    }
-                    else{
-                        SessionManager sessionManager = SessionManager.with(InboxActivity.this);
-                        Call<listcontact> call = userService.addcontact(sessionManager.getuserloggedin().getUserID(),textInputEditTextEmail.getText().toString(),textInputEditTextName.getText().toString(),textInputEditTextPhone.getText().toString());
-                        call.enqueue(new Callback<listcontact>() {
-                            @Override
-                            public void onResponse(Call<listcontact> call, Response<listcontact> response) {
-                                if(response.isSuccessful()){
-                                    String status=response.body().getStatus();
-                                    String statusmessage=response.body().getMessage();
-                                    if (status.equals("true")) {
-                                        Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
-                                        dialog.dismiss();
-                                    } else {
-                                        Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                    @Override
+                                    public void onFailure(Call<listcontact> call, Throwable t) {
+                                        Log.e("USER ACTIVITY ERROR", t.getMessage());
+                                        Toast.makeText(InboxActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
                                         dialog.dismiss();
                                     }
-                                }
-                                else{
-                                    Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
-                                    dialog.dismiss();
-                                }
+                                });
                             }
+                        }
+                    });
+                    appCompatButtonCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
 
-                            @Override
-                            public void onFailure(Call<listcontact> call, Throwable t) {
-                                Log.e("USER ACTIVITY ERROR", t.getMessage());
-                                Toast.makeText(InboxActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
-                                dialog.dismiss();
-                            }
-                        });
-                    }
                 }
                 else {
                     Intent intent = new Intent(InboxActivity.this, ComposeMessageActivity.class);
@@ -712,36 +725,63 @@ public class InboxActivity extends AppCompatActivity
         else{
             itemscontact=new ArrayList<>();
         }
+        Log.e("User","Masuk");
         if(adapter_contact!=null){
             adapter_contact.notifyDataSetChanged();
         }
+        Log.e("User","Masuk2");
         SessionManager sessionManager = SessionManager.with(InboxActivity.this);
         Call<List<listcontact>> call = userService.getcontact(sessionManager.getuserloggedin().getUserID());
         call.enqueue(new Callback<List<listcontact>>() {
             @Override
             public void onResponse(Call<List<listcontact>> call, Response<List<listcontact>> response) {
                 if(response.isSuccessful()){
+                    Log.e("User","Masuk1");
                     String status=response.body().get(0).getStatus();
                     String statusmessage=response.body().get(0).getMessage();
                     if (status.equals("true")) {
-                        for(int i=0;i<response.body().size();i++){
-                            listcontact = new listcontact();
-                            listcontact.setAddressbookid(response.body().get(i).getAddressbookid());
-                            listcontact.setUserid(response.body().get(i).getUserid());
-                            listcontact.setName(response.body().get(i).getName());
-                            listcontact.setEmail(response.body().get(i).getEmail());
-                            listcontact.setPhone(response.body().get(i).getPhone());
-                            if(response.body().get(i).getBirth_date().equals(null)){
-                                listcontact.setBirth_date("");
-                            }
-                            else {
-                                listcontact.setBirth_date(response.body().get(i).getBirth_date());
-                            }
-                            listcontact.setGender(response.body().get(i).getGender());
-                            listcontact.setSaved(response.body().get(i).isSaved());
-                            listcontact.setSuggestion(response.body().get(i).isSuggestion());
-                            listcontact.setDelete(response.body().get(i).isDelete());
-                            itemscontact.add(listcontact);
+
+                        itemscontact = response.body();
+
+//                        for(int i=0;i<rs.size();i++){
+//                            Log.e("User", rs.get(i).getName());
+//                            listcontact = new listcontact();
+//                            listcontact.setAddressbookid(response.body().get(i).getAddressbookid());
+//                            listcontact.setUserid(response.body().get(i).getUserid());
+//                            listcontact.setName(response.body().get(i).getName());
+//                            listcontact.setEmail(response.body().get(i).getEmail());
+//                            listcontact.setPhone(response.body().get(i).getPhone());
+//                            if(response.body().get(i).getBirth_date()==null){
+//                                listcontact.setBirth_date("");
+//                            }
+//                            else {
+//                                listcontact.setBirth_date(response.body().get(i).getBirth_date());
+//                            }
+//                            listcontact.setGender(response.body().get(i).getGender());
+//                            listcontact.setSaved(response.body().get(i).isSaved());
+//                            listcontact.setSuggestion(response.body().get(i).isSuggestion());
+//                            listcontact.setDelete(response.body().get(i).isDelete());
+//                            itemscontact.add(listcontact);
+//                            Log.e("User", String.valueOf(response.body().get(i).getAddressbookid()));
+//                            Log.e("User", String.valueOf(response.body()));
+//                        }
+                        Log.e("User",String.valueOf(itemscontact));
+//                        if(adapter_contact!=null){
+//                            adapter_contact.notifyDataSetChanged();
+//                            if(recyclerView_contact.getLayoutManager()==null) {
+//                                recyclerView_contact.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
+//                                recyclerView_contact.setHasFixedSize(true);
+//                            }
+//                            recyclerView_contact.setAdapter(adapter_contact);
+//                        }
+//                        else{
+                        adapter_contact=new AdapterListContact(InboxActivity.this,itemscontact);
+                        recyclerView_contact.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
+                        recyclerView_contact.setHasFixedSize(true);
+                        recyclerView_contact.setAdapter(adapter_contact);
+//
+                        if(swipecontact.isRefreshing()){
+                            swipecontact.setRefreshing(false);
                         }
 //                        Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
 
@@ -791,23 +831,7 @@ public class InboxActivity extends AppCompatActivity
 //                itemscontact.add(listcontact);
 //            }
 //        }
-        if(adapter_contact!=null){
-            adapter_contact.notifyDataSetChanged();
-            if(recyclerView_contact.getLayoutManager()==null) {
-                recyclerView_contact.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
-                recyclerView_contact.setHasFixedSize(true);
-            }
-            recyclerView_contact.setAdapter(adapter_contact);
-        }
-        else{
-            adapter_contact=new AdapterListContact(InboxActivity.this,itemscontact);
-            recyclerView_contact.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
-            recyclerView_contact.setHasFixedSize(true);
-            recyclerView_contact.setAdapter(adapter_contact);
-        }
-        if(swipecontact.isRefreshing()){
-            swipecontact.setRefreshing(false);
-        }
+
     }
 
     private void initToolbar(String folder) {
