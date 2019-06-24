@@ -1,10 +1,12 @@
 package com.application.imail.user;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -45,8 +47,38 @@ public class SettingActivity extends AppCompatActivity{
         lyt_changepassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(SettingActivity.this, ChangePasswordActivity.class);
-                startActivity(intent);
+                AlertDialog.Builder dialog=new AlertDialog.Builder(SettingActivity.this);
+                dialog.setTitle("Manage Account Alternative");
+                String[] items={"Add Account Alternative", "Remove Account Alternative"};
+                dialog.setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(which==0){
+                            Intent intent=new Intent(SettingActivity.this, ChangePasswordActivity.class);
+                            startActivity(intent);
+                            dialog.dismiss();
+                        }
+                        else{
+                            final Dialog dialogs=new Dialog(SettingActivity.this);
+                            dialogs.setCancelable(true);
+                            dialogs.setContentView(R.layout.dialog_remove_account_alternative);
+                            dialogs.show();
+
+                            final AppCompatButton recyclerview = (AppCompatButton) dialogs.findViewById(R.id.recyclerView);
+                            final AppCompatButton appCompatButtonClose = (AppCompatButton) dialogs.findViewById(R.id.appCompatButtonClose);
+
+                            appCompatButtonClose.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dialogs.dismiss();
+                                }
+                            });
+                            dialog.dismiss();
+                        }
+                    }
+                });
+                dialog.show();
+
             }
         });
         lyt_logout = findViewById(R.id.lyt_logout);

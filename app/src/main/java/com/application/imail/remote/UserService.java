@@ -35,6 +35,14 @@ public interface UserService {
     Call<User> addakunalternatif(@Field("Email") String email, @Field("Password") String password, @Field("Alternate_Email") String alternate_email);
 
     @FormUrlEncoded
+    @POST("getalternatif/")
+    Call<User> getakunalternatif(@Field("UserID") int UserID);
+
+    @FormUrlEncoded
+    @POST("removealternatif/")
+    Call<User> removeakunalternatif(@Field("UserID") int UserID, @Field("Email") String email);
+
+    @FormUrlEncoded
     @POST("getcontact/")
     Call<List<listcontact>> getcontact(@Field("UserID") int UserID);
 
