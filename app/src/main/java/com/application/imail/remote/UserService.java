@@ -43,6 +43,10 @@ public interface UserService {
     Call<listcontact> addcontact(@Field("UserID") int UserID, @Field("Email") String Email, @Field("Name") String Name, @Field("Phone") String Phone);
 
     @FormUrlEncoded
+    @POST("editcontact/")
+    Call<listcontact> editcontact(@Field("UserID") int UserID, @Field("Name") String Name, @Field("Phone") String Phone);
+
+    @FormUrlEncoded
     @POST("deletecontact/")
     Call<listcontact> deletecontact(@Field("UserID") int UserID, @Field("Email") String Email);
 

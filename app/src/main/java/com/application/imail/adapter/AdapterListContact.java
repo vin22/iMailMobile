@@ -1,8 +1,12 @@
 package com.application.imail.adapter;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -23,6 +27,7 @@ import com.application.imail.model.listemail;
 import com.application.imail.remote.APIUtils;
 import com.application.imail.remote.UserService;
 import com.application.imail.user.InboxActivity;
+import com.application.imail.utils.InputValidation;
 import com.balysv.materialripple.MaterialRippleLayout;
 
 import java.util.ArrayList;
@@ -39,6 +44,7 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
     UserService userService = APIUtils.getUserService();;
     private Context ctx;
     private OnItemClickListener mOnItemClickListener;
+    InputValidation inputValidation = new InputValidation(ctx);;
 
     public interface OnItemClickListener {
         void onItemClick(View view, listemail obj, int position);
@@ -92,7 +98,93 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
             view.edit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    final Dialog dialog=new Dialog(ctx);
+                    dialog.setCancelable(true);
+                    dialog.setContentView(R.layout.dialog_edit_contact);
+                    dialog.show();
 
+                    final TextInputLayout textInputLayoutName = (TextInputLayout) dialog.findViewById(R.id.textInputLayoutName);
+                    final TextInputLayout textInputLayoutPhone = (TextInputLayout) dialog.findViewById(R.id.textInputLayoutPhoneNumber);
+                    final TextInputEditText textInputEditTextName = (TextInputEditText) dialog.findViewById(R.id.textInputEditTextName);
+                    final TextInputEditText textInputEditTextPhone = (TextInputEditText) dialog.findViewById(R.id.textInputEditTextPhoneNumber);
+                    final AppCompatButton appCompatButtonEdit = (AppCompatButton) dialog.findViewById(R.id.appCompatButtonEdit);
+                    final AppCompatButton appCompatButtonCancel = (AppCompatButton) dialog.findViewById(R.id.appCompatButtonCancel);
+                    appCompatButtonEdit.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (!inputValidation.isInputEditTextFilled(textInputEditTextName, textInputLayoutName, ctx.getString(R.string.error_message_name))) {
+                                return;
+                            }
+                            if (!inputValidation.isInputEditTextFilled(textInputEditTextPhone, textInputLayoutPhone,ctx.getString(R.string.error_message_passwordkosong))) {
+                                return;
+                            }
+                            else{
+                                final SessionManager sessionManager = SessionManager.with(ctx);
+                                Call<listcontact> call = userService.editcontact(sessionManager.getuserloggedin().getUserID(),textInputEditTextName.getText().toString(),textInputEditTextPhone.getText().toString());
+                                call.enqueue(new Callback<listcontact>() {
+                                    @Override
+                                    public void onResponse(Call<listcontact> call, Response<listcontact> response) {
+                                        if(response.isSuccessful()){
+                                            String status=response.body().getStatus();
+                                            String statusmessage=response.body().getMessage();
+                                            if (status.equals("true")) {
+                                                Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+                                                Call<List<listcontact>> callget = userService.getcontact(sessionManager.getuserloggedin().getUserID());
+                                                callget.enqueue(new Callback<List<listcontact>>() {
+                                                    @Override
+                                                    public void onResponse(Call<List<listcontact>> call, Response<List<listcontact>> response) {
+                                                        if(response.isSuccessful()){
+                                                            String status=response.body().get(0).getStatus();
+                                                            String statusmessage=response.body().get(0).getMessage();
+                                                            if (status.equals("true")) {
+                                                                items = response.body();
+                                                                itemsfilter = response.body();
+                                                                notifyDataSetChanged();
+
+                                                            } else {
+                                                                Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+
+                                                            }
+                                                        }
+                                                        else{
+                                                            Toast.makeText(ctx, "Response failed", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(Call<List<listcontact>> call, Throwable t) {
+                                                        Log.e("USER ACTIVITY ERROR", t.getMessage());
+                                                        Toast.makeText(ctx, "Response failure", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                                dialog.dismiss();
+                                            } else {
+                                                Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+                                                dialog.dismiss();
+                                            }
+                                        }
+                                        else{
+                                            Toast.makeText(ctx, "Response failed", Toast.LENGTH_SHORT).show();
+                                            dialog.dismiss();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<listcontact> call, Throwable t) {
+                                        Log.e("USER ACTIVITY ERROR", t.getMessage());
+                                        Toast.makeText(ctx, "Response failure", Toast.LENGTH_SHORT).show();
+                                        dialog.dismiss();
+                                    }
+                                });
+                            }
+                        }
+                    });
+                    appCompatButtonCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
                 }
             });
             view.delete.setOnClickListener(new View.OnClickListener() {
@@ -101,7 +193,7 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
                     AlertDialog.Builder dialogs=new AlertDialog.Builder(ctx).setTitle("Delete Contact").setMessage("Are you sure to delete this contact?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(final DialogInterface dialog, int which) {
-                            SessionManager sessionManager = SessionManager.with(ctx);
+                            final SessionManager sessionManager = SessionManager.with(ctx);
                             Call<listcontact> call = userService.deletecontact(sessionManager.getuserloggedin().getUserID(),p.getEmail());
                             call.enqueue(new Callback<listcontact>() {
                                 @Override
@@ -111,7 +203,6 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
                                         String statusmessage=response.body().getMessage();
                                         if (status.equals("true")) {
                                             Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
-                                            SessionManager sessionManager = SessionManager.with(ctx);
                                             Call<List<listcontact>> callget = userService.getcontact(sessionManager.getuserloggedin().getUserID());
                                             callget.enqueue(new Callback<List<listcontact>>() {
                                                 @Override
