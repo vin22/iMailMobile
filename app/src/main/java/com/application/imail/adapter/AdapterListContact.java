@@ -25,6 +25,7 @@ import com.application.imail.config.SessionManager;
 import com.application.imail.model.listcontact;
 import com.application.imail.model.listemail;
 import com.application.imail.remote.APIUtils;
+import com.application.imail.remote.ContactService;
 import com.application.imail.remote.UserService;
 import com.application.imail.user.InboxActivity;
 import com.application.imail.utils.InputValidation;
@@ -41,7 +42,7 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private List<listcontact> items = new ArrayList<>();
     private List<listcontact> itemsfilter = new ArrayList<>();
-    UserService userService = APIUtils.getUserService();;
+    ContactService contactService = APIUtils.getContactService();;
     private Context ctx;
     private OnItemClickListener mOnItemClickListener;
     InputValidation inputValidation = new InputValidation(ctx);;
@@ -120,7 +121,7 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
                             }
                             else{
                                 final SessionManager sessionManager = SessionManager.with(ctx);
-                                Call<listcontact> call = userService.editcontact(sessionManager.getuserloggedin().getUserID(),textInputEditTextName.getText().toString(),textInputEditTextPhone.getText().toString());
+                                Call<listcontact> call = contactService.editcontact(sessionManager.getuserloggedin().getUserID(),textInputEditTextName.getText().toString(),textInputEditTextPhone.getText().toString());
                                 call.enqueue(new Callback<listcontact>() {
                                     @Override
                                     public void onResponse(Call<listcontact> call, Response<listcontact> response) {
@@ -129,7 +130,7 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
                                             String statusmessage=response.body().getMessage();
                                             if (status.equals("true")) {
                                                 Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
-                                                Call<List<listcontact>> callget = userService.getcontact(sessionManager.getuserloggedin().getUserID());
+                                                Call<List<listcontact>> callget = contactService.getcontact(sessionManager.getuserloggedin().getUserID());
                                                 callget.enqueue(new Callback<List<listcontact>>() {
                                                     @Override
                                                     public void onResponse(Call<List<listcontact>> call, Response<List<listcontact>> response) {
@@ -194,7 +195,7 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
                         @Override
                         public void onClick(final DialogInterface dialog, int which) {
                             final SessionManager sessionManager = SessionManager.with(ctx);
-                            Call<listcontact> call = userService.deletecontact(sessionManager.getuserloggedin().getUserID(),p.getEmail());
+                            Call<listcontact> call = contactService.deletecontact(sessionManager.getuserloggedin().getUserID(),p.getEmail());
                             call.enqueue(new Callback<listcontact>() {
                                 @Override
                                 public void onResponse(Call<listcontact> call, Response<listcontact> response) {
@@ -203,7 +204,7 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
                                         String statusmessage=response.body().getMessage();
                                         if (status.equals("true")) {
                                             Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
-                                            Call<List<listcontact>> callget = userService.getcontact(sessionManager.getuserloggedin().getUserID());
+                                            Call<List<listcontact>> callget = contactService.getcontact(sessionManager.getuserloggedin().getUserID());
                                             callget.enqueue(new Callback<List<listcontact>>() {
                                                 @Override
                                                 public void onResponse(Call<List<listcontact>> call, Response<List<listcontact>> response) {

@@ -42,6 +42,7 @@ import com.application.imail.config.SessionManager;
 import com.application.imail.model.listcontact;
 import com.application.imail.model.listemail;
 import com.application.imail.remote.APIUtils;
+import com.application.imail.remote.ContactService;
 import com.application.imail.remote.UserService;
 import com.application.imail.utils.InputValidation;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
@@ -76,6 +77,7 @@ public class InboxActivity extends AppCompatActivity
     InputValidation inputValidation;
     SessionManager userConfig;
     UserService userService;
+    ContactService contactService;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,6 +116,7 @@ public class InboxActivity extends AppCompatActivity
         inputValidation = new InputValidation(this);
         userConfig = new SessionManager(this);
         userService = APIUtils.getUserService();
+        contactService = APIUtils.getContactService();
 
         searchView=(MaterialSearchView)findViewById(R.id.searchView);
         setEmailInbox();
@@ -149,7 +152,7 @@ public class InboxActivity extends AppCompatActivity
                             }
                             else{
                                 SessionManager sessionManager = SessionManager.with(InboxActivity.this);
-                                Call<listcontact> call = userService.addcontact(sessionManager.getuserloggedin().getUserID(),textInputEditTextEmail.getText().toString(),textInputEditTextName.getText().toString(),textInputEditTextPhone.getText().toString());
+                                Call<listcontact> call = contactService.addcontact(sessionManager.getuserloggedin().getUserID(),textInputEditTextEmail.getText().toString(),textInputEditTextName.getText().toString(),textInputEditTextPhone.getText().toString());
                                 call.enqueue(new Callback<listcontact>() {
                                     @Override
                                     public void onResponse(Call<listcontact> call, Response<listcontact> response) {
@@ -731,7 +734,7 @@ public class InboxActivity extends AppCompatActivity
         }
         Log.e("User","Masuk2");
         SessionManager sessionManager = SessionManager.with(InboxActivity.this);
-        Call<List<listcontact>> call = userService.getcontact(sessionManager.getuserloggedin().getUserID());
+        Call<List<listcontact>> call = contactService.getcontact(sessionManager.getuserloggedin().getUserID());
         call.enqueue(new Callback<List<listcontact>>() {
             @Override
             public void onResponse(Call<List<listcontact>> call, Response<List<listcontact>> response) {

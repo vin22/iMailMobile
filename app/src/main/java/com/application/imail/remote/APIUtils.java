@@ -12,5 +12,8 @@ public class APIUtils {
     public static UserService getUserService(){
         return RetrofitClient.getClient(API_URL).create(UserService.class);
     }
+    public static ContactService getContactService(){
+        return RetrofitClient.getClient(API_URL).create(ContactService.class);
+    }
 }
 
