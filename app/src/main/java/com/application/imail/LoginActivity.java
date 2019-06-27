@@ -109,8 +109,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onResponse(Call<List<Domain>> call, Response<List<Domain>> response) {
                 if(response.isSuccessful()){
                     Log.e("User","Masuk1");
+
                     String status=response.body().get(0).getStatus();
                     String statusmessage=response.body().get(0).getMessage();
+                    Log.e("User",status);
                     if (status.equals("true")) {
                         if(itemsdomain!=null){
                             itemsdomain.clear();
@@ -120,8 +122,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         }
                         itemsdomain = response.body();
                         List<String>itemsdomains=new ArrayList<>();
-                        for (int i=0;i<itemsdomains.size();i++){
+                        for (int i=0;i<itemsdomain.size();i++){
                             itemsdomains.add(itemsdomain.get(i).getDomainname());
+                            Log.e("Domain",itemsdomain.get(i).getDomainname() );
                         }
                         domain.setItems(itemsdomains);
 

@@ -41,26 +41,46 @@
                 android:maxLength="50"
                 android:textColor="@android:color/white" />
         </android.support.design.widget.TextInputLayout>
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/textInputLayoutEmail"
+
+        <android.support.v7.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_marginTop="@dimen/dp16">
-
-            <android.support.design.widget.TextInputEditText
-                android:drawableStart="@drawable/ic_email"
-                android:drawablePadding="@dimen/dp4"
-                android:id="@+id/textInputEditTextEmail"
-                android:layout_width="match_parent"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/textInputLayoutEmail"
+                android:layout_weight="1"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:hint="Email"
-                android:textColorHint="@android:color/white"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:maxLength="50"
-                android:inputType="textEmailAddress"
-                android:textColor="@android:color/white" />
-        </android.support.design.widget.TextInputLayout>
+                >
+
+                <android.support.design.widget.TextInputEditText
+                    android:drawableStart="@drawable/ic_email"
+                    android:drawablePadding="@dimen/dp4"
+                    android:id="@+id/textInputEditTextEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Email"
+                    android:textColorHint="@android:color/white"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:maxLength="50"
+                    android:inputType="textEmailAddress"
+                    android:textColor="@android:color/white" />
+            </android.support.design.widget.TextInputLayout>
+            <com.jaredrummler.materialspinner.MaterialSpinner
+                android:id="@+id/domain"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:padding="@dimen/dp8"
+                android:text="@string/hintdomain"
+                android:textColor="@android:color/white"
+                app:ms_background_color="@android:color/transparent"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                style="@style/Base.Widget.AppCompat.Spinner"/>
+        </android.support.v7.widget.LinearLayoutCompat>
+
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/textInputLayoutPassword"

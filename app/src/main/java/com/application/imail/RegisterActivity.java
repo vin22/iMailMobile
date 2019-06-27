@@ -14,11 +14,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.application.imail.config.SessionManager;
+import com.application.imail.model.Domain;
 import com.application.imail.model.User;
 import com.application.imail.remote.APIUtils;
+import com.application.imail.remote.DomainService;
 import com.application.imail.remote.UserService;
 import com.application.imail.user.InboxActivity;
 import com.application.imail.utils.InputValidation;
+import com.jaredrummler.materialspinner.MaterialSpinner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -29,6 +35,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     User user;
     SessionManager userConfig;
     UserService userService;
+    DomainService domainService;
+    List<Domain> itemsdomain;
     private NestedScrollView nestedScrollView;
 
     private TextInputLayout textInputLayoutFullName;
@@ -38,7 +46,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private TextInputEditText textInputEditTextFullName;
     private TextInputEditText textInputEditTextEmail;
     private TextInputEditText textInputEditTextPassword, textInputEditTextConfirmPassword;
-
+    MaterialSpinner domain;
     private AppCompatButton appCompatButtonRegister;
     ProgressDialog progress;
     TextView loginnow;
@@ -52,7 +60,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         initViews();
         initListeners();
         initObjects();
-
+        getDomain();
     }
     /**
      * This method is to initialize views
@@ -67,6 +75,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         textInputEditTextEmail = (TextInputEditText) findViewById(R.id.textInputEditTextEmail);
         textInputEditTextPassword = (TextInputEditText) findViewById(R.id.textInputEditTextPassword);
         textInputEditTextConfirmPassword = (TextInputEditText) findViewById(R.id.textInputEditTextConfirmPassword);
+        domain = findViewById(R.id.domain);
         appCompatButtonRegister = (AppCompatButton) findViewById(R.id.appCompatButtonRegister);
         loginnow=findViewById(R.id.loginnow);
     }
@@ -79,6 +88,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         userConfig = new SessionManager(this);
         userService = APIUtils.getUserService();
         inputValidation = new InputValidation(this);
+        domainService = APIUtils.getDomainService();
     }
 //    /**
 //     * This method is to initialize objects to be used
@@ -91,6 +101,51 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
      * This implemented method is to listen the click on view
      *
      */
+
+    public void getDomain(){
+        Call<List<Domain>> call = domainService.getdomain();
+        call.enqueue(new Callback<List<Domain>>() {
+            @Override
+            public void onResponse(Call<List<Domain>> call, Response<List<Domain>> response) {
+                if(response.isSuccessful()){
+                    Log.e("User","Masuk1");
+                    String status=response.body().get(0).getStatus();
+                    String statusmessage=response.body().get(0).getMessage();
+                    if (status.equals("true")) {
+                        if(itemsdomain!=null){
+                            itemsdomain.clear();
+                        }
+                        else{
+                            itemsdomain=new ArrayList<>();
+                        }
+                        itemsdomain = response.body();
+                        List<String>itemsdomains=new ArrayList<>();
+                        for (int i=0;i<itemsdomain.size();i++){
+                            itemsdomains.add(itemsdomain.get(i).getDomainname());
+                        }
+                        domain.setItems(itemsdomains);
+
+                    } else {
+//                        Toast.makeText(LoginActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                        Log.e("USER ACTIVITY ERROR", statusmessage);
+
+                    }
+                }
+                else{
+                    Log.e("USER ACTIVITY ERROR", "Response failed");
+//                    Toast.makeText(LoginActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Domain>> call, Throwable t) {
+                Log.e("USER ACTIVITY ERROR", t.getMessage());
+//                Toast.makeText(LoginActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -121,7 +176,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 //                    emptyInputEditText();
 //                }
                 else {
-                    Call<User> call = userService.register(textInputEditTextEmail.getText().toString(), textInputEditTextPassword.getText().toString(), textInputEditTextFullName.getText().toString());
+                    Call<User> call = userService.register(textInputEditTextEmail.getText().toString()+"@"+domain.getText().toString(), textInputEditTextPassword.getText().toString(), textInputEditTextFullName.getText().toString());
                     call.enqueue(new Callback<User>() {
                         @Override
                         public void onResponse(Call<User> call, Response<User> response) {

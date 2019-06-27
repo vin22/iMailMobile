@@ -53,7 +53,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:padding="@dimen/dp8"
-                android:text="Your Email"
+                android:text="@string/hintdomain"
                 android:textColor="@android:color/white"
                 app:ms_background_color="@android:color/transparent"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"

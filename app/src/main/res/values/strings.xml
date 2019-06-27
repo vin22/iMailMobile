@@ -85,6 +85,8 @@
     <string name="text_transfer">Transfer</string>
     <string name="text_submit">Submit</string>
     <string name="text_save">Save</string>
+
+    <string name="hintdomain">@domain.com</string>
     <!-- Spinner -->
     <string-array name="android_layout_arrays">
         <item>Pilih Bulan</item>
