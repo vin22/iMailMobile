@@ -15,5 +15,8 @@ public class APIUtils {
     public static ContactService getContactService(){
         return RetrofitClient.getClient(API_URL).create(ContactService.class);
     }
+    public static DomainService getDomainService(){
+        return RetrofitClient.getClient(API_URL).create(DomainService.class);
+    }
 }
 

@@ -15,12 +15,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.application.imail.config.SessionManager;
+import com.application.imail.model.Domain;
 import com.application.imail.model.User;
 import com.application.imail.model.listcontact;
 import com.application.imail.remote.APIUtils;
+import com.application.imail.remote.DomainService;
 import com.application.imail.remote.UserService;
 import com.application.imail.user.InboxActivity;
 import com.application.imail.utils.InputValidation;
+import com.jaredrummler.materialspinner.MaterialSpinner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +37,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     User user;
     SessionManager userConfig;
     UserService userService;
+    DomainService domainService;
+    List<Domain> itemsdomain;
     private NestedScrollView nestedScrollView;
 
     private TextInputLayout textInputLayoutUsername;
@@ -42,6 +47,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private TextInputEditText textInputEditTextUsername;
     private TextInputEditText textInputEditTextPassword;
 
+    MaterialSpinner domain;
     private AppCompatButton appCompatButtonLogin;
     TextView registernow;
     ProgressDialog progress;
@@ -57,6 +63,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         initViews();
         initListeners();
         initObjects();
+        getDomain();
         //jika sudah memiliki session login maka akan langsung masuk HomeUserActivity
         if (SessionManager.with(this).isuserlogin()) {
             Intent masuk=new Intent(this,InboxActivity.class);
@@ -72,6 +79,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         textInputLayoutPassword = (TextInputLayout) findViewById(R.id.textInputLayoutPassword);
         textInputEditTextUsername = (TextInputEditText) findViewById(R.id.textInputEditTextUsername);
         textInputEditTextPassword = (TextInputEditText) findViewById(R.id.textInputEditTextPassword);
+        domain = findViewById(R.id.domain);
         appCompatButtonLogin = (AppCompatButton) findViewById(R.id.appCompatButtonLogin);
         registernow=findViewById(R.id.registernow);
     }
@@ -83,6 +91,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         registernow.setOnClickListener(this);
         userConfig = new SessionManager(this);
         userService = APIUtils.getUserService();
+        domainService = APIUtils.getDomainService();
         inputValidation = new InputValidation(this);
     }
 //    /**
@@ -91,6 +100,49 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void initObjects() {
         progress = new ProgressDialog(activity);
         user=new User();
+    }
+
+    public void getDomain(){
+        Call<List<Domain>> call = domainService.getdomain();
+        call.enqueue(new Callback<List<Domain>>() {
+            @Override
+            public void onResponse(Call<List<Domain>> call, Response<List<Domain>> response) {
+                if(response.isSuccessful()){
+                    Log.e("User","Masuk1");
+                    String status=response.body().get(0).getStatus();
+                    String statusmessage=response.body().get(0).getMessage();
+                    if (status.equals("true")) {
+                        if(itemsdomain!=null){
+                            itemsdomain.clear();
+                        }
+                        else{
+                            itemsdomain=new ArrayList<>();
+                        }
+                        itemsdomain = response.body();
+                        List<String>itemsdomains=new ArrayList<>();
+                        for (int i=0;i<itemsdomains.size();i++){
+                            itemsdomains.add(itemsdomain.get(i).getDomainname());
+                        }
+                        domain.setItems(itemsdomains);
+
+                    } else {
+//                        Toast.makeText(LoginActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                        Log.e("USER ACTIVITY ERROR", statusmessage);
+
+                    }
+                }
+                else{
+                    Log.e("USER ACTIVITY ERROR", "Response failed");
+//                    Toast.makeText(LoginActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Domain>> call, Throwable t) {
+                Log.e("USER ACTIVITY ERROR", t.getMessage());
+//                Toast.makeText(LoginActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
     /**
      * This implemented method is to listen the click on view
@@ -101,7 +153,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         switch (v.getId()) {
             //jika klik button login akan melakukan proses validasi
             case R.id.appCompatButtonLogin:
-                if (!inputValidation.isInputEditTextFilled(textInputEditTextUsername, textInputLayoutUsername, getString(R.string.error_message_email_username))) {
+                if (!inputValidation.isInputEditTextFilled(textInputEditTextUsername, textInputLayoutUsername, getString(R.string.error_message_username))) {
                     return;
                 }
                 if (!inputValidation.isInputEditTextFilled(textInputEditTextPassword, textInputLayoutPassword,getString(R.string.error_message_passwordkosong))) {
@@ -113,7 +165,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 else {
                     Log.e("POST",textInputEditTextUsername.getText().toString());
                     Log.e("POST",textInputEditTextPassword.getText().toString());
-                    Call<User> call = userService.login(textInputEditTextUsername.getText().toString(), textInputEditTextPassword.getText().toString());
+                    Call<User> call = userService.login(textInputEditTextUsername.getText().toString()+"@"+domain.getText().toString(), textInputEditTextPassword.getText().toString());
                     call.enqueue(new Callback<User>() {
                         @Override
                         public void onResponse(Call<User> call, Response<User> response) {
