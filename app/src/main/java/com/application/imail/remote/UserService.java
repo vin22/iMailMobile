@@ -23,7 +23,7 @@ public interface UserService {
 
     @FormUrlEncoded
     @POST("register/")
-    Call<User> register(@Field("Email") String email, @Field("Password") String password, @Field("Name") String name);
+    Call<User> register(@Field("Email") String email, @Field("Password") String password, @Field("Name") String name, @Field("domainid") int domainid);
 
     @FormUrlEncoded
     @POST("password/")

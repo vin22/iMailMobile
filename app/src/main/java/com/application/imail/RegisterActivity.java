@@ -176,7 +176,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 //                    emptyInputEditText();
 //                }
                 else {
-                    Call<User> call = userService.register(textInputEditTextEmail.getText().toString()+"@"+domain.getText().toString(), textInputEditTextPassword.getText().toString(), textInputEditTextFullName.getText().toString());
+                    Call<User> call = userService.register(textInputEditTextEmail.getText().toString()+"@"+domain.getText().toString(), textInputEditTextPassword.getText().toString(), textInputEditTextFullName.getText().toString(), itemsdomain.get(0).getDomainid();
                     call.enqueue(new Callback<User>() {
                         @Override
                         public void onResponse(Call<User> call, Response<User> response) {
