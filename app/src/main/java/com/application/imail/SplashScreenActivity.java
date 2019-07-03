@@ -11,7 +11,7 @@ import android.widget.ProgressBar;
 public class SplashScreenActivity extends Activity {
 
     // Splash screen waktu
-    private static int SPLASH_TIME_OUT = 3000;
+    private static int SPLASH_TIME_OUT = 2000;
 //    ProgressBar loading;
 
     @Override

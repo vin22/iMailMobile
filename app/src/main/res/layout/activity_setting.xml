@@ -24,6 +24,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <com.balysv.materialripple.MaterialRippleLayout
+            android:id="@+id/lyt_manageaccount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <LinearLayout
@@ -35,12 +36,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                    android:text="Manage Account"/>
+                    android:text="Manage Account Alternative"/>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:text="Add email account alternative"/>
+                    android:text="Add/remove email account alternative"/>
             </LinearLayout>
         </com.balysv.materialripple.MaterialRippleLayout>
         <View

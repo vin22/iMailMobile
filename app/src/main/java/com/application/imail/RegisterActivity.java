@@ -121,26 +121,26 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         itemsdomain = response.body();
                         List<String>itemsdomains=new ArrayList<>();
                         for (int i=0;i<itemsdomain.size();i++){
-                            itemsdomains.add(itemsdomain.get(i).getDomainname());
+                            itemsdomains.add("@"+itemsdomain.get(i).getDomainname());
                         }
                         domain.setItems(itemsdomains);
 
                     } else {
-//                        Toast.makeText(LoginActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
                         Log.e("USER ACTIVITY ERROR", statusmessage);
 
                     }
                 }
                 else{
                     Log.e("USER ACTIVITY ERROR", "Response failed");
-//                    Toast.makeText(LoginActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<List<Domain>> call, Throwable t) {
                 Log.e("USER ACTIVITY ERROR", t.getMessage());
-//                Toast.makeText(LoginActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterActivity.this, "Response failure", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -176,7 +176,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 //                    emptyInputEditText();
 //                }
                 else {
-                    Call<User> call = userService.register(textInputEditTextEmail.getText().toString()+"@"+domain.getText().toString(), textInputEditTextPassword.getText().toString(), textInputEditTextFullName.getText().toString(), itemsdomain.get(0).getDomainid();
+                    Call<User> call = userService.register(textInputEditTextEmail.getText().toString()+domain.getText().toString(), textInputEditTextPassword.getText().toString(), textInputEditTextFullName.getText().toString(), itemsdomain.get(domain.getSelectedIndex()).getDomainid());
                     call.enqueue(new Callback<User>() {
                         @Override
                         public void onResponse(Call<User> call, Response<User> response) {

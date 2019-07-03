@@ -18,6 +18,10 @@ import retrofit2.http.Path;
 
 public interface ContactService {
     @FormUrlEncoded
+    @POST("getcontacts/")
+    Call<List<listcontact>> getcontacts(@Field("UserID") int UserID);
+
+    @FormUrlEncoded
     @POST("getcontact/")
     Call<List<listcontact>> getcontact(@Field("UserID") int UserID);
 

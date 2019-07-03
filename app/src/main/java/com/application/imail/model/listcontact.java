@@ -1,6 +1,13 @@
 package com.application.imail.model;
 
-public class listcontact {
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import com.tylersuehr.chips.Chip;
+
+public class listcontact extends Chip {
     public String AddressBookID, UserID, Name, Email, Phone, Birth_Date, Gender, status, message;
     public boolean Saved, Suggestion, IsDelete;
 
@@ -99,5 +106,36 @@ public class listcontact {
     public void setDelete(boolean delete) {
         IsDelete = delete;
     }
+
+    @Nullable
+    @Override
+    public Drawable getAvatarDrawable() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public Object getId() {
+        return getAddressBookID();
+    }
+
+    @Nullable
+    @Override
+    public String getSubtitle() {
+        return getName();
+    }
+
+    @NonNull
+    @Override
+    public String getTitle() {
+        return getEmail();
+    }
+
+    @Nullable
+    @Override
+    public Uri getAvatarUri() {
+        return null;
+    }
+
 
 }

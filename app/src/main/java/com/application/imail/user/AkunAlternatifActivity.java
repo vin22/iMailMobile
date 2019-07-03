@@ -2,24 +2,34 @@ package com.application.imail.user;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.application.imail.R;
 import com.application.imail.RegisterActivity;
 import com.application.imail.config.SessionManager;
+import com.application.imail.model.Domain;
 import com.application.imail.model.User;
 import com.application.imail.remote.APIUtils;
+import com.application.imail.remote.DomainService;
 import com.application.imail.remote.UserService;
 import com.application.imail.utils.InputValidation;
+import com.jaredrummler.materialspinner.MaterialSpinner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,6 +40,8 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
     User user;
     SessionManager userConfig;
     UserService userService;
+    DomainService domainService;
+    List<Domain> itemsdomain;
     private NestedScrollView nestedScrollView;
 
     private TextInputLayout textInputLayoutAkunAlternatif;
@@ -37,7 +49,7 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
 
     private TextInputEditText textInputEditTextAkunAlternatif;
     private TextInputEditText textInputEditTextPassword;
-
+    MaterialSpinner domain;
     private AppCompatButton appCompatButtonAdd;
     ProgressDialog progress;
     InputValidation inputValidation;
@@ -45,9 +57,25 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_akun_alternatif);
+        initToolbar();
         initViews();
         initListeners();
         initObjects();
+        getDomain();
+    }
+
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Add Account Alternative");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = AkunAlternatifActivity.this.getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setStatusBarColor(AkunAlternatifActivity.this.getResources().getColor(R.color.colorPrimary));
+        }
     }
     /**
      * This method is to initialize views
@@ -58,6 +86,7 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
         textInputLayoutPassword = (TextInputLayout) findViewById(R.id.textInputLayoutPassword);
         textInputEditTextAkunAlternatif = (TextInputEditText) findViewById(R.id.textInputEditTextAkunAlternatif);
         textInputEditTextPassword = (TextInputEditText) findViewById(R.id.textInputEditTextPassword);
+        domain = findViewById(R.id.domain);
         appCompatButtonAdd = (AppCompatButton) findViewById(R.id.appCompatButtonAdd);
     }
 //    /**
@@ -68,6 +97,7 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
         userConfig = new SessionManager(this);
         userService = APIUtils.getUserService();
         inputValidation = new InputValidation(this);
+        domainService = APIUtils.getDomainService();
     }
 //    /**
 //     * This method is to initialize objects to be used
@@ -80,11 +110,54 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
      * This implemented method is to listen the click on view
      *
      */
+    public void getDomain(){
+        Call<List<Domain>> call = domainService.getdomain();
+        call.enqueue(new Callback<List<Domain>>() {
+            @Override
+            public void onResponse(Call<List<Domain>> call, Response<List<Domain>> response) {
+                if(response.isSuccessful()){
+                    Log.e("User","Masuk1");
+                    String status=response.body().get(0).getStatus();
+                    String statusmessage=response.body().get(0).getMessage();
+                    if (status.equals("true")) {
+                        if(itemsdomain!=null){
+                            itemsdomain.clear();
+                        }
+                        else{
+                            itemsdomain=new ArrayList<>();
+                        }
+                        itemsdomain = response.body();
+                        List<String>itemsdomains=new ArrayList<>();
+                        for (int i=0;i<itemsdomain.size();i++){
+                            itemsdomains.add("@"+itemsdomain.get(i).getDomainname());
+                        }
+                        domain.setItems(itemsdomains);
+
+                    } else {
+                        Toast.makeText(AkunAlternatifActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                        Log.e("USER ACTIVITY ERROR", statusmessage);
+
+                    }
+                }
+                else{
+                    Log.e("USER ACTIVITY ERROR", "Response failed");
+                    Toast.makeText(AkunAlternatifActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Domain>> call, Throwable t) {
+                Log.e("USER ACTIVITY ERROR", t.getMessage());
+                Toast.makeText(AkunAlternatifActivity.this, "Response failure", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             //jika klik button login akan melakukan proses validasi
-            case R.id.appCompatButtonLogin:
+            case R.id.appCompatButtonAdd:
                 if (!inputValidation.isInputEditTextFilled(textInputEditTextAkunAlternatif, textInputLayoutAkunAlternatif, getString(R.string.error_message_akunalternatif))) {
                     return;
                 }
@@ -96,7 +169,7 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
 //                }
                 else {
                     SessionManager sessionManager = SessionManager.with(AkunAlternatifActivity.this);
-                    Call<User> call = userService.addakunalternatif(sessionManager.getuserloggedin().getEmail(), textInputEditTextPassword.getText().toString(),textInputEditTextAkunAlternatif.getText().toString());
+                    Call<User> call = userService.addakunalternatif(sessionManager.getuserloggedin().getEmail()+domain.getText().toString(), textInputEditTextPassword.getText().toString(),textInputEditTextAkunAlternatif.getText().toString());
                     call.enqueue(new Callback<User>() {
                         @Override
                         public void onResponse(Call<User> call, Response<User> response) {

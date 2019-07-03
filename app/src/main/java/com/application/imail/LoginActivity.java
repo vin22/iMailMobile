@@ -123,27 +123,27 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         itemsdomain = response.body();
                         List<String>itemsdomains=new ArrayList<>();
                         for (int i=0;i<itemsdomain.size();i++){
-                            itemsdomains.add(itemsdomain.get(i).getDomainname());
+                            itemsdomains.add("@"+itemsdomain.get(i).getDomainname());
                             Log.e("Domain",itemsdomain.get(i).getDomainname() );
                         }
                         domain.setItems(itemsdomains);
 
                     } else {
-//                        Toast.makeText(LoginActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
                         Log.e("USER ACTIVITY ERROR", statusmessage);
 
                     }
                 }
                 else{
                     Log.e("USER ACTIVITY ERROR", "Response failed");
-//                    Toast.makeText(LoginActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<List<Domain>> call, Throwable t) {
                 Log.e("USER ACTIVITY ERROR", t.getMessage());
-//                Toast.makeText(LoginActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -168,7 +168,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 else {
                     Log.e("POST",textInputEditTextUsername.getText().toString());
                     Log.e("POST",textInputEditTextPassword.getText().toString());
-                    Call<User> call = userService.login(textInputEditTextUsername.getText().toString()+"@"+domain.getText().toString(), textInputEditTextPassword.getText().toString());
+                    Call<User> call = userService.login(textInputEditTextUsername.getText().toString()+domain.getText().toString(), textInputEditTextPassword.getText().toString());
                     call.enqueue(new Callback<User>() {
                         @Override
                         public void onResponse(Call<User> call, Response<User> response) {
@@ -178,7 +178,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     //                            int statuscode = response.code();
                                 String statusmessage=response.body().getMessage();
                                 if (status.equals("true")) {
-                                    Toast.makeText(LoginActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(LoginActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
 //                                    itemscontact = new ArrayList<listcontact>();
 //                                    listcontact = new listcontact();
 //                                    listcontact.setAddressbookid("1");
@@ -253,6 +253,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     user.setEmail(response.body().getEmail());
     //                                user.setUsername(response.body().getName());
                                     user.setName(response.body().getName());
+                                    user.setPassword(textInputEditTextPassword.getText().toString());
                                     sessionManager.createsession(user);
     //                                user.setPassword("vincent");
     //                                userConfig.writeNorekening(response.body().getNorekening());

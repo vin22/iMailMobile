@@ -18,5 +18,8 @@ public class APIUtils {
     public static DomainService getDomainService(){
         return RetrofitClient.getClient(API_URL).create(DomainService.class);
     }
+    public static MessageService getMessageService(){
+        return RetrofitClient.getClient(API_URL).create(MessageService.class);
+    }
 }
 

@@ -42,10 +42,10 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private List<listcontact> items = new ArrayList<>();
     private List<listcontact> itemsfilter = new ArrayList<>();
-    ContactService contactService = APIUtils.getContactService();;
+    ContactService contactService = APIUtils.getContactService();
     private Context ctx;
     private OnItemClickListener mOnItemClickListener;
-    InputValidation inputValidation = new InputValidation(ctx);;
+    InputValidation inputValidation = new InputValidation(ctx);
 
     public interface OnItemClickListener {
         void onItemClick(View view, listemail obj, int position);

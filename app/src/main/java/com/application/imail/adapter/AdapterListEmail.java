@@ -1,5 +1,6 @@
 package com.application.imail.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -12,33 +13,43 @@ import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.application.imail.R;
+import com.application.imail.model.Message;
 import com.application.imail.model.listemail;
+import com.application.imail.remote.APIUtils;
+import com.application.imail.remote.MessageService;
 import com.application.imail.user.ReadMessageActivity;
 import com.balysv.materialripple.MaterialRippleLayout;
 import com.bumptech.glide.Glide;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
-    private List<listemail> items = new ArrayList<>();
-    private List<listemail> itemsfilter = new ArrayList<>();
-
+    private List<Message> items = new ArrayList<>();
+    private List<Message> itemsfilter = new ArrayList<>();
+    MessageService messageService = APIUtils.getMessageService();
     private Context ctx;
     private OnItemClickListener mOnItemClickListener;
 
     public interface OnItemClickListener {
-        void onItemClick(View view, listemail obj, int position);
+        void onItemClick(View view, Message obj, int position);
     }
 
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
         this.mOnItemClickListener = mItemClickListener;
     }
 
-    public AdapterListEmail(Context context, List<listemail> items) {
+    public AdapterListEmail(Context context, List<Message> items) {
         this.items = items;
         ctx = context;
         this.itemsfilter = items;
@@ -75,17 +86,82 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        final listemail p = itemsfilter.get(position);
+        final Message p = itemsfilter.get(position);
         if (holder instanceof OriginalViewHolder) {
             final OriginalViewHolder view = (OriginalViewHolder) holder;
-            view.nama.setText(p.getSendername());
-            view.subject.setText(p.getSubject());
-            view.date.setText(p.getSent_date());
-            view.message.setText(p.getMessage());
-            if(p.getFolder().equals("Trash")){
+            SimpleDateFormat formatapi=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+            SimpleDateFormat format=new SimpleDateFormat("dd MMM yy");
+
+            if(p.getFolder().equals("Draft")) {
+                try{
+                    if(p.getSendername().equals("null")){
+                        view.nama.setText("(Draft)");
+                    }
+                    else if(p.getSendername().equals("")){
+                        view.nama.setText("(Draft)");
+                    }
+                    else{
+                        view.nama.setText(p.getSendername()+"(Draft)");
+                    }
+                }catch (Exception e){
+                    view.nama.setText("(Draft)");
+                    e.printStackTrace();
+                }
+            }
+            else{
+                view.nama.setText(p.getSendername());
+            }
+            try{
+                if(p.getSubject().equals("null")){
+                    view.subject.setText("[no Subject]");
+                }
+                else if(p.getSubject().equals("")){
+                    view.subject.setText("[no Subject]");
+                }
+                else{
+                    view.subject.setText(p.getSubject());
+                }
+            }catch (Exception e){
+                view.subject.setText("[no Subject]");
+                e.printStackTrace();
+            }
+
+//            catch (Exception e){
+//                view.subject.setText("[no Subject]");
+//                e.printStackTrace();
+//                Log.e("Date","Masuk");
+//            }
+            try {
+                view.date.setText(format.format(formatapi.parse(p.getDate())));
+            }
+            catch (ParseException e){
+                e.printStackTrace();
+                Log.e("Date",p.getDate());
+            }
+//            if(p.getBody().toString().equals("null")){
+//                view.message.setText("[no Message]");
+//            }
+//            else if(p.getBody().equals("")){
+//
+//            }
+            try {
+                if (p.getBody().equals("null")) {
+                    view.message.setText("[no Message]");
+                } else if (p.getBody().equals("")) {
+                    view.message.setText("[no Message]");
+                } else {
+                    view.message.setText(p.getBody());
+                }
+            }
+            catch (Exception e){
+                view.message.setText("[no Message]");
+                e.printStackTrace();
+                Log.e("Date","Masuk");
+            }
+            if(p.isTrash()){
                 view.starred.setVisibility(View.GONE);
             }
-            if(p.getStarred()){
+            if(p.isStarred()){
                 Glide.with(ctx).load(R.drawable.ic_star).into(view.starred);
                 Log.e("image","Star");
             }
@@ -96,8 +172,9 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
             view.starred.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Starred(p.getMessageID());
                     Log.e("image","Masuk");
-                    if(!p.getStarred()){
+                    if(!p.isStarred()){
                         p.setStarred(true);
                         Glide.with(ctx).load(R.drawable.ic_star).into(view.starred);
                     }
@@ -110,18 +187,37 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
+                public void onClick(View v) {
                     ArrayList<String>itemsemail=new ArrayList<>();
-                    itemsemail.add(items.get(position).getSubject());
-                    itemsemail.add(String.valueOf(items.get(position).getStarred()));
+                    itemsemail.add(view.subject.getText().toString());
+                    itemsemail.add(String.valueOf(items.get(position).isStarred()));
                     itemsemail.add(items.get(position).getFolder());
-                    itemsemail.add(items.get(position).getSendername());
-                    itemsemail.add(items.get(position).getReceiver());
-                    itemsemail.add(items.get(position).getSent_date());
-                    itemsemail.add(items.get(position).getMessage());
+                    itemsemail.add(view.nama.getText().toString());
+                    try{
+                        if(items.get(position).getReceiver().equals("null")){
+                            itemsemail.add("");
+                        }
+                        else if(items.get(position).getReceiver().equals("")){
+                            itemsemail.add("");
+                        }
+                        else{
+                            itemsemail.add(items.get(position).getReceiver());
+                        }
+                    }catch (Exception e){
+                        itemsemail.add("");
+                        e.printStackTrace();
+                    }
+
+                    itemsemail.add(items.get(position).getDate());
+                    itemsemail.add(view.message.getText().toString());
+                    itemsemail.add(String.valueOf(items.get(position).getMessageID()));
+                    for(int i=0;i<itemsemail.size();i++){
+                        Log.e("Items",itemsemail.get(i));
+                    }
                     Intent intent=new Intent(ctx, ReadMessageActivity.class);
                     intent.putStringArrayListExtra("email",itemsemail);
-                    ctx.startActivity(intent);
+
+                    ((Activity)ctx).startActivityForResult(intent, 200);
                 }
             });
         }
@@ -132,7 +228,7 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
         return itemsfilter.size();
     }
 
-    public void setItems(List<listemail> filteredGalaxies)
+    public void setItems(List<Message> filteredGalaxies)
     {
         this.itemsfilter=filteredGalaxies;
     }
@@ -149,7 +245,7 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
                     constraint = constraint.toString().toUpperCase();
 
                     //HOLD FILTERS WE FIND
-                    List<listemail> foundFilters = new ArrayList<>();
+                    List<Message> foundFilters = new ArrayList<>();
 
                     String galaxy;
 
@@ -167,7 +263,7 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
                             //ADD IF FOUND
                             foundFilters.add(items.get(i));
                         }
-                        else if(items.get(i).getMessage().toUpperCase().contains(constraint)){
+                        else if(items.get(i).getBody().toUpperCase().contains(constraint)){
                             //ADD IF FOUND
                             foundFilters.add(items.get(i));
                         }
@@ -188,9 +284,37 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             @Override
             protected void publishResults(CharSequence charSequence, Filter.FilterResults filterResults) {
-                setItems((List<listemail>) filterResults.values);
+                setItems((List<Message>) filterResults.values);
                 notifyDataSetChanged();
             }
         };
+    }
+
+    public void Starred(int messageid){
+        Call<Message> call = messageService.starred(messageid);
+        call.enqueue(new Callback<Message>() {
+            @Override
+            public void onResponse(Call<Message> call, Response<Message> response) {
+                if(response.isSuccessful()){
+                    String status=response.body().getStatus();
+                    String statusmessage=response.body().getMessage();
+                    if (status.equals("true")) {
+                        Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else{
+                    Toast.makeText(ctx, "Response failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Message> call, Throwable t) {
+                Log.e("USER ACTIVITY ERROR", t.getMessage());
+                Toast.makeText(ctx, "Response failure", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 }

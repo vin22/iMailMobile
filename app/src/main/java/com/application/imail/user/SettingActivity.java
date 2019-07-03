@@ -20,7 +20,7 @@ import com.application.imail.config.SessionManager;
 
 public class SettingActivity extends AppCompatActivity{
 
-    View lyt_changepassword,lyt_logout;
+    View lyt_manageaccount, lyt_changepassword,lyt_logout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,8 +43,8 @@ public class SettingActivity extends AppCompatActivity{
     }
 
     private void initViews() {
-        lyt_changepassword = findViewById(R.id.lyt_changepassword);
-        lyt_changepassword.setOnClickListener(new View.OnClickListener() {
+        lyt_manageaccount = findViewById(R.id.lyt_manageaccount);
+        lyt_manageaccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder dialog=new AlertDialog.Builder(SettingActivity.this);
@@ -54,7 +54,7 @@ public class SettingActivity extends AppCompatActivity{
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if(which==0){
-                            Intent intent=new Intent(SettingActivity.this, ChangePasswordActivity.class);
+                            Intent intent=new Intent(SettingActivity.this, AkunAlternatifActivity.class);
                             startActivity(intent);
                             dialog.dismiss();
                         }
@@ -78,7 +78,14 @@ public class SettingActivity extends AppCompatActivity{
                     }
                 });
                 dialog.show();
-
+            }
+        });
+        lyt_changepassword = findViewById(R.id.lyt_changepassword);
+        lyt_changepassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(SettingActivity.this, ChangePasswordActivity.class);
+                startActivity(intent);
             }
         });
         lyt_logout = findViewById(R.id.lyt_logout);
