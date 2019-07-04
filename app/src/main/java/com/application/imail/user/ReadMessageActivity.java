@@ -291,6 +291,90 @@ public class ReadMessageActivity extends AppCompatActivity {
             });
             dialogs.show();
         }
+        else if(email.get(2).equals("Inbox")){
+            AlertDialog.Builder dialogs=new AlertDialog.Builder(ReadMessageActivity.this).setTitle("Delete Email in Inbox").setMessage("Are you sure to delete this email?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(final DialogInterface dialog, int which) {
+                    Call<Message> call = messageService.deleteinbox(Integer.parseInt(email.get(7)));
+                    call.enqueue(new Callback<Message>() {
+                        @Override
+                        public void onResponse(Call<Message> call, Response<Message> response) {
+                            if(response.isSuccessful()){
+                                String status=response.body().getStatus();
+                                String statusmessage=response.body().getMessage();
+                                if (status.equals("true")) {
+                                    Toast.makeText(ReadMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+                                    action=true;
+                                } else {
+                                    Toast.makeText(ReadMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+                                }
+                            }
+                            else{
+                                Toast.makeText(ReadMessageActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Message> call, Throwable t) {
+                            Toast.makeText(ReadMessageActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.dismiss();
+                }
+            }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            dialogs.show();
+        }
+        else if(email.get(2).equals("Sent")){
+            AlertDialog.Builder dialogs=new AlertDialog.Builder(ReadMessageActivity.this).setTitle("Delete Email in Sent").setMessage("Are you sure to delete this email?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(final DialogInterface dialog, int which) {
+                    Call<Message> call = messageService.deletesent(Integer.parseInt(email.get(7)));
+                    call.enqueue(new Callback<Message>() {
+                        @Override
+                        public void onResponse(Call<Message> call, Response<Message> response) {
+                            if(response.isSuccessful()){
+                                String status=response.body().getStatus();
+                                String statusmessage=response.body().getMessage();
+                                if (status.equals("true")) {
+                                    Toast.makeText(ReadMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+                                    action=true;
+                                } else {
+                                    Toast.makeText(ReadMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+                                }
+                            }
+                            else{
+                                Toast.makeText(ReadMessageActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Message> call, Throwable t) {
+                            Toast.makeText(ReadMessageActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.dismiss();
+                }
+            }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            dialogs.show();
+        }
         //belum
         else if(email.get(2).equals("Starred")){
             AlertDialog.Builder dialogs=new AlertDialog.Builder(ReadMessageActivity.this).setTitle("Delete Email in Starred").setMessage("Are you sure to delete this email?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {

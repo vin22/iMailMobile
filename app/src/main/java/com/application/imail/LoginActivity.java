@@ -54,6 +54,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     InputValidation inputValidation;
     listcontact listcontact;
     List<listcontact> itemscontact;
+    ProgressDialog pd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -168,6 +169,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 else {
                     Log.e("POST",textInputEditTextUsername.getText().toString());
                     Log.e("POST",textInputEditTextPassword.getText().toString());
+                    if(pd!=null){
+                        pd.setTitle("Please Wait");
+                        pd.setMessage("Login to your account");
+                        pd.show();
+                    }
+                    else{
+                        pd=new ProgressDialog(LoginActivity.this);
+                        pd.setTitle("Please Wait");
+                        pd.setMessage("Login to your account");
+                        pd.show();
+                    }
                     Call<User> call = userService.login(textInputEditTextUsername.getText().toString()+domain.getText().toString(), textInputEditTextPassword.getText().toString());
                     call.enqueue(new Callback<User>() {
                         @Override
@@ -262,12 +274,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     startActivity(new Intent(LoginActivity.this, InboxActivity.class));
                                     finish();
                                     emptyInputEditText();
+                                    if(pd.isShowing()){
+                                        pd.dismiss();
+                                    }
 
                                 } else {
+                                    if(pd.isShowing()){
+                                        pd.dismiss();
+                                    }
                                     Toast.makeText(LoginActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
                                 }
                             }
-                                else{
+                            else{
+                                if(pd.isShowing()){
+                                    pd.dismiss();
+                                }
                                 Toast.makeText(LoginActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -275,6 +296,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         @Override
                         public void onFailure(Call<User> call, Throwable t) {
                             Log.e("USER ACTIVITY ERROR", t.getMessage());
+                            if(pd.isShowing()){
+                                pd.dismiss();
+                            }
                             Toast.makeText(LoginActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
                         }
                     });

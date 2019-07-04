@@ -53,6 +53,7 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
     private AppCompatButton appCompatButtonAdd;
     ProgressDialog progress;
     InputValidation inputValidation;
+    ProgressDialog pd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -168,6 +169,17 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
 //                    emptyInputEditText();
 //                }
                 else {
+                    if(pd!=null){
+                        pd.setTitle("Please Wait");
+                        pd.setMessage("Add your email account alternative");
+                        pd.show();
+                    }
+                    else{
+                        pd=new ProgressDialog(AkunAlternatifActivity.this);
+                        pd.setTitle("Please Wait");
+                        pd.setMessage("Add your email account alternative");
+                        pd.show();
+                    }
                     SessionManager sessionManager = SessionManager.with(AkunAlternatifActivity.this);
                     Call<User> call = userService.addakunalternatif(sessionManager.getuserloggedin().getEmail()+domain.getText().toString(), textInputEditTextPassword.getText().toString(),textInputEditTextAkunAlternatif.getText().toString());
                     call.enqueue(new Callback<User>() {
@@ -181,12 +193,21 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
                                     Toast.makeText(AkunAlternatifActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
                                     finish();
                                     emptyInputEditText();
+                                    if(pd.isShowing()){
+                                        pd.dismiss();
+                                    }
 
                                 } else {
+                                    if(pd.isShowing()){
+                                        pd.dismiss();
+                                    }
                                     Toast.makeText(AkunAlternatifActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
                                 }
                             }
-                                else{
+                            else{
+                                if(pd.isShowing()){
+                                    pd.dismiss();
+                                }
                                 Toast.makeText(AkunAlternatifActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -194,6 +215,9 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
                         @Override
                         public void onFailure(Call<User> call, Throwable t) {
                             Log.e("USER ACTIVITY ERROR", t.getMessage());
+                            if(pd.isShowing()){
+                                pd.dismiss();
+                            }
                             Toast.makeText(AkunAlternatifActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
                         }
                     });

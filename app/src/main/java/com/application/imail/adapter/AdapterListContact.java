@@ -2,6 +2,7 @@ package com.application.imail.adapter;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.design.widget.TextInputEditText;
@@ -46,7 +47,7 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
     private Context ctx;
     private OnItemClickListener mOnItemClickListener;
     InputValidation inputValidation = new InputValidation(ctx);
-
+    ProgressDialog pd;
     public interface OnItemClickListener {
         void onItemClick(View view, listemail obj, int position);
     }
@@ -120,6 +121,17 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
                                 return;
                             }
                             else{
+                                if(pd!=null){
+                                    pd.setTitle("Please Wait");
+                                    pd.setMessage("Edit your contact");
+                                    pd.show();
+                                }
+                                else{
+                                    pd=new ProgressDialog(ctx);
+                                    pd.setTitle("Please Wait");
+                                    pd.setMessage("Edit your contact");
+                                    pd.show();
+                                }
                                 final SessionManager sessionManager = SessionManager.with(ctx);
                                 Call<listcontact> call = contactService.editcontact(sessionManager.getuserloggedin().getUserID(),textInputEditTextName.getText().toString(),textInputEditTextPhone.getText().toString());
                                 call.enqueue(new Callback<listcontact>() {
@@ -141,13 +153,21 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
                                                                 items = response.body();
                                                                 itemsfilter = response.body();
                                                                 notifyDataSetChanged();
-
+                                                                if(pd.isShowing()){
+                                                                    pd.dismiss();
+                                                                }
                                                             } else {
+                                                                if(pd.isShowing()){
+                                                                    pd.dismiss();
+                                                                }
                                                                 Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
 
                                                             }
                                                         }
                                                         else{
+                                                            if(pd.isShowing()){
+                                                                pd.dismiss();
+                                                            }
                                                             Toast.makeText(ctx, "Response failed", Toast.LENGTH_SHORT).show();
                                                         }
                                                     }
@@ -155,17 +175,26 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
                                                     @Override
                                                     public void onFailure(Call<List<listcontact>> call, Throwable t) {
                                                         Log.e("USER ACTIVITY ERROR", t.getMessage());
+                                                        if(pd.isShowing()){
+                                                            pd.dismiss();
+                                                        }
                                                         Toast.makeText(ctx, "Response failure", Toast.LENGTH_SHORT).show();
                                                     }
                                                 });
                                                 dialog.dismiss();
                                             } else {
                                                 Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+                                                if(pd.isShowing()){
+                                                    pd.dismiss();
+                                                }
                                                 dialog.dismiss();
                                             }
                                         }
                                         else{
                                             Toast.makeText(ctx, "Response failed", Toast.LENGTH_SHORT).show();
+                                            if(pd.isShowing()){
+                                                pd.dismiss();
+                                            }
                                             dialog.dismiss();
                                         }
                                     }
@@ -173,6 +202,9 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
                                     @Override
                                     public void onFailure(Call<listcontact> call, Throwable t) {
                                         Log.e("USER ACTIVITY ERROR", t.getMessage());
+                                        if(pd.isShowing()){
+                                            pd.dismiss();
+                                        }
                                         Toast.makeText(ctx, "Response failure", Toast.LENGTH_SHORT).show();
                                         dialog.dismiss();
                                     }
@@ -199,6 +231,17 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
                             call.enqueue(new Callback<listcontact>() {
                                 @Override
                                 public void onResponse(Call<listcontact> call, Response<listcontact> response) {
+                                    if(pd!=null){
+                                        pd.setTitle("Please Wait");
+                                        pd.setMessage("Delete your contact");
+                                        pd.show();
+                                    }
+                                    else{
+                                        pd=new ProgressDialog(ctx);
+                                        pd.setTitle("Please Wait");
+                                        pd.setMessage("Delete your contact");
+                                        pd.show();
+                                    }
                                     if(response.isSuccessful()){
                                         String status=response.body().getStatus();
                                         String statusmessage=response.body().getMessage();
@@ -215,13 +258,20 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
                                                             items = response.body();
                                                             itemsfilter = response.body();
                                                             notifyDataSetChanged();
-
+                                                            if(pd.isShowing()){
+                                                                pd.dismiss();
+                                                            }
                                                         } else {
+                                                            if(pd.isShowing()){
+                                                                pd.dismiss();
+                                                            }
                                                             Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
-
                                                         }
                                                     }
                                                     else{
+                                                        if(pd.isShowing()){
+                                                            pd.dismiss();
+                                                        }
                                                         Toast.makeText(ctx, "Response failed", Toast.LENGTH_SHORT).show();
                                                     }
                                                 }
@@ -229,16 +279,25 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
                                                 @Override
                                                 public void onFailure(Call<List<listcontact>> call, Throwable t) {
                                                     Log.e("USER ACTIVITY ERROR", t.getMessage());
+                                                    if(pd.isShowing()){
+                                                        pd.dismiss();
+                                                    }
                                                     Toast.makeText(ctx, "Response failure", Toast.LENGTH_SHORT).show();
                                                 }
                                             });
                                             dialog.dismiss();
                                         } else {
+                                            if(pd.isShowing()){
+                                                pd.dismiss();
+                                            }
                                             Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
                                             dialog.dismiss();
                                         }
                                     }
                                     else{
+                                        if(pd.isShowing()){
+                                            pd.dismiss();
+                                        }
                                         Toast.makeText(ctx, "Response failed", Toast.LENGTH_SHORT).show();
                                         dialog.dismiss();
                                     }
@@ -246,6 +305,9 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                                 @Override
                                 public void onFailure(Call<listcontact> call, Throwable t) {
+                                    if(pd.isShowing()){
+                                        pd.dismiss();
+                                    }
                                     Toast.makeText(ctx, "Response failure", Toast.LENGTH_SHORT).show();
                                     dialog.dismiss();
                                 }

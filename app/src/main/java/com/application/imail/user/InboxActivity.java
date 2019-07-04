@@ -1,6 +1,7 @@
 package com.application.imail.user;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -54,6 +55,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
@@ -63,15 +65,15 @@ import retrofit2.Response;
 public class InboxActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     AdapterListContact adapter_contact;
-    AdapterListEmail adapter_inbox, adapter_starred, adapter_trash, adapter_draft;
-    AdapterListEmailTes adapter_spam, adapter_sent;
+    AdapterListEmail adapter_inbox,adapter_sent, adapter_starred, adapter_trash, adapter_draft;
+    AdapterListEmailTes adapter_spam;
     RecyclerView recyclerView_inbox, recyclerView_spam, recyclerView_starred, recyclerView_sent, recyclerView_trash, recyclerView_draft, recyclerView_contact;
     SwipeRefreshLayout swipeinbox, swipespam, swipestarred, swipesent, swipetrash, swipedraft, swipecontact;
     CoordinatorLayout parent_view;
     listemail listemail;
     List<listemail> items;
     List<listcontact> itemscontact;
-    List<Message> itemsinbox, itemsdraft, itemsstarred, itemstrash;
+    List<Message> itemsinbox, itemssent, itemsdraft, itemsstarred, itemstrash;
     Toolbar toolbar;
     MaterialSearchView searchView;
     SessionManager sessionManager;
@@ -84,6 +86,7 @@ public class InboxActivity extends AppCompatActivity
     UserService userService;
     ContactService contactService;
     MessageService messageService;
+    ProgressDialog pd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -158,6 +161,17 @@ public class InboxActivity extends AppCompatActivity
                                 return;
                             }
                             else{
+                                if(pd!=null){
+                                    pd.setTitle("Please Wait");
+                                    pd.setMessage("Add your new contact");
+                                    pd.show();
+                                }
+                                else{
+                                    pd=new ProgressDialog(InboxActivity.this);
+                                    pd.setTitle("Please Wait");
+                                    pd.setMessage("Add your new contact");
+                                    pd.show();
+                                }
                                 SessionManager sessionManager = SessionManager.with(InboxActivity.this);
                                 Call<listcontact> call = contactService.addcontact(sessionManager.getuserloggedin().getUserID(),textInputEditTextEmail.getText().toString(),textInputEditTextName.getText().toString(),textInputEditTextPhone.getText().toString());
                                 call.enqueue(new Callback<listcontact>() {
@@ -172,11 +186,17 @@ public class InboxActivity extends AppCompatActivity
                                                 dialog.dismiss();
                                             } else {
                                                 Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                                if(pd.isShowing()){
+                                                    pd.dismiss();
+                                                }
                                                 dialog.dismiss();
                                             }
                                         }
                                         else{
                                             Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                                            if(pd.isShowing()){
+                                                pd.dismiss();
+                                            }
                                             dialog.dismiss();
                                         }
                                     }
@@ -185,6 +205,9 @@ public class InboxActivity extends AppCompatActivity
                                     public void onFailure(Call<listcontact> call, Throwable t) {
                                         Log.e("USER ACTIVITY ERROR", t.getMessage());
                                         Toast.makeText(InboxActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+                                        if(pd.isShowing()){
+                                            pd.dismiss();
+                                        }
                                         dialog.dismiss();
                                     }
                                 });
@@ -387,11 +410,22 @@ public class InboxActivity extends AppCompatActivity
     }
 
     public void setEmailInbox(){
-        if(items!=null){
-            items.clear();
+        if(pd!=null){
+            pd.setTitle("Please Wait");
+            pd.setMessage("Loading email in Inbox");
+            pd.show();
         }
         else{
-            items=new ArrayList<>();
+            pd=new ProgressDialog(InboxActivity.this);
+            pd.setTitle("Please Wait");
+            pd.setMessage("Loading email in Inbox");
+            pd.show();
+        }
+        if(itemsinbox!=null){
+            itemsinbox.clear();
+        }
+        else{
+            itemsinbox=new ArrayList<>();
         }
         if(adapter_inbox!=null){
             adapter_inbox.notifyDataSetChanged();
@@ -425,16 +459,26 @@ public class InboxActivity extends AppCompatActivity
 //                            recyclerView_inbox.setAdapter(adapter_inbox);
 //                        }
 //                        else{
+                        Collections.sort(itemsinbox);
                             adapter_inbox=new AdapterListEmail(InboxActivity.this,itemsinbox);
                             recyclerView_inbox.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
                             recyclerView_inbox.setHasFixedSize(true);
                             recyclerView_inbox.setAdapter(adapter_inbox);
+                            if(pd.isShowing()){
+                                pd.dismiss();
+                            }
 //                        }
                     } else {
+                        if(pd.isShowing()){
+                            pd.dismiss();
+                        }
                         Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
                     }
                 }
                 else{
+                    if(pd.isShowing()){
+                        pd.dismiss();
+                    }
                     Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -442,6 +486,9 @@ public class InboxActivity extends AppCompatActivity
             @Override
             public void onFailure(Call<List<Message>> call, Throwable t) {
                 Log.e("USER ACTIVITY ERROR", t.getMessage());
+                if(pd.isShowing()){
+                    pd.dismiss();
+                }
                 Toast.makeText(InboxActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
             }
         });
@@ -537,6 +584,17 @@ public class InboxActivity extends AppCompatActivity
     }
 
     public void setEmailStarred(){
+        if(pd!=null){
+            pd.setTitle("Please Wait");
+            pd.setMessage("Loading email in Starred");
+            pd.show();
+        }
+        else{
+            pd=new ProgressDialog(InboxActivity.this);
+            pd.setTitle("Please Wait");
+            pd.setMessage("Loading email in Starred");
+            pd.show();
+        }
         if(itemsstarred!=null){
             itemsstarred.clear();
         }
@@ -589,6 +647,7 @@ public class InboxActivity extends AppCompatActivity
                         for(int i=0;i<itemsstarred.size();i++){
                             itemsstarred.get(i).setFolder(folder);
                         }
+                        Collections.sort(itemsstarred);
 //                        if(adapter_starred!=null){
 //                            adapter_starred.notifyDataSetChanged();
 //                            if(recyclerView_starred.getLayoutManager()==null) {
@@ -602,15 +661,24 @@ public class InboxActivity extends AppCompatActivity
                             recyclerView_starred.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
                             recyclerView_starred.setHasFixedSize(true);
                             recyclerView_starred.setAdapter(adapter_starred);
+                            if(pd.isShowing()){
+                                pd.dismiss();
+                            }
 //                        }
 //                        Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
 
                     } else {
+                        if(pd.isShowing()){
+                            pd.dismiss();
+                        }
                         Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
 
                     }
                 }
                 else{
+                    if(pd.isShowing()){
+                        pd.dismiss();
+                    }
                     Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -618,6 +686,9 @@ public class InboxActivity extends AppCompatActivity
             @Override
             public void onFailure(Call<List<Message>> call, Throwable t) {
                 Log.e("USER ACTIVITY ERROR", t.getMessage());
+                if(pd.isShowing()){
+                    pd.dismiss();
+                }
                 Toast.makeText(InboxActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
             }
         });
@@ -628,63 +699,144 @@ public class InboxActivity extends AppCompatActivity
     }
 
     public void setEmailSent(){
-        if(items!=null){
-            items.clear();
+        if(pd!=null){
+            pd.setTitle("Please Wait");
+            pd.setMessage("Loading email in Sent");
+            pd.show();
         }
         else{
-            items=new ArrayList<>();
+            pd=new ProgressDialog(InboxActivity.this);
+            pd.setTitle("Please Wait");
+            pd.setMessage("Loading email in Sent");
+            pd.show();
+        }
+        if(itemssent!=null){
+            itemssent.clear();
+        }
+        else{
+            itemssent=new ArrayList<>();
         }
         if(adapter_sent!=null){
             adapter_sent.notifyDataSetChanged();
         }
-        for(int i=0;i<6;i++){
-            if(i%2==1) {
-                listemail = new listemail();
-                listemail.setSendername(getResources().getString(R.string.user_pertama));
-                listemail.setSender(getResources().getString(R.string.user_email_pertama));
-                listemail.setReceiver(sessionManager.getuserloggedin().Email);
-                listemail.setSubject("Starred:"+getResources().getString(R.string.subject_pertama));
-                listemail.setSent_date(getResources().getString(R.string.date_pertama));
-                listemail.setMessage(getResources().getString(R.string.message_pertama));
-                listemail.setStarred(false);
-                listemail.setFolder("Sent");
-                items.add(listemail);
-                Log.e("listemailspam",getResources().getString(R.string.user_pertama));
+        SessionManager sessionManager = SessionManager.with(InboxActivity.this);
+        Call<List<Message>> call = messageService.getsent(sessionManager.getuserloggedin().getEmail());
+        call.enqueue(new Callback<List<Message>>() {
+            @Override
+            public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
+                if(response.isSuccessful()){
+                    Log.e("User","Masuk1");
+                    String status=response.body().get(0).getStatus();
+                    String statusmessage=response.body().get(0).getMessage();
+                    if (status.equals("true")) {
+                        itemssent = response.body();
+                        for(int i=0;i<itemssent.size();i++){
+                            itemssent.get(i).setFolder(folder);
+                        }
+//                        if(adapter_starred!=null){
+//                            adapter_starred.notifyDataSetChanged();
+//                            if(recyclerView_starred.getLayoutManager()==null) {
+//                                recyclerView_starred.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
+//                                recyclerView_starred.setHasFixedSize(true);
+//                            }
+//                            recyclerView_starred.setAdapter(adapter_starred);
+//                        }
+//                        else{
+                        Collections.sort(itemssent);
+                        adapter_sent=new AdapterListEmail(InboxActivity.this,itemssent);
+                        recyclerView_sent.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
+                        recyclerView_sent.setHasFixedSize(true);
+                        recyclerView_sent.setAdapter(adapter_sent);
+                        if(pd.isShowing()){
+                            pd.dismiss();
+                        }
+//                        }
+//                        Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+
+                    } else {
+                        if(pd.isShowing()){
+                            pd.dismiss();
+                        }
+                        Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+                else{
+                    if(pd.isShowing()){
+                        pd.dismiss();
+                    }
+                    Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                }
             }
-            else{
-                listemail = new listemail();
-                listemail.setSendername(getResources().getString(R.string.user_kedua));
-                listemail.setSender(getResources().getString(R.string.user_email_kedua));
-                listemail.setReceiver(sessionManager.getuserloggedin().Email);
-                listemail.setSubject("Starred:"+getResources().getString(R.string.subject_kedua));
-                listemail.setSent_date(getResources().getString(R.string.date_kedua));
-                listemail.setMessage(getResources().getString(R.string.message_kedua));
-                listemail.setStarred(false);
-                listemail.setFolder("Sent");
-                items.add(listemail);
-                Log.e("listemailspam",getResources().getString(R.string.user_kedua));
+
+            @Override
+            public void onFailure(Call<List<Message>> call, Throwable t) {
+                Log.e("USER ACTIVITY ERROR", t.getMessage());
+                if(pd.isShowing()){
+                    pd.dismiss();
+                }
+                Toast.makeText(InboxActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
             }
-        }
-        if(adapter_sent!=null){
-            adapter_sent.notifyDataSetChanged();
-            if(recyclerView_sent.getLayoutManager()==null) {
-                recyclerView_sent.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
-                recyclerView_sent.setHasFixedSize(true);
-            }
-            recyclerView_sent.setAdapter(adapter_sent);
-        }
-        else{
-            adapter_sent=new AdapterListEmailTes(InboxActivity.this,items);
-            recyclerView_sent.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
-            recyclerView_sent.setHasFixedSize(true);
-            recyclerView_sent.setAdapter(adapter_sent);
-        }
+        });
+//        for(int i=0;i<6;i++){
+//            if(i%2==1) {
+//                listemail = new listemail();
+//                listemail.setSendername(getResources().getString(R.string.user_pertama));
+//                listemail.setSender(getResources().getString(R.string.user_email_pertama));
+//                listemail.setReceiver(sessionManager.getuserloggedin().Email);
+//                listemail.setSubject("Starred:"+getResources().getString(R.string.subject_pertama));
+//                listemail.setSent_date(getResources().getString(R.string.date_pertama));
+//                listemail.setMessage(getResources().getString(R.string.message_pertama));
+//                listemail.setStarred(false);
+//                listemail.setFolder("Sent");
+//                items.add(listemail);
+//                Log.e("listemailspam",getResources().getString(R.string.user_pertama));
+//            }
+//            else{
+//                listemail = new listemail();
+//                listemail.setSendername(getResources().getString(R.string.user_kedua));
+//                listemail.setSender(getResources().getString(R.string.user_email_kedua));
+//                listemail.setReceiver(sessionManager.getuserloggedin().Email);
+//                listemail.setSubject("Starred:"+getResources().getString(R.string.subject_kedua));
+//                listemail.setSent_date(getResources().getString(R.string.date_kedua));
+//                listemail.setMessage(getResources().getString(R.string.message_kedua));
+//                listemail.setStarred(false);
+//                listemail.setFolder("Sent");
+//                items.add(listemail);
+//                Log.e("listemailspam",getResources().getString(R.string.user_kedua));
+//            }
+//        }
+//        if(adapter_sent!=null){
+//            adapter_sent.notifyDataSetChanged();
+//            if(recyclerView_sent.getLayoutManager()==null) {
+//                recyclerView_sent.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
+//                recyclerView_sent.setHasFixedSize(true);
+//            }
+//            recyclerView_sent.setAdapter(adapter_sent);
+//        }
+//        else{
+//            adapter_sent=new AdapterListEmailTes(InboxActivity.this,items);
+//            recyclerView_sent.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
+//            recyclerView_sent.setHasFixedSize(true);
+//            recyclerView_sent.setAdapter(adapter_sent);
+//        }
         if(swipesent.isRefreshing()){
             swipesent.setRefreshing(false);
         }
     }
 
     public void setEmailTrash(){
+        if(pd!=null){
+            pd.setTitle("Please Wait");
+            pd.setMessage("Loading email in Trash");
+            pd.show();
+        }
+        else{
+            pd=new ProgressDialog(InboxActivity.this);
+            pd.setTitle("Please Wait");
+            pd.setMessage("Loading email in Trash");
+            pd.show();
+        }
         if(itemstrash!=null){
             itemstrash.clear();
         }
@@ -718,19 +870,29 @@ public class InboxActivity extends AppCompatActivity
 //                            recyclerView_trash.setAdapter(adapter_trash);
 //                        }
 //                        else{
+                        Collections.sort(itemstrash);
                             adapter_trash=new AdapterListEmail(InboxActivity.this,itemstrash);
                             recyclerView_trash.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
                             recyclerView_trash.setHasFixedSize(true);
                             recyclerView_trash.setAdapter(adapter_trash);
+                            if(pd.isShowing()){
+                                pd.dismiss();
+                            }
 //                        }
 //                        Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
 
                     } else {
+                        if(pd.isShowing()){
+                            pd.dismiss();
+                        }
                         Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
 
                     }
                 }
                 else{
+                    if(pd.isShowing()){
+                        pd.dismiss();
+                    }
                     Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -738,6 +900,9 @@ public class InboxActivity extends AppCompatActivity
             @Override
             public void onFailure(Call<List<Message>> call, Throwable t) {
                 Log.e("USER ACTIVITY ERROR", t.getMessage());
+                if(pd.isShowing()){
+                    pd.dismiss();
+                }
                 Toast.makeText(InboxActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
             }
         });
@@ -776,6 +941,17 @@ public class InboxActivity extends AppCompatActivity
     }
 
     public void setEmailDraft(){
+        if(pd!=null){
+            pd.setTitle("Please Wait");
+            pd.setMessage("Loading email in Draft");
+            pd.show();
+        }
+        else{
+            pd=new ProgressDialog(InboxActivity.this);
+            pd.setTitle("Please Wait");
+            pd.setMessage("Loading email in Draft");
+            pd.show();
+        }
         if(itemsdraft!=null){
             itemsdraft.clear();
         }
@@ -811,19 +987,29 @@ public class InboxActivity extends AppCompatActivity
 //                            recyclerView_draft.setAdapter(adapter_draft);
 //                        }
 //                        else{
+                        Collections.sort(itemsdraft);
                             adapter_draft=new AdapterListEmail(InboxActivity.this,itemsdraft);
                             recyclerView_draft.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
                             recyclerView_draft.setHasFixedSize(true);
                             recyclerView_draft.setAdapter(adapter_draft);
+                            if(pd.isShowing()){
+                                pd.dismiss();
+                            }
 //                        }
 //                        Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
 
                     } else {
+                        if(pd.isShowing()){
+                            pd.dismiss();
+                        }
                         Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
 
                     }
                 }
                 else{
+                    if(pd.isShowing()){
+                        pd.dismiss();
+                    }
                     Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -831,6 +1017,9 @@ public class InboxActivity extends AppCompatActivity
             @Override
             public void onFailure(Call<List<Message>> call, Throwable t) {
                 Log.e("USER ACTIVITY ERROR", t.getMessage());
+                if(pd.isShowing()){
+                    pd.dismiss();
+                }
                 Toast.makeText(InboxActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
             }
         });
@@ -870,6 +1059,17 @@ public class InboxActivity extends AppCompatActivity
     }
 
     public void setContact(){
+        if(pd!=null){
+            pd.setTitle("Please Wait");
+            pd.setMessage("Loading contact");
+            pd.show();
+        }
+        else{
+            pd=new ProgressDialog(InboxActivity.this);
+            pd.setTitle("Please Wait");
+            pd.setMessage("Loading contact");
+            pd.show();
+        }
         if(itemscontact!=null){
             itemscontact.clear();
         }
@@ -929,18 +1129,26 @@ public class InboxActivity extends AppCompatActivity
                         recyclerView_contact.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
                         recyclerView_contact.setHasFixedSize(true);
                         recyclerView_contact.setAdapter(adapter_contact);
-//
+                        if(pd.isShowing()){
+                            pd.dismiss();
+                        }
                         if(swipecontact.isRefreshing()){
                             swipecontact.setRefreshing(false);
                         }
 //                        Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
 
                     } else {
+                        if(pd.isShowing()){
+                            pd.dismiss();
+                        }
                         Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
 
                     }
                 }
                 else{
+                    if(pd.isShowing()){
+                        pd.dismiss();
+                    }
                     Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -948,6 +1156,9 @@ public class InboxActivity extends AppCompatActivity
             @Override
             public void onFailure(Call<List<listcontact>> call, Throwable t) {
                 Log.e("USER ACTIVITY ERROR", t.getMessage());
+                if(pd.isShowing()){
+                    pd.dismiss();
+                }
                 Toast.makeText(InboxActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
             }
         });

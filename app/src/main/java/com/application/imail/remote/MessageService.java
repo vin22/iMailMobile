@@ -42,6 +42,18 @@ public interface MessageService {
     Call<List<Message>> read(@Field("Email") String email, @Field("Password") String password);
 
     @FormUrlEncoded
+    @POST("deleteinbox/")
+    Call<Message> deleteinbox(@Field("MessageID") int MessageID);
+
+    @FormUrlEncoded
+    @POST("getsent/")
+    Call<List<Message>> getsent(@Field("Sender") String sender);
+
+    @FormUrlEncoded
+    @POST("deletesent/")
+    Call<Message> deletesent(@Field("MessageID") int MessageID);
+
+    @FormUrlEncoded
     @POST("gettrash/")
     Call<List<Message>> gettrash(@Field("Sender") String sender);
 

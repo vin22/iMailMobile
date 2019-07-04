@@ -65,6 +65,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
         messageService= APIUtils.getMessageService();
         contactService= APIUtils.getContactService();
         setEmail();
+	    getContacts();
     }
 
     private void initToolbar() {
@@ -312,7 +313,6 @@ public class ComposeMessageActivity extends AppCompatActivity {
 ////        chipsInput.addChip("tes2",  "info");
 //        // pass the ContactChip list
 //        chipsInput.setFilterableList(contactList);
-        getContacts();
     }
 
     private void initListener(){
@@ -321,18 +321,20 @@ public class ComposeMessageActivity extends AppCompatActivity {
 
     public void setEmail(){
         sessionManager=SessionManager.with(this);
-        spinnerfrom.setItems(sessionManager.getuserloggedin().Email);
+        spinnerfrom.setItems(sessionManager.getuserloggedin().getEmail());
     }
 
     public void getContacts(){
-        Call<List<listcontact>> call = contactService.getcontact(sessionManager.getuserloggedin().getUserID());
+        Call<List<listcontact>> call = contactService.getcontacts(sessionManager.getuserloggedin().getUserID());
         call.enqueue(new Callback<List<listcontact>>() {
             @Override
             public void onResponse(Call<List<listcontact>> call, Response<List<listcontact>> response) {
                 if(response.isSuccessful()){
                     Log.e("User","Masuk1");
+                    Log.e("User",String.valueOf(sessionManager.getuserloggedin().getUserID()));
                     String status=response.body().get(0).getStatus();
                     String statusmessage=response.body().get(0).getMessage();
+                    Log.e("User",status);
                     if (status.equals("true")) {
                         if(itemscontact!=null){
                             itemscontact.clear();
@@ -341,7 +343,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
                             itemscontact=new ArrayList<>();
                         }
                         itemscontact = response.body();
-                        Log.e("User",String.valueOf(itemscontact));
+                        Log.e("User",String.valueOf(itemscontact.size()));
                         chips_to.clearFilteredChips();
                         chips_bcc.clearFilteredChips();
                         chips_cc.clearFilteredChips();
@@ -350,7 +352,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
                         chips_bcc.setFilterableChipList(itemscontact);
                         chips_cc.setFilterableChipList(itemscontact);
                     } else {
-                        Toast.makeText(ComposeMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(ComposeMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
 
                     }
                 }

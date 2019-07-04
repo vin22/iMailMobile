@@ -1,7 +1,10 @@
 package com.application.imail.adapter;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.application.imail.R;
+import com.application.imail.config.SessionManager;
 import com.application.imail.model.Message;
 import com.application.imail.model.listemail;
 import com.application.imail.remote.APIUtils;
@@ -27,6 +31,7 @@ import com.bumptech.glide.Glide;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import retrofit2.Call;
@@ -40,7 +45,7 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
     MessageService messageService = APIUtils.getMessageService();
     private Context ctx;
     private OnItemClickListener mOnItemClickListener;
-
+    ProgressDialog pd;
     public interface OnItemClickListener {
         void onItemClick(View view, Message obj, int position);
     }
@@ -57,7 +62,7 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
         public ImageView image;
-        public ImageButton starred;
+        public ImageButton starred, delete;
         public TextView subject, message, nama, date;
         public View lyt_parent;
         public MaterialRippleLayout layout;
@@ -69,6 +74,7 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
             date = v.findViewById(R.id.date);
             image =  v.findViewById(R.id.image);
             starred =  v.findViewById(R.id.starred);
+            delete =  v.findViewById(R.id.delete);
             nama = (TextView) v.findViewById(R.id.nama);
             lyt_parent = (View) v.findViewById(R.id.lyt_parent);
             layout = v.findViewById(R.id.layout_email);
@@ -89,7 +95,7 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
         final Message p = itemsfilter.get(position);
         if (holder instanceof OriginalViewHolder) {
             final OriginalViewHolder view = (OriginalViewHolder) holder;
-            SimpleDateFormat formatapi=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+            SimpleDateFormat formatapi=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             SimpleDateFormat format=new SimpleDateFormat("dd MMM yy");
 
             if(p.getFolder().equals("Draft")) {
@@ -132,7 +138,19 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
 //                Log.e("Date","Masuk");
 //            }
             try {
-                view.date.setText(format.format(formatapi.parse(p.getDate())));
+//                if(p.getFolder().equals("Inbox")){
+//                    formatapi=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+//                }
+                Calendar cal=Calendar.getInstance();
+                if((cal.getTime().getTime()-formatapi.parse(p.getDate().substring(0,19)).getTime())<=(1000*60*60)){
+                    view.date.setText(String.valueOf((cal.getTime().getTime()-formatapi.parse(p.getDate().substring(0,19)).getTime())/(1000*60*60)+1)+" hour ago");
+                }
+                else if((cal.getTime().getTime()-formatapi.parse(p.getDate().substring(0,19)).getTime())<(1000*60*60*24)){
+                    view.date.setText(String.valueOf((cal.getTime().getTime()-formatapi.parse(p.getDate().substring(0,19)).getTime())/(1000*60*60)+1)+" hours ago");
+                }
+                else{
+                    view.date.setText(format.format(formatapi.parse(p.getDate().substring(0,19))));
+                }
             }
             catch (ParseException e){
                 e.printStackTrace();
@@ -161,6 +179,9 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
             if(p.isTrash()){
                 view.starred.setVisibility(View.GONE);
             }
+            if(p.getFolder().equals("Starred")){
+                view.delete.setVisibility(View.GONE);
+            }
             if(p.isStarred()){
                 Glide.with(ctx).load(R.drawable.ic_star).into(view.starred);
                 Log.e("image","Star");
@@ -181,6 +202,438 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
                     else{
                         p.setStarred(false);
                         Glide.with(ctx).load(R.drawable.ic_star_border).into(view.starred);
+                    }
+                }
+            });
+            view.delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(p.getFolder().equals("Inbox")){
+                        AlertDialog.Builder dialogs=new AlertDialog.Builder(ctx).setTitle("Delete Email in Inbox").setMessage("Are you sure to delete this email?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(final DialogInterface dialog, int which) {
+                                if(pd!=null){
+                                    pd.setTitle("Please Wait");
+                                    pd.setMessage("Delete email in Inbox");
+                                    pd.show();
+                                }
+                                else{
+                                    pd=new ProgressDialog(ctx);
+                                    pd.setTitle("Please Wait");
+                                    pd.setMessage("Delete email in Inbox");
+                                    pd.show();
+                                }
+                                Call<Message> call = messageService.deleteinbox(p.getMessageID());
+                                call.enqueue(new Callback<Message>() {
+                                    @Override
+                                    public void onResponse(Call<Message> call, Response<Message> response) {
+                                        if(response.isSuccessful()){
+                                            String status=response.body().getStatus();
+                                            String statusmessage=response.body().getMessage();
+                                            if (status.equals("true")) {
+                                                Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+                                                dialog.dismiss();
+                                                SessionManager sessionManager = SessionManager.with(ctx);
+                                                Call<List<Message>> call1 = messageService.read(sessionManager.getuserloggedin().getEmail(), sessionManager.getuserloggedin().getPassword());
+                                                call1.enqueue(new Callback<List<Message>>() {
+                                                    @Override
+                                                    public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
+                                                        if(response.isSuccessful()){
+                                                            Log.e("User","Masuk1");
+                                                            String status=response.body().get(0).getStatus();
+                                                            String statusmessage=response.body().get(0).getMessage();
+                                                            if (status.equals("true")) {
+                                                                items= response.body();
+                                                                itemsfilter = response.body();
+                                                                for(int i=0;i<items.size();i++){
+                                                                    items.get(i).setFolder("Inbox");
+                                                                    itemsfilter.get(i).setFolder("Inbox");
+                                                                }
+                                                                notifyDataSetChanged();
+                                                                if(pd.isShowing()){
+                                                                    pd.dismiss();
+                                                                }
+
+                                                            } else {
+                                                                if(pd.isShowing()){
+                                                                    pd.dismiss();
+                                                                }
+                                                                Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+                                                        else{
+                                                            if(pd.isShowing()){
+                                                                pd.dismiss();
+                                                            }
+                                                            Toast.makeText(ctx, "Response failed", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(Call<List<Message>> call, Throwable t) {
+                                                        Log.e("USER ACTIVITY ERROR", t.getMessage());
+                                                        if(pd.isShowing()){
+                                                            pd.dismiss();
+                                                        }
+                                                        Toast.makeText(ctx, "Response failure", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                            } else {
+                                                if(pd.isShowing()){
+                                                    pd.dismiss();
+                                                }
+                                                Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+                                                dialog.dismiss();
+                                            }
+                                        }
+                                        else{
+                                            if(pd.isShowing()){
+                                                pd.dismiss();
+                                            }
+                                            Toast.makeText(ctx, "Response failed", Toast.LENGTH_SHORT).show();
+                                            dialog.dismiss();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<Message> call, Throwable t) {
+                                        if(pd.isShowing()){
+                                            pd.dismiss();
+                                        }
+                                        Toast.makeText(ctx, "Response failure", Toast.LENGTH_SHORT).show();
+                                        dialog.dismiss();
+                                    }
+                                });
+                                dialog.dismiss();
+                            }
+                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        dialogs.show();
+                    }
+                    else if(p.getFolder().equals("Sent")){
+                        AlertDialog.Builder dialogs=new AlertDialog.Builder(ctx).setTitle("Delete Email in Sent").setMessage("Are you sure to delete this email?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(final DialogInterface dialog, int which) {
+                                if(pd!=null){
+                                    pd.setTitle("Please Wait");
+                                    pd.setMessage("Delete email in Sent");
+                                    pd.show();
+                                }
+                                else{
+                                    pd=new ProgressDialog(ctx);
+                                    pd.setTitle("Please Wait");
+                                    pd.setMessage("Delete email in Sent");
+                                    pd.show();
+                                }
+                                Call<Message> call = messageService.deletesent(p.getMessageID());
+                                call.enqueue(new Callback<Message>() {
+                                    @Override
+                                    public void onResponse(Call<Message> call, Response<Message> response) {
+                                        if(response.isSuccessful()){
+                                            String status=response.body().getStatus();
+                                            String statusmessage=response.body().getMessage();
+                                            if (status.equals("true")) {
+                                                Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+                                                dialog.dismiss();
+                                                SessionManager sessionManager = SessionManager.with(ctx);
+                                                Call<List<Message>> call1 = messageService.getsent(sessionManager.getuserloggedin().getEmail());
+                                                call1.enqueue(new Callback<List<Message>>() {
+                                                    @Override
+                                                    public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
+                                                        if(response.isSuccessful()){
+                                                            Log.e("User","Masuk1");
+                                                            String status=response.body().get(0).getStatus();
+                                                            String statusmessage=response.body().get(0).getMessage();
+                                                            if (status.equals("true")) {
+                                                                items = response.body();
+                                                                itemsfilter = response.body();
+                                                                for(int i=0;i<items.size();i++){
+                                                                    items.get(i).setFolder("Sent");
+                                                                    itemsfilter.get(i).setFolder("Sent");
+                                                                }
+                                                                notifyDataSetChanged();
+                                                                if(pd.isShowing()){
+                                                                    pd.dismiss();
+                                                                }
+
+                                                            } else {
+                                                                if(pd.isShowing()){
+                                                                    pd.dismiss();
+                                                                }
+                                                                Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+                                                        else{
+                                                            if(pd.isShowing()){
+                                                                pd.dismiss();
+                                                            }
+                                                            Toast.makeText(ctx, "Response failed", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(Call<List<Message>> call, Throwable t) {
+                                                        Log.e("USER ACTIVITY ERROR", t.getMessage());
+                                                        if(pd.isShowing()){
+                                                            pd.dismiss();
+                                                        }
+                                                        Toast.makeText(ctx, "Response failure", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+
+                                            } else {
+                                                if(pd.isShowing()){
+                                                    pd.dismiss();
+                                                }
+                                                Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+                                                dialog.dismiss();
+                                            }
+                                        }
+                                        else{
+                                            if(pd.isShowing()){
+                                                pd.dismiss();
+                                            }
+                                            Toast.makeText(ctx, "Response failed", Toast.LENGTH_SHORT).show();
+                                            dialog.dismiss();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<Message> call, Throwable t) {
+                                        if(pd.isShowing()){
+                                            pd.dismiss();
+                                        }
+                                        Toast.makeText(ctx, "Response failure", Toast.LENGTH_SHORT).show();
+                                        dialog.dismiss();
+                                    }
+                                });
+                                dialog.dismiss();
+                            }
+                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        dialogs.show();
+                    }
+//                    else if(p.getFolder().equals("Starred")){
+//
+//                    }
+                    else if(p.getFolder().equals("Draft")){
+                        AlertDialog.Builder dialogs=new AlertDialog.Builder(ctx).setTitle("Delete Email in Draft").setMessage("Are you sure to delete this email?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(final DialogInterface dialog, int which) {
+                                if(pd!=null){
+                                    pd.setTitle("Please Wait");
+                                    pd.setMessage("Delete email in Draft");
+                                    pd.show();
+                                }
+                                else{
+                                    pd=new ProgressDialog(ctx);
+                                    pd.setTitle("Please Wait");
+                                    pd.setMessage("Delete email in Draft");
+                                    pd.show();
+                                }
+                                Call<Message> call = messageService.deletedraft(p.getMessageID());
+                                call.enqueue(new Callback<Message>() {
+                                    @Override
+                                    public void onResponse(Call<Message> call, Response<Message> response) {
+                                        if(response.isSuccessful()){
+                                            String status=response.body().getStatus();
+                                            String statusmessage=response.body().getMessage();
+                                            if (status.equals("true")) {
+                                                Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+                                                dialog.dismiss();
+                                                SessionManager sessionManager = SessionManager.with(ctx);
+                                                Call<List<Message>> call1 = messageService.getdraft(sessionManager.getuserloggedin().getEmail());
+                                                call1.enqueue(new Callback<List<Message>>() {
+                                                    @Override
+                                                    public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
+                                                        if(response.isSuccessful()){
+                                                            Log.e("User","Masuk1");
+                                                            String status=response.body().get(0).getStatus();
+                                                            String statusmessage=response.body().get(0).getMessage();
+                                                            if (status.equals("true")) {
+                                                                items = response.body();
+                                                                itemsfilter = response.body();
+                                                                for(int i=0;i<items.size();i++) {
+                                                                    items.get(i).setFolder("Draft");
+                                                                }
+                                                                notifyDataSetChanged();
+                                                                if(pd.isShowing()){
+                                                                    pd.dismiss();
+                                                                }
+
+                                                            } else {
+                                                                if(pd.isShowing()){
+                                                                    pd.dismiss();
+                                                                }
+                                                                Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+                                                        else{
+                                                            if(pd.isShowing()){
+                                                                pd.dismiss();
+                                                            }
+                                                            Toast.makeText(ctx, "Response failed", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(Call<List<Message>> call, Throwable t) {
+                                                        Log.e("USER ACTIVITY ERROR", t.getMessage());
+                                                        if(pd.isShowing()){
+                                                            pd.dismiss();
+                                                        }
+                                                        Toast.makeText(ctx, "Response failure", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                            } else {
+                                                if(pd.isShowing()){
+                                                    pd.dismiss();
+                                                }
+                                                Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+                                                dialog.dismiss();
+                                            }
+                                        }
+                                        else{
+                                            if(pd.isShowing()){
+                                                pd.dismiss();
+                                            }
+                                            Toast.makeText(ctx, "Response failed", Toast.LENGTH_SHORT).show();
+                                            dialog.dismiss();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<Message> call, Throwable t) {
+                                        if(pd.isShowing()){
+                                            pd.dismiss();
+                                        }
+                                        Toast.makeText(ctx, "Response failure", Toast.LENGTH_SHORT).show();
+                                        dialog.dismiss();
+                                    }
+                                });
+                                dialog.dismiss();
+                            }
+                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        dialogs.show();
+                    }
+                    else if(p.getFolder().equals("Trash")){
+                        AlertDialog.Builder dialogs=new AlertDialog.Builder(ctx).setTitle("Delete Email in Trash").setMessage("Are you sure to delete this email?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(final DialogInterface dialog, int which) {
+                                if(pd!=null){
+                                    pd.setTitle("Please Wait");
+                                    pd.setMessage("Delete email in Trash");
+                                    pd.show();
+                                }
+                                else{
+                                    pd=new ProgressDialog(ctx);
+                                    pd.setTitle("Please Wait");
+                                    pd.setMessage("Delete email in Trash");
+                                    pd.show();
+                                }
+                                Call<Message> call = messageService.deletetrash(p.getMessageID());
+                                call.enqueue(new Callback<Message>() {
+                                    @Override
+                                    public void onResponse(Call<Message> call, Response<Message> response) {
+                                        if(response.isSuccessful()){
+                                            String status=response.body().getStatus();
+                                            String statusmessage=response.body().getMessage();
+                                            if (status.equals("true")) {
+                                                Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+                                                dialog.dismiss();
+                                                SessionManager sessionManager = SessionManager.with(ctx);
+                                                Call<List<Message>> call1 = messageService.gettrash(sessionManager.getuserloggedin().getEmail());
+                                                call1.enqueue(new Callback<List<Message>>() {
+                                                    @Override
+                                                    public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
+                                                        if(response.isSuccessful()){
+                                                            Log.e("User","Masuk1");
+                                                            String status=response.body().get(0).getStatus();
+                                                            String statusmessage=response.body().get(0).getMessage();
+                                                            if (status.equals("true")) {
+
+                                                                items = response.body();
+                                                                itemsfilter = response.body();
+                                                                for(int i=0;i<items.size();i++){
+                                                                    items.get(i).setFolder("Trash");
+                                                                    itemsfilter.get(i).setFolder("Trash");
+                                                                }
+                                                                notifyDataSetChanged();
+                                                                if(pd.isShowing()){
+                                                                    pd.dismiss();
+                                                                }
+                                                            } else {
+                                                                if(pd.isShowing()){
+                                                                    pd.dismiss();
+                                                                }
+                                                                Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+                                                        else{
+                                                            if(pd.isShowing()){
+                                                                pd.dismiss();
+                                                            }
+                                                            Toast.makeText(ctx, "Response failed", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(Call<List<Message>> call, Throwable t) {
+                                                        Log.e("USER ACTIVITY ERROR", t.getMessage());
+                                                        if(pd.isShowing()){
+                                                            pd.dismiss();
+                                                        }
+                                                        Toast.makeText(ctx, "Response failure", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                            } else {
+                                                if(pd.isShowing()){
+                                                    pd.dismiss();
+                                                }
+                                                Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+                                                dialog.dismiss();
+                                            }
+                                        }
+                                        else{
+                                            if(pd.isShowing()){
+                                                pd.dismiss();
+                                            }
+                                            Toast.makeText(ctx, "Response failed", Toast.LENGTH_SHORT).show();
+                                            dialog.dismiss();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<Message> call, Throwable t) {
+                                        if(pd.isShowing()){
+                                            pd.dismiss();
+                                        }
+                                        Toast.makeText(ctx, "Response failure", Toast.LENGTH_SHORT).show();
+                                        dialog.dismiss();
+                                    }
+                                });
+                                dialog.dismiss();
+                            }
+                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        dialogs.show();
                     }
                 }
             });

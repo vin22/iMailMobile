@@ -51,6 +51,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     ProgressDialog progress;
     TextView loginnow;
     InputValidation inputValidation;
+    ProgressDialog pd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -176,6 +177,17 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 //                    emptyInputEditText();
 //                }
                 else {
+                    if(pd!=null){
+                        pd.setTitle("Please Wait");
+                        pd.setMessage("Register your email");
+                        pd.show();
+                    }
+                    else{
+                        pd=new ProgressDialog(RegisterActivity.this);
+                        pd.setTitle("Please Wait");
+                        pd.setMessage("Register your email");
+                        pd.show();
+                    }
                     Call<User> call = userService.register(textInputEditTextEmail.getText().toString()+domain.getText().toString(), textInputEditTextPassword.getText().toString(), textInputEditTextFullName.getText().toString(), itemsdomain.get(domain.getSelectedIndex()).getDomainid());
                     call.enqueue(new Callback<User>() {
                         @Override
@@ -188,7 +200,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                 String statusmessage = response.body().getMessage();
                                 if (status.equals("true")) {
                                     emptyInputEditText();
+                                    if(pd.isShowing()){
+                                        pd.dismiss();
+                                    }
                                     Toast.makeText(RegisterActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+
 //                                user.setEmail(response.body().getEmail());
 //                                user.setUsername(response.body().getName());
 //                                user.setName(response.body().getName());
@@ -201,19 +217,31 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 //                                finish();
 
                                 } else {
+                                    if(pd.isShowing()){
+                                        pd.dismiss();
+                                    }
                                     Toast.makeText(RegisterActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+
 
                                 }
                             }
                             else{
+                                if(pd.isShowing()){
+                                    pd.dismiss();
+                                }
                                 Toast.makeText(RegisterActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+
                             }
                         }
 
                         @Override
                         public void onFailure(Call<User> call, Throwable t) {
                             Log.e("USER ACTIVITY ERROR", t.getMessage());
+                            if(pd.isShowing()){
+                                pd.dismiss();
+                            }
                             Toast.makeText(RegisterActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+
                         }
                     });
 //                    if (textInputEditTextUsername.getText().toString().equals("vincent@email.com") || textInputEditTextUsername.getText().toString().equals("vin_22") && textInputEditTextPassword.getText().toString().equals("vincent")) {

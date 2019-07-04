@@ -44,6 +44,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
     private AppCompatButton appCompatButtonChange;
     ProgressDialog progress;
     InputValidation inputValidation;
+    ProgressDialog pd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,6 +122,17 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
 //                    emptyInputEditText();
 //                }
                 else {
+                    if(pd!=null){
+                        pd.setTitle("Please Wait");
+                        pd.setMessage("Changing your password");
+                        pd.show();
+                    }
+                    else{
+                        pd=new ProgressDialog(ChangePasswordActivity.this);
+                        pd.setTitle("Please Wait");
+                        pd.setMessage("Changing your password");
+                        pd.show();
+                    }
                     SessionManager sessionManager = SessionManager.with(ChangePasswordActivity.this);
                     Call<User> call = userService.changepassword(sessionManager.getuserloggedin().getEmail(), textInputEditTextOldPassword.getText().toString(),textInputEditTextNewPassword.getText().toString());
                     call.enqueue(new Callback<User>() {
@@ -146,11 +158,17 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
     //                                finish();
 
                                 } else {
+                                    if(pd.isShowing()){
+                                        pd.dismiss();
+                                    }
                                     Toast.makeText(ChangePasswordActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
 
                                 }
                             }
                             else{
+                                if(pd.isShowing()){
+                                    pd.dismiss();
+                                }
                                 Toast.makeText(ChangePasswordActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -158,6 +176,9 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
                         @Override
                         public void onFailure(Call<User> call, Throwable t) {
                             Log.e("USER ACTIVITY ERROR", t.getMessage());
+                            if(pd.isShowing()){
+                                pd.dismiss();
+                            }
                             Toast.makeText(ChangePasswordActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
                         }
                     });

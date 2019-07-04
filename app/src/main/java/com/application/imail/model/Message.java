@@ -2,7 +2,7 @@ package com.application.imail.model;
 
 import java.util.Date;
 
-public class Message {
+public class Message implements Comparable<Message>{
     public int MessageID;
     public String Sendername, Sender, Receiver, Reply, Forward, Subject, Body, Attachment, Cc, Bcc, Folder, Date;
     public boolean Dlt, isRead, isTrash, Starred;
@@ -161,6 +161,11 @@ public class Message {
 
     public void setTrash(boolean trash) {
         isTrash = trash;
+    }
+
+    @Override
+    public int compareTo(Message message) {
+        return message.getDate().compareTo(getDate());
     }
 }
 
