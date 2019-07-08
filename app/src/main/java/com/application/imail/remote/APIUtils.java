@@ -6,7 +6,7 @@ public class APIUtils {
 
     }
 
-    public static final String API_URL = "http://192.168.43.234/WebApi/api/";
+    public static final String API_URL = "http://192.168.43.234/iMail/api/";
     //192.168.100.5
     //192.168.43.38
     public static UserService getUserService(){
