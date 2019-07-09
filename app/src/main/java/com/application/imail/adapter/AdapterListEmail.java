@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -98,6 +99,9 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
             SimpleDateFormat formatapi=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             SimpleDateFormat format=new SimpleDateFormat("dd MMM yy");
 
+            if(!p.isRead()){
+                view.nama.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+            }
             if(p.getFolder().equals("Draft")) {
                 try{
                     if(p.getSendername().equals("null")){
@@ -641,6 +645,7 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     ArrayList<String>itemsemail=new ArrayList<>();
                     itemsemail.add(view.subject.getText().toString());
                     itemsemail.add(String.valueOf(items.get(position).isStarred()));
@@ -671,6 +676,47 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
                     intent.putStringArrayListExtra("email",itemsemail);
 
                     ((Activity)ctx).startActivityForResult(intent, 200);
+
+                    Call<Message> call1 = messageService.readinbox(p.getMessageID());
+                    call1.enqueue(new Callback<Message>() {
+                        @Override
+                        public void onResponse(Call<Message> call, Response<Message> response) {
+                            if (response.isSuccessful()) {
+                                Log.e("User", "Masuk1");
+                                String status = response.body().getStatus();
+                                String statusmessage = response.body().getMessage();
+                                if (status.equals("true")) {
+
+//                                    items = response.body();
+//                                    itemsfilter = response.body();
+//                                    for (int i = 0; i < items.size(); i++) {
+//                                        items.get(i).setFolder("Trash");
+//                                        itemsfilter.get(i).setFolder("Trash");
+//                                    }
+//                                    notifyDataSetChanged();
+//                                    if (pd.isShowing()) {
+//                                        pd.dismiss();
+//                                    }
+                                } else {
+//                                    if (pd.isShowing()) {
+//                                        pd.dismiss();
+//                                    }
+//                                    Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(ctx, "Response failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Message> call, Throwable t) {
+                            Log.e("USER ACTIVITY ERROR", t.getMessage());
+//                            if (pd.isShowing()) {
+//                                pd.dismiss();
+//                            }
+                            Toast.makeText(ctx, "Response failure", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             });
         }
