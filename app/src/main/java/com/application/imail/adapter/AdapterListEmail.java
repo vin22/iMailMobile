@@ -101,6 +101,11 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             if(!p.isRead()){
                 view.nama.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+                view.subject.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+            }
+            else{
+                view.nama.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
+                view.subject.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
             }
             if(p.getFolder().equals("Draft")) {
                 try{
