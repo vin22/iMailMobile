@@ -502,8 +502,13 @@ public class ComposeMessageActivity extends AppCompatActivity {
     public void sendEmail(){
         String receiver="", cc="", bcc="";
         boolean select=false;
+        boolean emailvalid=true;
         for (int i = 0; i < chips_to.getSelectedChips().size(); i++) {
             Log.e("Masuk", String.valueOf(chips_to.getSelectedChips()));
+            if(chips_to.getSelectedChipByPosition(i).equals(sessionManager.getuserloggedin().getEmail())){
+                emailvalid=false;
+                break;
+            }
             if (!select) {
                 receiver += String.valueOf(chips_to.getSelectedChipByPosition(i));
                 Log.e("Masuk", receiver);
@@ -540,38 +545,41 @@ public class ComposeMessageActivity extends AppCompatActivity {
                 Log.e("Masuk", cc);
             }
         }
-
-        Call<Message> call = messageService.send(sessionManager.getuserloggedin().getUserID(),spinnerfrom.getText().toString(),sessionManager.getuserloggedin().getName(),receiver,subject.getText().toString(),
-                message.getText().toString(),cc,bcc);
-        call.enqueue(new Callback<Message>() {
-            @Override
-            public void onResponse(Call<Message> call, Response<Message> response) {
-                if(response.isSuccessful()){
-                    String status=response.body().getStatus();
-                    String statusmessage=response.body().getMessage();
-                    if (status.equals("true")) {
-                        Toast.makeText(ComposeMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
-                        chips_to.clearSelectedChips();
-                        chips_bcc.clearSelectedChips();
-                        chips_cc.clearSelectedChips();
-                        subject.setText("");
-                        message.setText("");
-                        getContacts();
+        if(!emailvalid){
+            Toast.makeText(ComposeMessageActivity.this, "Email yang dituju merupakan email Anda", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Call<Message> call = messageService.send(sessionManager.getuserloggedin().getUserID(), spinnerfrom.getText().toString(), sessionManager.getuserloggedin().getName(), receiver, subject.getText().toString(),
+                    message.getText().toString(), cc, bcc);
+            call.enqueue(new Callback<Message>() {
+                @Override
+                public void onResponse(Call<Message> call, Response<Message> response) {
+                    if (response.isSuccessful()) {
+                        String status = response.body().getStatus();
+                        String statusmessage = response.body().getMessage();
+                        if (status.equals("true")) {
+                            Toast.makeText(ComposeMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                            chips_to.clearSelectedChips();
+                            chips_bcc.clearSelectedChips();
+                            chips_cc.clearSelectedChips();
+                            subject.setText("");
+                            message.setText("");
+                            getContacts();
+                        } else {
+                            Toast.makeText(ComposeMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                        }
                     } else {
-                        Toast.makeText(ComposeMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ComposeMessageActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
                     }
                 }
-                else{
-                    Toast.makeText(ComposeMessageActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
-                }
-            }
 
-            @Override
-            public void onFailure(Call<Message> call, Throwable t) {
-                Log.e("USER ACTIVITY ERROR", t.getMessage());
-                Toast.makeText(ComposeMessageActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onFailure(Call<Message> call, Throwable t) {
+                    Log.e("USER ACTIVITY ERROR", t.getMessage());
+                    Toast.makeText(ComposeMessageActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
 
     }
 }
