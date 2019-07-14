@@ -1,6 +1,7 @@
 package com.application.imail.user;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -40,6 +41,7 @@ import com.tylersuehr.chips.Chip;
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.wasabeef.richeditor.RichEditor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -55,6 +57,10 @@ public class ComposeMessageActivity extends AppCompatActivity {
     SessionManager sessionManager;
     ContactService contactService;
     List<listcontact>itemscontact;
+
+    //HTML
+    private RichEditor mEditor;
+    TextView mPreview;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,143 +94,108 @@ public class ComposeMessageActivity extends AppCompatActivity {
         subject=findViewById(R.id.edittext_subject);
         message=findViewById(R.id.edittext_message);
         spinnerfrom=findViewById(R.id.spinnerfrom);
-//        to=findViewById(R.id.edittext_to);
-//        bcc=findViewById(R.id.edittext_bcc);
-//        cc=findViewById(R.id.edittext_cc);
 
         chips_to = (ChipsInputLayout)findViewById(R.id.chips_to);
         chips_bcc = (ChipsInputLayout)findViewById(R.id.chips_bcc);
         chips_cc = (ChipsInputLayout)findViewById(R.id.chips_cc);
-//        chips_subject = (ChipsInputLayout)findViewById(R.id.chips_subject);
-//        chips_message = (ChipsInputLayout)findViewById(R.id.chips_message);
-        // ...Cool logic to acquire chips
-//        List<Chip> contactList = new ArrayList<>();
-//        contactList.add(new Chip() {
-//            @Nullable
-//            @Override
-//            public Object getId() {
-//                return null;
-//            }
-//
-//            @NonNull
-//            @Override
-//            public String getTitle() {
-//                return "Tes1";
-//            }
-//
-//            @Nullable
-//            @Override
-//            public String getSubtitle() {
-//                return "tes1@email.com";
-//            }
-//
-//            @Nullable
-//            @Override
-//            public Uri getAvatarUri() {
-//                return null;
-//            }
-//
-//            @Nullable
-//            @Override
-//            public Drawable getAvatarDrawable() {
-//                return null;
-//            }
-//        });
-//        contactList.add(new Chip() {
-//            @Nullable
-//            @Override
-//            public Object getId() {
-//                return null;
-//            }
-//
-//            @NonNull
-//            @Override
-//            public String getTitle() {
-//                return "Tes2";
-//            }
-//
-//            @Nullable
-//            @Override
-//            public String getSubtitle() {
-//                return "tes2@email.com";
-//            }
-//
-//            @Nullable
-//            @Override
-//            public Uri getAvatarUri() {
-//                return null;
-//            }
-//
-//            @Nullable
-//            @Override
-//            public Drawable getAvatarDrawable() {
-//                return null;
-//            }
-//        });
-//
-//        List<Chip> contactList1 = new ArrayList<>();
-//        contactList1.add(new Chip() {
-//            @Nullable
-//            @Override
-//            public Object getId() {
-//                return null;
-//            }
-//
-//            @NonNull
-//            @Override
-//            public String getTitle() {
-//                return "Subjek1";
-//            }
-//
-//            @Nullable
-//            @Override
-//            public String getSubtitle() {
-//                return "subjek1@email.com";
-//            }
-//
-//            @Nullable
-//            @Override
-//            public Uri getAvatarUri() {
-//                return null;
-//            }
-//
-//            @Nullable
-//            @Override
-//            public Drawable getAvatarDrawable() {
-//                return null;
-//            }
-//        });
-//        contactList1.add(new Chip() {
-//            @Nullable
-//            @Override
-//            public Object getId() {
-//                return null;
-//            }
-//
-//            @NonNull
-//            @Override
-//            public String getTitle() {
-//                return "Subjek2";
-//            }
-//
-//            @Nullable
-//            @Override
-//            public String getSubtitle() {
-//                return "subjek2@email.com";
-//            }
-//
-//            @Nullable
-//            @Override
-//            public Uri getAvatarUri() {
-//                return null;
-//            }
-//
-//            @Nullable
-//            @Override
-//            public Drawable getAvatarDrawable() {
-//                return null;
-//            }
-//        });
+
+        mEditor = (RichEditor) findViewById(R.id.editor);
+        mPreview = (TextView) findViewById(R.id.preview);
+
+        mEditor.setPlaceholder("Message");
+        mEditor.setEditorFontColor(Color.BLACK);
+        mEditor.setEditorFontSize(16);
+        mEditor.setFontSize(16);
+        mEditor.setOnTextChangeListener(new RichEditor.OnTextChangeListener() {
+            @Override public void onTextChange(String text) {
+                isinput=true;
+                mPreview.setText(text);
+            }
+        });
+
+        findViewById(R.id.action_bold).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.setBold();
+            }
+        });
+
+        findViewById(R.id.action_italic).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.setItalic();
+            }
+        });
+
+        findViewById(R.id.action_underline).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.setUnderline();
+            }
+        });
+
+        findViewById(R.id.action_heading1).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.setHeading(1);
+            }
+        });
+
+        findViewById(R.id.action_heading2).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.setHeading(2);
+            }
+        });
+
+        findViewById(R.id.action_heading3).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.setHeading(3);
+            }
+        });
+
+        findViewById(R.id.action_heading4).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.setHeading(4);
+            }
+        });
+
+        findViewById(R.id.action_heading5).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.setHeading(5);
+            }
+        });
+
+        findViewById(R.id.action_heading6).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.setHeading(6);
+            }
+        });
+
+        findViewById(R.id.action_indent).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.setIndent();
+            }
+        });
+
+        findViewById(R.id.action_outdent).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.setOutdent();
+            }
+        });
+
+        findViewById(R.id.action_insert_bullets).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.setBullets();
+            }
+        });
+
+        findViewById(R.id.action_insert_numbers).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.setNumbers();
+            }
+        });
+
+        findViewById(R.id.action_insert_link).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.insertLink("https://github.com/wasabeef", "wasabeef");
+            }
+        });
 
 
         message.addTextChangedListener(new TextWatcher() {
@@ -472,7 +443,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
             }
 
             Call<Message> call = messageService.adddraft(spinnerfrom.getText().toString(),receiver, "","",subject.getText().toString(),
-                    message.getText().toString(),cc,bcc,"");
+                    mPreview.getText().toString(),cc,bcc,"");
             call.enqueue(new Callback<Message>() {
                 @Override
                 public void onResponse(Call<Message> call, Response<Message> response) {
@@ -510,12 +481,12 @@ public class ComposeMessageActivity extends AppCompatActivity {
                 break;
             }
             if (!select) {
-                receiver += String.valueOf(chips_to.getSelectedChipByPosition(i));
+                receiver += String.valueOf(chips_to.getSelectedChipByPosition(i).getTitle());
                 Log.e("Masuk", receiver);
                 select=true;
             }
             else if (select) {
-                receiver += ","+String.valueOf(chips_to.getSelectedChipByPosition(i));
+                receiver += ","+String.valueOf(chips_to.getSelectedChipByPosition(i).getTitle());
                 Log.e("Masuk", receiver);
             }
         }
@@ -549,8 +520,10 @@ public class ComposeMessageActivity extends AppCompatActivity {
             Toast.makeText(ComposeMessageActivity.this, "Email yang dituju merupakan email Anda", Toast.LENGTH_SHORT).show();
         }
         else {
+//            Call<Message> call = messageService.send(sessionManager.getuserloggedin().getUserID(), spinnerfrom.getText().toString(), sessionManager.getuserloggedin().getName(), receiver, subject.getText().toString(),
+////                    message.getText().toString(), cc, bcc);
             Call<Message> call = messageService.send(sessionManager.getuserloggedin().getUserID(), spinnerfrom.getText().toString(), sessionManager.getuserloggedin().getName(), receiver, subject.getText().toString(),
-                    message.getText().toString(), cc, bcc);
+                    mPreview.getText().toString(), cc, bcc);
             call.enqueue(new Callback<Message>() {
                 @Override
                 public void onResponse(Call<Message> call, Response<Message> response) {
@@ -564,7 +537,10 @@ public class ComposeMessageActivity extends AppCompatActivity {
                             chips_cc.clearSelectedChips();
                             subject.setText("");
                             message.setText("");
+                            mEditor.setHtml(null);
+                            mPreview.setText("");
                             getContacts();
+                            isinput=false;
                         } else {
                             Toast.makeText(ComposeMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
                         }
