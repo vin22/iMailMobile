@@ -69,6 +69,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (SessionManager.with(this).isuserlogin()) {
             Intent masuk=new Intent(this,InboxActivity.class);
             startActivity(masuk);
+            finish();
         }
     }
     /**
