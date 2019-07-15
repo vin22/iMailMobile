@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -177,7 +178,7 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
                 } else if (p.getBody().equals("")) {
                     view.message.setText("[no Message]");
                 } else {
-                    view.message.setText(p.getBody());
+                    view.message.setText(Html.fromHtml(p.getBody()));
                 }
             }
             catch (Exception e){
