@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -181,7 +182,7 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
                         pd.show();
                     }
                     SessionManager sessionManager = SessionManager.with(AkunAlternatifActivity.this);
-                    Call<User> call = userService.addakunalternatif(sessionManager.getuserloggedin().getEmail()+domain.getText().toString(), textInputEditTextPassword.getText().toString(),textInputEditTextAkunAlternatif.getText().toString());
+                    Call<User> call = userService.addakunalternatif(sessionManager.getuserloggedin().getEmail(), textInputEditTextPassword.getText().toString(),textInputEditTextAkunAlternatif.getText().toString()+domain.getText().toString());
                     call.enqueue(new Callback<User>() {
                         @Override
                         public void onResponse(Call<User> call, Response<User> response) {
@@ -252,6 +253,21 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
                     break;
                 }
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == android.R.id.home) {
+            finish();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 //    /**
 //     * This method is to validate the input text fields and verify login credentials from SQLite

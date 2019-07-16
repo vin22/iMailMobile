@@ -145,76 +145,45 @@
                 </LinearLayout>
 
             </LinearLayout>
-
-            <LinearLayout
+            <TextView
                 android:layout_margin="@dimen/dp8"
+                android:id="@+id/message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:id="@+id/message"
-                    android:layout_height="wrap_content"
-                    android:text="@string/short_lorem_ipsum"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textColor="@color/grey_90"
-                    android:visibility="visible" />
-            </LinearLayout>
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:fontFamily="@font/opensans_regular"
+                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec molestie sapien urna, et tempor lorem feugiat vitae. Mauris vestibulum, nisi a sagittis faucibus, urna nibh tincidunt ligula, ut aliquet massa dui ut tortor. Fusce ex felis, hendrerit at dui et, egestas volutpat tortor. Cras maximus dolor ipsum, in vestibulum augue vehicula in. Sed commodo dapibus diam eget tempus." />
 
 
-            <LinearLayout
-                android:layout_margin="@dimen/dp8"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec molestie sapien urna, et tempor lorem feugiat vitae. Mauris vestibulum, nisi a sagittis faucibus, urna nibh tincidunt ligula, ut aliquet massa dui ut tortor. Fusce ex felis, hendrerit at dui et, egestas volutpat tortor. Cras maximus dolor ipsum, in vestibulum augue vehicula in. Sed commodo dapibus diam eget tempus."
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_margin="@dimen/dp8"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec molestie sapien urna, et tempor lorem feugiat vitae. Mauris vestibulum, nisi a sagittis faucibus, urna nibh tincidunt ligula, ut aliquet massa dui ut tortor. Fusce ex felis, hendrerit at dui et, egestas volutpat tortor. Cras maximus dolor ipsum, in vestibulum augue vehicula in. Sed commodo dapibus diam eget tempus."
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_marginBottom="@dimen/dp16"
-                android:layout_gravity="end"
-                android:gravity="center_horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <android.support.v7.widget.AppCompatButton
-                    android:id="@+id/reply"
-                    android:text="Reply"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:drawableStart="@drawable/ic_reply"
-                    android:background="@drawable/border_bg_white"
-                    android:layout_marginRight="@dimen/dp8"/>
-                <android.support.v7.widget.AppCompatButton
-                    android:id="@+id/forward"
-                    android:text="Forward"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:drawableStart="@drawable/ic_forward"
-                    android:background="@drawable/border_bg_white"
-                    android:layout_marginLeft="@dimen/dp8"/>
-            </LinearLayout>
 
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
+    <LinearLayout
+        android:layout_marginBottom="@dimen/dp16"
+        android:layout_gravity="bottom"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/reply"
+            android:text="Reply"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:drawableStart="@drawable/ic_reply"
+            android:background="@drawable/border_bg_white"
+            android:layout_marginRight="@dimen/dp8"/>
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/forward"
+            android:text="Forward"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:drawableStart="@drawable/ic_forward"
+            android:background="@drawable/border_bg_white"
+            android:layout_marginLeft="@dimen/dp8"/>
+    </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

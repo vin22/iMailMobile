@@ -31,7 +31,7 @@ public interface ContactService {
 
     @FormUrlEncoded
     @POST("editcontact/")
-    Call<listcontact> editcontact(@Field("UserID") int UserID, @Field("Name") String Name, @Field("Phone") String Phone);
+    Call<listcontact> editcontact(@Field("UserID") int UserID, @Field("Email") String Email, @Field("Name") String Name, @Field("Phone") String Phone);
 
     @FormUrlEncoded
     @POST("deletecontact/")

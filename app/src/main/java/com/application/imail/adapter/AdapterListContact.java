@@ -133,7 +133,7 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
                                     pd.show();
                                 }
                                 final SessionManager sessionManager = SessionManager.with(ctx);
-                                Call<listcontact> call = contactService.editcontact(sessionManager.getuserloggedin().getUserID(),textInputEditTextName.getText().toString(),textInputEditTextPhone.getText().toString());
+                                Call<listcontact> call = contactService.editcontact(sessionManager.getuserloggedin().getUserID(),p.getEmail(),textInputEditTextName.getText().toString(),textInputEditTextPhone.getText().toString());
                                 call.enqueue(new Callback<listcontact>() {
                                     @Override
                                     public void onResponse(Call<listcontact> call, Response<listcontact> response) {

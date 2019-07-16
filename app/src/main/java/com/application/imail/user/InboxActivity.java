@@ -1132,9 +1132,7 @@ public class InboxActivity extends AppCompatActivity
                         if(pd.isShowing()){
                             pd.dismiss();
                         }
-                        if(swipecontact.isRefreshing()){
-                            swipecontact.setRefreshing(false);
-                        }
+
 //                        Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
 
                     } else {
@@ -1162,6 +1160,9 @@ public class InboxActivity extends AppCompatActivity
                 Toast.makeText(InboxActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
             }
         });
+        if(swipecontact.isRefreshing()){
+            swipecontact.setRefreshing(false);
+        }
 //        for(int i=0;i<10;i++){
 //            if(i%2==0) {
 //                listcontact = new listcontact();

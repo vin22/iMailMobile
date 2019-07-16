@@ -9,6 +9,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -102,7 +103,7 @@ public class ReadMessageActivity extends AppCompatActivity {
     }
 
     public void setEmail(){
-        subject.setText(email.get(0));
+        subject.setText("Subject : "+email.get(0));
         if(email.get(1).equals("true")) {
             Glide.with(ReadMessageActivity.this).load(R.drawable.ic_star).into(starred);
             isStarred=true;
@@ -122,7 +123,7 @@ public class ReadMessageActivity extends AppCompatActivity {
         }catch (ParseException e){
             e.printStackTrace();
         }
-        message.setText(email.get(6));
+        message.setText(Html.fromHtml(email.get(6)));
 //        starred.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {

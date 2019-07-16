@@ -92,7 +92,7 @@ public class SettingActivity extends AppCompatActivity{
         lyt_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onBackPressed();
+                Logout();
                 Log.e("Setting","Masuk1");
             }
         });
@@ -129,6 +129,10 @@ public class SettingActivity extends AppCompatActivity{
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+    public void Logout(){
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setMessage("Apakah Anda yakin untuk logout dari iMail?");
         dialog.setCancelable(false);
