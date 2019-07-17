@@ -120,8 +120,23 @@ public class ReadMessageActivity extends AppCompatActivity {
         SimpleDateFormat format=new SimpleDateFormat("dd MMM yy");
         try {
             date.setText(format.format(formatapi.parse(email.get(5))));
+//            if(email.get(2).equals("Inbox")){
+//                formatapi=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+//                date.setText(format.format(formatapi.parse(email.get(5))));
+//            }
+//            else {
+//                date.setText(format.format(formatapi.parse(email.get(5))));
+//            }
         }catch (ParseException e){
+            try {
+                formatapi = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                date.setText(format.format(formatapi.parse(email.get(5))));
+            }
+            catch(ParseException e1){
+                e1.printStackTrace();
+            }
             e.printStackTrace();
+
         }
         message.setText(Html.fromHtml(email.get(6)));
 //        starred.setOnClickListener(new View.OnClickListener() {
