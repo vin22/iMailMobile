@@ -1,5 +1,6 @@
 package com.application.imail.user;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -61,6 +62,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
     //HTML
     private RichEditor mEditor;
     TextView mPreview;
+    ProgressDialog pd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -471,6 +473,17 @@ public class ComposeMessageActivity extends AppCompatActivity {
     }
 
     public void sendEmail(){
+        if(pd!=null){
+            pd.setTitle("Please Wait");
+            pd.setMessage("Sending your message");
+            pd.show();
+        }
+        else{
+            pd=new ProgressDialog(ComposeMessageActivity.this);
+            pd.setTitle("Please Wait");
+            pd.setMessage("Sending your message");
+            pd.show();
+        }
         String receiver="", cc="", bcc="";
         boolean select=false;
         boolean emailvalid=true;
@@ -541,16 +554,28 @@ public class ComposeMessageActivity extends AppCompatActivity {
                             mPreview.setText("");
                             getContacts();
                             isinput=false;
+                            if(pd.isShowing()){
+                                pd.dismiss();
+                            }
                         } else {
+                            if(pd.isShowing()){
+                                pd.dismiss();
+                            }
                             Toast.makeText(ComposeMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
                         }
                     } else {
+                        if(pd.isShowing()){
+                            pd.dismiss();
+                        }
                         Toast.makeText(ComposeMessageActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<Message> call, Throwable t) {
+                    if(pd.isShowing()){
+                        pd.dismiss();
+                    }
                     Log.e("USER ACTIVITY ERROR", t.getMessage());
                     Toast.makeText(ComposeMessageActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
                 }

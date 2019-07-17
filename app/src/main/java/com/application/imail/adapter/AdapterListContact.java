@@ -157,6 +157,9 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
                                                                     pd.dismiss();
                                                                 }
                                                             } else {
+                                                                items.clear();
+                                                                itemsfilter.clear();
+                                                                notifyDataSetChanged();
                                                                 if(pd.isShowing()){
                                                                     pd.dismiss();
                                                                 }
@@ -262,6 +265,9 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
                                                                 pd.dismiss();
                                                             }
                                                         } else {
+                                                            items.clear();
+                                                            itemsfilter.clear();
+                                                            notifyDataSetChanged();
                                                             if(pd.isShowing()){
                                                                 pd.dismiss();
                                                             }

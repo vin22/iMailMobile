@@ -34,6 +34,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
@@ -203,7 +204,7 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
             view.starred.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Starred(p.getMessageID());
+                    Starred(p.getMessageID(), p.getFolder());
                     Log.e("image","Masuk");
                     if(!p.isStarred()){
                         p.setStarred(true);
@@ -259,12 +260,17 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
                                                                     items.get(i).setFolder("Inbox");
                                                                     itemsfilter.get(i).setFolder("Inbox");
                                                                 }
+                                                                Collections.sort(items);
+                                                                Collections.sort(itemsfilter);
                                                                 notifyDataSetChanged();
                                                                 if(pd.isShowing()){
                                                                     pd.dismiss();
                                                                 }
 
                                                             } else {
+                                                                items.clear();
+                                                                itemsfilter.clear();
+                                                                notifyDataSetChanged();
                                                                 if(pd.isShowing()){
                                                                     pd.dismiss();
                                                                 }
@@ -365,12 +371,17 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
                                                                     items.get(i).setFolder("Sent");
                                                                     itemsfilter.get(i).setFolder("Sent");
                                                                 }
+                                                                Collections.sort(items);
+                                                                Collections.sort(itemsfilter);
                                                                 notifyDataSetChanged();
                                                                 if(pd.isShowing()){
                                                                     pd.dismiss();
                                                                 }
 
                                                             } else {
+                                                                items.clear();
+                                                                itemsfilter.clear();
+                                                                notifyDataSetChanged();
                                                                 if(pd.isShowing()){
                                                                     pd.dismiss();
                                                                 }
@@ -473,13 +484,19 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
                                                                 itemsfilter = response.body();
                                                                 for(int i=0;i<items.size();i++) {
                                                                     items.get(i).setFolder("Draft");
+                                                                    itemsfilter.get(i).setFolder("Draft");
                                                                 }
+                                                                Collections.sort(items);
+                                                                Collections.sort(itemsfilter);
                                                                 notifyDataSetChanged();
                                                                 if(pd.isShowing()){
                                                                     pd.dismiss();
                                                                 }
 
                                                             } else {
+                                                                items.clear();
+                                                                itemsfilter.clear();
+                                                                notifyDataSetChanged();
                                                                 if(pd.isShowing()){
                                                                     pd.dismiss();
                                                                 }
@@ -581,11 +598,16 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
                                                                     items.get(i).setFolder("Trash");
                                                                     itemsfilter.get(i).setFolder("Trash");
                                                                 }
+                                                                Collections.sort(items);
+                                                                Collections.sort(itemsfilter);
                                                                 notifyDataSetChanged();
                                                                 if(pd.isShowing()){
                                                                     pd.dismiss();
                                                                 }
                                                             } else {
+                                                                items.clear();
+                                                                itemsfilter.clear();
+                                                                notifyDataSetChanged();
                                                                 if(pd.isShowing()){
                                                                     pd.dismiss();
                                                                 }
@@ -651,7 +673,6 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                     ArrayList<String>itemsemail=new ArrayList<>();
                     itemsemail.add(view.subject.getText().toString());
                     itemsemail.add(String.valueOf(items.get(position).isStarred()));
@@ -683,6 +704,7 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                     ((Activity)ctx).startActivityForResult(intent, 200);
 
+                    //make isRead=true
                     Call<Message> call1 = messageService.readinbox(p.getMessageID());
                     call1.enqueue(new Callback<Message>() {
                         @Override
@@ -795,7 +817,7 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
         };
     }
 
-    public void Starred(int messageid){
+    public void Starred(int messageid, final String folder){
         Call<Message> call = messageService.starred(messageid);
         call.enqueue(new Callback<Message>() {
             @Override
@@ -804,6 +826,46 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
                     String status=response.body().getStatus();
                     String statusmessage=response.body().getMessage();
                     if (status.equals("true")) {
+                        if(folder.equals("Starred")) {
+                            SessionManager sessionManager = SessionManager.with(ctx);
+                            Call<List<Message>> call1 = messageService.getstarred(sessionManager.getuserloggedin().getEmail());
+                            call1.enqueue(new Callback<List<Message>>() {
+                                @Override
+                                public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
+                                    if (response.isSuccessful()) {
+                                        Log.e("User", "Masuk1");
+                                        String status = response.body().get(0).getStatus();
+                                        String statusmessage = response.body().get(0).getMessage();
+                                        if (status.equals("true")) {
+                                            items = response.body();
+                                            itemsfilter = response.body();
+                                            for (int i = 0; i < items.size(); i++) {
+                                                items.get(i).setFolder("Starred");
+                                                itemsfilter.get(i).setFolder("Starred");
+                                            }
+                                            Collections.sort(items);
+                                            Collections.sort(itemsfilter);
+                                            notifyDataSetChanged();
+
+                                        } else {
+                                            items.clear();
+                                            itemsfilter.clear();
+                                            notifyDataSetChanged();
+                                            Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+
+                                        }
+                                    } else {
+                                        Toast.makeText(ctx, "Response failed", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<List<Message>> call, Throwable t) {
+                                    Log.e("USER ACTIVITY ERROR", t.getMessage());
+                                    Toast.makeText(ctx, "Response failure", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
                         Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
