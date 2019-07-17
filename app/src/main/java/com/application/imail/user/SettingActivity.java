@@ -13,14 +13,24 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.application.imail.LoginActivity;
 import com.application.imail.R;
 import com.application.imail.config.SessionManager;
+import com.application.imail.model.User;
+import com.application.imail.remote.APIUtils;
+import com.application.imail.remote.UserService;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SettingActivity extends AppCompatActivity{
 
     View lyt_manageaccount, lyt_changepassword,lyt_logout;
+    UserService userService;
+    SessionManager sessionManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +53,8 @@ public class SettingActivity extends AppCompatActivity{
     }
 
     private void initViews() {
+        sessionManager=SessionManager.with(SettingActivity.this);
+        userService= APIUtils.getUserService();
         lyt_manageaccount = findViewById(R.id.lyt_manageaccount);
         lyt_manageaccount.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,21 +71,89 @@ public class SettingActivity extends AppCompatActivity{
                             dialog.dismiss();
                         }
                         else{
-                            final Dialog dialogs=new Dialog(SettingActivity.this);
-                            dialogs.setCancelable(true);
-                            dialogs.setContentView(R.layout.dialog_remove_account_alternative);
-                            dialogs.show();
-
-                            final AppCompatButton recyclerview = (AppCompatButton) dialogs.findViewById(R.id.recyclerView);
-                            final AppCompatButton appCompatButtonClose = (AppCompatButton) dialogs.findViewById(R.id.appCompatButtonClose);
-
-                            appCompatButtonClose.setOnClickListener(new View.OnClickListener() {
+                            Call<User> call = userService.getakunalternatif(sessionManager.getuserloggedin().getUserID());
+                            call.enqueue(new Callback<User>() {
                                 @Override
-                                public void onClick(View v) {
-                                    dialogs.dismiss();
+                                public void onResponse(Call<User> call, Response<User> response) {
+                                    if(response.isSuccessful()){
+                                        Log.e("User","Masuk1");
+                                        String status=response.body().getStatus();
+                                        String statusmessage=response.body().getMessage();
+                                        if (status.equals("true")) {
+                                            AlertDialog.Builder dialogs=new AlertDialog.Builder(SettingActivity.this);
+                                            dialogs.setTitle("Remove Account Alternative");
+                                            dialogs.setMessage("Are you sure to remove your account alternative?");
+                                            dialogs.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    Call<User> call1 = userService.removeakunalternatif(sessionManager.getuserloggedin().getUserID());
+                                                    call1.enqueue(new Callback<User>() {
+                                                        @Override
+                                                        public void onResponse(Call<User> call, Response<User> response) {
+                                                            if(response.isSuccessful()){
+                                                                Log.e("User","Masuk1");
+                                                                String status=response.body().getStatus();
+                                                                String statusmessage=response.body().getMessage();
+                                                                if (status.equals("true")) {
+                                                                    Toast.makeText(SettingActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                                                } else {
+                                                                    Toast.makeText(SettingActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                                                }
+                                                            }
+                                                            else{
+                                                                Toast.makeText(SettingActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+
+                                                        @Override
+                                                        public void onFailure(Call<User> call, Throwable t) {
+                                                            Log.e("USER ACTIVITY ERROR", t.getMessage());
+                                                            Toast.makeText(SettingActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
+                                                    dialog.dismiss();
+                                                }
+                                            });
+                                            dialogs.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.dismiss();
+                                                }
+                                            });
+                                            dialogs.show();
+                                        } else {
+                                            Toast.makeText(SettingActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                    else{
+                                        Toast.makeText(SettingActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<User> call, Throwable t) {
+                                    Log.e("USER ACTIVITY ERROR", t.getMessage());
+                                    Toast.makeText(SettingActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
                                 }
                             });
-                            dialog.dismiss();
+
+
+
+//                            final Dialog dialogs=new Dialog(SettingActivity.this);
+//                            dialogs.setCancelable(true);
+//                            dialogs.setContentView(R.layout.dialog_remove_account_alternative);
+//                            dialogs.show();
+//
+//                            final AppCompatButton recyclerview = (AppCompatButton) dialogs.findViewById(R.id.recyclerView);
+//                            final AppCompatButton appCompatButtonClose = (AppCompatButton) dialogs.findViewById(R.id.appCompatButtonClose);
+//
+//                            appCompatButtonClose.setOnClickListener(new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View v) {
+//                                    dialogs.dismiss();
+//                                }
+//                            });
+//                            dialog.dismiss();
                         }
                     }
                 });

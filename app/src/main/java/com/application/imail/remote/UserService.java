@@ -33,13 +33,11 @@ public interface UserService {
     @POST("registeralternatif/")
     Call<User> addakunalternatif(@Field("Email") String email, @Field("Password") String password, @Field("Alternate_Email") String alternate_email);
 
-    @FormUrlEncoded
-    @POST("getakunalternatif/")
+    @GET("getakunalternatif/")
     Call<User> getakunalternatif(@Field("UserID") int UserID);
 
-    @FormUrlEncoded
-    @POST("removeakunalternatif/")
-    Call<User> removeakunalternatif(@Field("UserID") int UserID, @Field("Email") String email);
+    @GET("removeakunalternatif/")
+    Call<User> removeakunalternatif(@Field("UserID") int UserID);
 
     @FormUrlEncoded
     @POST("ceksaldo/")
