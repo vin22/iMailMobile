@@ -15,6 +15,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface UserService {
     @FormUrlEncoded
@@ -34,10 +35,10 @@ public interface UserService {
     Call<User> addakunalternatif(@Field("Email") String email, @Field("Password") String password, @Field("Alternate_Email") String alternate_email);
 
     @GET("getakunalternatif/")
-    Call<User> getakunalternatif(@Field("UserID") int UserID);
+    Call<User> getakunalternatif(@Query("UserID") int UserID);
 
     @GET("removeakunalternatif/")
-    Call<User> removeakunalternatif(@Field("UserID") int UserID);
+    Call<User> removeakunalternatif(@Query("UserID") int UserID);
 
     @FormUrlEncoded
     @POST("ceksaldo/")
