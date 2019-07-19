@@ -152,7 +152,7 @@ public class ReadMessageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(ReadMessageActivity.this,ReplyActivity.class);
-                intent.putExtra("to",email.get(4));
+                intent.putExtra("to",email.get(8));
                 intent.putExtra("subject",email.get(0));
                 intent.putExtra("message",email.get(6));
                 startActivity(intent);
@@ -163,7 +163,7 @@ public class ReadMessageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(ReadMessageActivity.this,ForwardActivity.class);
-                intent.putExtra("to",email.get(4));
+                intent.putExtra("to",email.get(8));
                 intent.putExtra("subject",email.get(0));
                 intent.putExtra("message",email.get(6));
                 startActivity(intent);

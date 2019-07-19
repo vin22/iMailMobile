@@ -42,6 +42,7 @@ public class ReplyActivity extends AppCompatActivity {
     SessionManager sessionManager;
     ContactService contactService;
     List<listcontact> itemscontact;
+    List<listcontact> itemscont;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,8 +51,10 @@ public class ReplyActivity extends AppCompatActivity {
         initComponent();
         initListener();
         contactService= APIUtils.getContactService();
+        sessionManager=SessionManager.with(this);
         setEmail();
         getContacts();
+
     }
 
     private void initToolbar() {
@@ -89,9 +92,13 @@ public class ReplyActivity extends AppCompatActivity {
     }
 
     public void setEmail(){
-        sessionManager=SessionManager.with(this);
+
         spinnerfrom.setItems(sessionManager.getuserloggedin().getEmail());
 //        chips_to.setSelectedChipList();
+        itemscont=new ArrayList<>();
+        listcontact lc=new listcontact();
+        lc.setEmail(getIntent().getStringExtra("to"));
+        itemscont.add(lc);
 
         re.setText(getIntent().getStringExtra("subject"));
         lastmessage.setText(getIntent().getStringExtra("message"));
@@ -172,6 +179,7 @@ public class ReplyActivity extends AppCompatActivity {
                         chips_cc.clearFilteredChips();
 
                         chips_to.setFilterableChipList(itemscontact);
+                        chips_to.setSelectedChipList(itemscont);
                         chips_bcc.setFilterableChipList(itemscontact);
                         chips_cc.setFilterableChipList(itemscontact);
                     } else {

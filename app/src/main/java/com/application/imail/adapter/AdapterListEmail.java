@@ -709,6 +709,7 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
                     }
 //                    itemsemail.add(view.message.getText().toString());
                     itemsemail.add(String.valueOf(items.get(position).getMessageID()));
+                    itemsemail.add(String.valueOf(items.get(position).getSender()));
                     for(int i=0;i<itemsemail.size();i++){
                         Log.e("Items",itemsemail.get(i));
                     }

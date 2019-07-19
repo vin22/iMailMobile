@@ -42,6 +42,7 @@ public class ForwardActivity extends AppCompatActivity {
     SessionManager sessionManager;
     ContactService contactService;
     List<listcontact> itemscontact;
+    List<listcontact> itemscont;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +51,7 @@ public class ForwardActivity extends AppCompatActivity {
         initComponent();
         initListener();
         contactService= APIUtils.getContactService();
+        sessionManager=SessionManager.with(this);
         setEmail();
         getContacts();
     }
@@ -89,9 +91,13 @@ public class ForwardActivity extends AppCompatActivity {
     }
 
     public void setEmail(){
-        sessionManager=SessionManager.with(this);
+
         spinnerfrom.setItems(sessionManager.getuserloggedin().getEmail());
 //        chips_to.setSelectedChipList();
+        itemscont=new ArrayList<>();
+        listcontact lc=new listcontact();
+        lc.setEmail(getIntent().getStringExtra("to"));
+        itemscont.add(lc);
 
         fwd.setText(getIntent().getStringExtra("subject"));
         lastmessage.setText(getIntent().getStringExtra("message"));
