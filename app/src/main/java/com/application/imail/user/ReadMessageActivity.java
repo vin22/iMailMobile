@@ -114,6 +114,14 @@ public class ReadMessageActivity extends AppCompatActivity {
         }
 
         label.setText(email.get(2));
+        if(email.get(2).equals("Inbox")){
+            reply.setVisibility(View.VISIBLE);
+            forward.setVisibility(View.VISIBLE);
+        }
+        else{
+            reply.setVisibility(View.GONE);
+            forward.setVisibility(View.GONE);
+        }
         from.setText(email.get(3));
         to.setText(email.get(4));
         SimpleDateFormat formatapi=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
@@ -139,6 +147,28 @@ public class ReadMessageActivity extends AppCompatActivity {
 
         }
         message.setText(Html.fromHtml(email.get(6)));
+
+        reply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(ReadMessageActivity.this,ReplyActivity.class);
+                intent.putExtra("to",email.get(4));
+                intent.putExtra("subject",email.get(0));
+                intent.putExtra("message",email.get(6));
+                startActivity(intent);
+            }
+        });
+
+        forward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(ReadMessageActivity.this,ForwardActivity.class);
+                intent.putExtra("to",email.get(4));
+                intent.putExtra("subject",email.get(0));
+                intent.putExtra("message",email.get(6));
+                startActivity(intent);
+            }
+        });
 //        starred.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -200,6 +230,39 @@ public class ReadMessageActivity extends AppCompatActivity {
             }
         }
         else if(id==R.id.action_move){
+            AlertDialog.Builder dialog=new AlertDialog.Builder(ReadMessageActivity.this);
+            dialog.setTitle("Move message to folder");
+            if(email.get(2).equals("Inbox") || email.get(2).equals("Sent") || email.get(2).equals("Spam")){
+                String[] items1={"Draft"};
+                dialog.setItems(items1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+            }
+            else if(email.get(2).equals("Draft")) {
+                String[] items1 = {"Inbox"};
+                dialog.setItems(items1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+            }
+            else if(email.get(2).equals("Starred")){
+
+            }
+            else{
+                String[] items1={"Inbox","Draft"};
+                dialog.setItems(items1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+            }
+            dialog.show();
             return true;
         }
         else if(id==R.id.action_trash){
