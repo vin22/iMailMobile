@@ -330,6 +330,117 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
                         });
                         dialogs.show();
                     }
+                    else if(p.getFolder().equals("Spam")){
+                        AlertDialog.Builder dialogs=new AlertDialog.Builder(ctx).setTitle("Delete Email in Spam").setMessage("Are you sure to delete this email?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(final DialogInterface dialog, int which) {
+                                if(pd!=null){
+                                    pd.setTitle("Please Wait");
+                                    pd.setMessage("Delete email in Spam");
+                                    pd.show();
+                                }
+                                else{
+                                    pd=new ProgressDialog(ctx);
+                                    pd.setTitle("Please Wait");
+                                    pd.setMessage("Delete email in Spam");
+                                    pd.show();
+                                }
+                                Call<Message> call = messageService.deletespam(p.getMessageID());
+                                call.enqueue(new Callback<Message>() {
+                                    @Override
+                                    public void onResponse(Call<Message> call, Response<Message> response) {
+                                        if(response.isSuccessful()){
+                                            String status=response.body().getStatus();
+                                            String statusmessage=response.body().getMessage();
+                                            if (status.equals("true")) {
+                                                Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+                                                dialog.dismiss();
+                                                SessionManager sessionManager = SessionManager.with(ctx);
+                                                Call<List<Message>> call1 = messageService.readspam(sessionManager.getuserloggedin().getEmail(), sessionManager.getuserloggedin().getPassword());
+                                                call1.enqueue(new Callback<List<Message>>() {
+                                                    @Override
+                                                    public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
+                                                        if(response.isSuccessful()){
+                                                            Log.e("User","Masuk1");
+                                                            String status=response.body().get(0).getStatus();
+                                                            String statusmessage=response.body().get(0).getMessage();
+                                                            if (status.equals("true")) {
+                                                                items= response.body();
+                                                                itemsfilter = response.body();
+                                                                for(int i=0;i<items.size();i++){
+                                                                    items.get(i).setFolder("Spam");
+                                                                    itemsfilter.get(i).setFolder("Spam");
+                                                                }
+                                                                Collections.sort(items);
+                                                                Collections.sort(itemsfilter);
+                                                                notifyDataSetChanged();
+                                                                if(pd.isShowing()){
+                                                                    pd.dismiss();
+                                                                }
+
+                                                            } else {
+                                                                items.clear();
+                                                                itemsfilter.clear();
+                                                                notifyDataSetChanged();
+                                                                if(pd.isShowing()){
+                                                                    pd.dismiss();
+                                                                }
+                                                                Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+                                                        else{
+                                                            if(pd.isShowing()){
+                                                                pd.dismiss();
+                                                            }
+                                                            Toast.makeText(ctx, "Response failed", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(Call<List<Message>> call, Throwable t) {
+                                                        Log.e("USER ACTIVITY ERROR", t.getMessage());
+                                                        if(pd.isShowing()){
+                                                            pd.dismiss();
+                                                        }
+                                                        Toast.makeText(ctx, "Response failure", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                            } else {
+                                                if(pd.isShowing()){
+                                                    pd.dismiss();
+                                                }
+                                                Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
+                                                dialog.dismiss();
+                                            }
+                                        }
+                                        else{
+                                            if(pd.isShowing()){
+                                                pd.dismiss();
+                                            }
+                                            Toast.makeText(ctx, "Response failed", Toast.LENGTH_SHORT).show();
+                                            dialog.dismiss();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<Message> call, Throwable t) {
+                                        if(pd.isShowing()){
+                                            pd.dismiss();
+                                        }
+                                        Toast.makeText(ctx, "Response failure", Toast.LENGTH_SHORT).show();
+                                        dialog.dismiss();
+                                    }
+                                });
+                                dialog.dismiss();
+                            }
+                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        dialogs.show();
+                    }
                     else if(p.getFolder().equals("Sent")){
                         AlertDialog.Builder dialogs=new AlertDialog.Builder(ctx).setTitle("Delete Email in Sent").setMessage("Are you sure to delete this email?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override

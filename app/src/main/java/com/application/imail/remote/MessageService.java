@@ -37,9 +37,14 @@ public interface MessageService {
 //                       @Field("Subject") String subject, @Field("Body") String body,
 //                       @Field("Cc") String cc,@Field("Bcc") String bcc);
 
+
     @FormUrlEncoded
     @POST("read/")
     Call<List<Message>> read(@Field("Email") String email, @Field("Password") String password);
+
+    @FormUrlEncoded
+    @POST("readspam/")
+    Call<List<Message>> readspam(@Field("Email") String email, @Field("Password") String password);
 
     @FormUrlEncoded
     @POST("readinbox/")
@@ -48,6 +53,10 @@ public interface MessageService {
     @FormUrlEncoded
     @POST("deleteinbox/")
     Call<Message> deleteinbox(@Field("MessageID") int MessageID);
+
+    @FormUrlEncoded
+    @POST("deletespam/")
+    Call<Message> deletespam(@Field("MessageID") int MessageID);
 
     @FormUrlEncoded
     @POST("getsent/")

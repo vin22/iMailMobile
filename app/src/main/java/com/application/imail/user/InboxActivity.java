@@ -65,15 +65,14 @@ import retrofit2.Response;
 public class InboxActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     AdapterListContact adapter_contact;
-    AdapterListEmail adapter_inbox,adapter_sent, adapter_starred, adapter_trash, adapter_draft;
-    AdapterListEmailTes adapter_spam;
+    AdapterListEmail adapter_inbox,adapter_spam, adapter_sent, adapter_starred, adapter_trash, adapter_draft;
     RecyclerView recyclerView_inbox, recyclerView_spam, recyclerView_starred, recyclerView_sent, recyclerView_trash, recyclerView_draft, recyclerView_contact;
     SwipeRefreshLayout swipeinbox, swipespam, swipestarred, swipesent, swipetrash, swipedraft, swipecontact;
     CoordinatorLayout parent_view;
     listemail listemail;
     List<listemail> items;
     List<listcontact> itemscontact;
-    List<Message> itemsinbox, itemssent, itemsdraft, itemsstarred, itemstrash;
+    List<Message> itemsinbox, itemsspam, itemssent, itemsdraft, itemsstarred, itemstrash;
     Toolbar toolbar;
     MaterialSearchView searchView;
     SessionManager sessionManager;
@@ -527,57 +526,131 @@ public class InboxActivity extends AppCompatActivity
     }
 
     public void setEmailSpam(){
-        if(items!=null){
-            items.clear();
+        if(pd!=null){
+            pd.setTitle("Please Wait");
+            pd.setMessage("Loading email in Spam");
+            pd.show();
         }
         else{
-            items=new ArrayList<>();
+            pd=new ProgressDialog(InboxActivity.this);
+            pd.setTitle("Please Wait");
+            pd.setMessage("Loading email in Spam");
+            pd.show();
+        }
+        if(itemsspam!=null){
+            itemsspam.clear();
+        }
+        else{
+            itemsspam=new ArrayList<>();
         }
         if(adapter_spam!=null){
             adapter_spam.notifyDataSetChanged();
         }
-        for(int i=0;i<10;i++){
-            if(i%2==1) {
-                listemail = new listemail();
-                listemail.setSendername(getResources().getString(R.string.user_pertama));
-                listemail.setSender(getResources().getString(R.string.user_email_pertama));
-                listemail.setReceiver(sessionManager.getuserloggedin().Email);
-                listemail.setSubject(getResources().getString(R.string.subject_pertama));
-                listemail.setSent_date(getResources().getString(R.string.date_pertama));
-                listemail.setMessage(getResources().getString(R.string.message_pertama));
-                listemail.setStarred(false);
-                listemail.setFolder("Spam");
-                items.add(listemail);
-                Log.e("listemailspam",getResources().getString(R.string.user_pertama));
+        Call<List<Message>> call = messageService.readspam(sessionManager.getuserloggedin().getEmail(), sessionManager.getuserloggedin().getPassword());
+        call.enqueue(new Callback<List<Message>>() {
+            @Override
+            public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
+                if(response.isSuccessful()){
+                    Log.e("User","Masuk1");
+                    String status=response.body().get(0).getStatus();
+                    String statusmessage=response.body().get(0).getMessage();
+                    if (status.equals("true")) {
+                        if(itemsspam!=null){
+                            itemsspam.clear();
+                        }
+                        else {
+                            itemsspam=new ArrayList<>();
+                        }
+                        itemsspam = response.body();
+                        for(int i=0;i<itemsspam.size();i++){
+                            itemsspam.get(i).setFolder(folder);
+                        }
+
+//                        if(adapter_inbox!=null){
+//                            adapter_inbox.notifyDataSetChanged();
+//                            if(recyclerView_inbox.getLayoutManager()==null) {
+//                                recyclerView_inbox.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
+//                                recyclerView_inbox.setHasFixedSize(true);
+//                            }
+//                            recyclerView_inbox.setAdapter(adapter_inbox);
+//                        }
+//                        else{
+                        Collections.sort(itemsspam);
+                        adapter_spam=new AdapterListEmail(InboxActivity.this,itemsspam);
+                        recyclerView_spam.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
+                        recyclerView_spam.setHasFixedSize(true);
+                        recyclerView_spam.setAdapter(adapter_spam);
+                        if(pd.isShowing()){
+                            pd.dismiss();
+                        }
+//                        }
+                    } else {
+                        if(pd.isShowing()){
+                            pd.dismiss();
+                        }
+                        Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else{
+                    if(pd.isShowing()){
+                        pd.dismiss();
+                    }
+                    Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                }
             }
-            else{
-                listemail = new listemail();
-                listemail.setSendername(getResources().getString(R.string.user_kedua));
-                listemail.setSender(getResources().getString(R.string.user_email_kedua));
-                listemail.setReceiver(sessionManager.getuserloggedin().Email);
-                listemail.setSubject(getResources().getString(R.string.subject_kedua));
-                listemail.setSent_date(getResources().getString(R.string.date_kedua));
-                listemail.setMessage(getResources().getString(R.string.message_kedua));
-                listemail.setStarred(false);
-                listemail.setFolder("Spam");
-                items.add(listemail);
-                Log.e("listemailspam",getResources().getString(R.string.user_kedua));
+
+            @Override
+            public void onFailure(Call<List<Message>> call, Throwable t) {
+                Log.e("USER ACTIVITY ERROR", t.getMessage());
+                if(pd.isShowing()){
+                    pd.dismiss();
+                }
+                Toast.makeText(InboxActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
             }
-        }
-        if(adapter_spam!=null){
-            adapter_spam.notifyDataSetChanged();
-            if(recyclerView_spam.getLayoutManager()==null) {
-                recyclerView_spam.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
-                recyclerView_spam.setHasFixedSize(true);
-            }
-            recyclerView_spam.setAdapter(adapter_spam);
-        }
-        else{
-            adapter_spam=new AdapterListEmailTes(InboxActivity.this,items);
-            recyclerView_spam.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
-            recyclerView_spam.setHasFixedSize(true);
-            recyclerView_spam.setAdapter(adapter_spam);
-        }
+        });
+
+//        for(int i=0;i<10;i++){
+//            if(i%2==1) {
+//                listemail = new listemail();
+//                listemail.setSendername(getResources().getString(R.string.user_pertama));
+//                listemail.setSender(getResources().getString(R.string.user_email_pertama));
+//                listemail.setReceiver(sessionManager.getuserloggedin().Email);
+//                listemail.setSubject(getResources().getString(R.string.subject_pertama));
+//                listemail.setSent_date(getResources().getString(R.string.date_pertama));
+//                listemail.setMessage(getResources().getString(R.string.message_pertama));
+//                listemail.setStarred(false);
+//                listemail.setFolder("Spam");
+//                items.add(listemail);
+//                Log.e("listemailspam",getResources().getString(R.string.user_pertama));
+//            }
+//            else{
+//                listemail = new listemail();
+//                listemail.setSendername(getResources().getString(R.string.user_kedua));
+//                listemail.setSender(getResources().getString(R.string.user_email_kedua));
+//                listemail.setReceiver(sessionManager.getuserloggedin().Email);
+//                listemail.setSubject(getResources().getString(R.string.subject_kedua));
+//                listemail.setSent_date(getResources().getString(R.string.date_kedua));
+//                listemail.setMessage(getResources().getString(R.string.message_kedua));
+//                listemail.setStarred(false);
+//                listemail.setFolder("Spam");
+//                items.add(listemail);
+//                Log.e("listemailspam",getResources().getString(R.string.user_kedua));
+//            }
+//        }
+//        if(adapter_spam!=null){
+//            adapter_spam.notifyDataSetChanged();
+//            if(recyclerView_spam.getLayoutManager()==null) {
+//                recyclerView_spam.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
+//                recyclerView_spam.setHasFixedSize(true);
+//            }
+//            recyclerView_spam.setAdapter(adapter_spam);
+//        }
+//        else{
+//            adapter_spam=new AdapterListEmailTes(InboxActivity.this,items);
+//            recyclerView_spam.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
+//            recyclerView_spam.setHasFixedSize(true);
+//            recyclerView_spam.setAdapter(adapter_spam);
+//        }
         if(swipespam.isRefreshing()){
             swipespam.setRefreshing(false);
         }
@@ -1433,6 +1506,30 @@ public class InboxActivity extends AppCompatActivity
                     swipedraft.setVisibility(View.GONE);
                     swipecontact.setVisibility(View.GONE);
                     setEmailInbox();
+                }
+                else if(data.getExtras().getString("folder").equals("Spam")){
+                    folder="Spam";
+                    initToolbar(folder);
+                    swipeinbox.setVisibility(View.GONE);
+                    swipespam.setVisibility(View.VISIBLE);
+                    swipestarred.setVisibility(View.GONE);
+                    swipesent.setVisibility(View.GONE);
+                    swipetrash.setVisibility(View.GONE);
+                    swipedraft.setVisibility(View.GONE);
+                    swipecontact.setVisibility(View.GONE);
+                    setEmailStarred();
+                }
+                else if(data.getExtras().getString("folder").equals("Sent")){
+                    folder="Sent";
+                    initToolbar(folder);
+                    swipeinbox.setVisibility(View.GONE);
+                    swipespam.setVisibility(View.GONE);
+                    swipestarred.setVisibility(View.GONE);
+                    swipesent.setVisibility(View.VISIBLE);
+                    swipetrash.setVisibility(View.GONE);
+                    swipedraft.setVisibility(View.GONE);
+                    swipecontact.setVisibility(View.GONE);
+                    setEmailStarred();
                 }
                 else if(data.getExtras().getString("folder").equals("Starred")){
                     folder="Starred";

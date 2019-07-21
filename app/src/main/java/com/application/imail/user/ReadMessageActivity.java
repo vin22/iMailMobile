@@ -1,6 +1,7 @@
 package com.application.imail.user;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.application.imail.R;
+import com.application.imail.config.SessionManager;
 import com.application.imail.model.Message;
 import com.application.imail.remote.APIUtils;
 import com.application.imail.remote.MessageService;
@@ -29,6 +31,8 @@ import com.bumptech.glide.Glide;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -187,6 +191,9 @@ public class ReadMessageActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_read_message, menu);
+        if(email.get(2).equals("Starred")){
+            menu.findItem(R.id.action_trash).setVisible(false);
+        }
 //        MenuItem item = menu.findItem(R.id.action_search);
 
 //        searchView.setMenuItem(item);
@@ -411,6 +418,47 @@ public class ReadMessageActivity extends AppCompatActivity {
                 }
             });
             dialogs.show();
+        }
+        else if(email.get(2).equals("Spam")){
+            AlertDialog.Builder dialogs=new AlertDialog.Builder(ReadMessageActivity.this).setTitle("Delete Email in Spam").setMessage("Are you sure to delete this email?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(final DialogInterface dialog, int which) {
+                    Call<Message> call = messageService.deletespam(Integer.parseInt(email.get(7)));
+                    call.enqueue(new Callback<Message>() {
+                        @Override
+                        public void onResponse(Call<Message> call, Response<Message> response) {
+                            if(response.isSuccessful()){
+                                String status=response.body().getStatus();
+                                String statusmessage=response.body().getMessage();
+                                if (status.equals("true")) {
+                                    Toast.makeText(ReadMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+                                    action=true;
+                                } else {
+                                    Toast.makeText(ReadMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+                                }
+                            }
+                            else{
+                                Toast.makeText(ReadMessageActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Message> call, Throwable t) {
+                            Toast.makeText(ReadMessageActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.dismiss();
+                }
+            }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
         }
         else if(email.get(2).equals("Sent")){
             AlertDialog.Builder dialogs=new AlertDialog.Builder(ReadMessageActivity.this).setTitle("Delete Email in Sent").setMessage("Are you sure to delete this email?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
