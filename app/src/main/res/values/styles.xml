@@ -16,6 +16,8 @@
         <item name="android:editTextStyle">@style/EditText</item>
         <item name="editTextStyle">@style/EditText</item>
         <item name="android:windowContentOverlay">@null</item>
+        <item name="android:actionModeBackground">@color/colorPrimary</item>
+        <item name="actionModeBackground">@color/colorPrimary</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

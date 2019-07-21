@@ -10,6 +10,8 @@ import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
+import android.util.SparseBooleanArray;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,8 +29,10 @@ import com.application.imail.model.listemail;
 import com.application.imail.remote.APIUtils;
 import com.application.imail.remote.MessageService;
 import com.application.imail.user.ReadMessageActivity;
+import com.application.imail.utils.FlipAnimator;
 import com.balysv.materialripple.MaterialRippleLayout;
 import com.bumptech.glide.Glide;
+import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -41,14 +45,24 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
-
+public class AdapterListEmail extends RecyclerView.Adapter<AdapterListEmail.OriginalViewHolder> implements Filterable {
+    private MessageAdapterListener listener;
     private List<Message> items = new ArrayList<>();
     private List<Message> itemsfilter = new ArrayList<>();
     MessageService messageService = APIUtils.getMessageService();
     private Context ctx;
     private OnItemClickListener mOnItemClickListener;
     ProgressDialog pd;
+
+    private SparseBooleanArray selectedItems;
+
+    // array used to perform multiple animation at once
+    private SparseBooleanArray animationItemsIndex;
+    private boolean reverseAllAnimations = false;
+
+    // index is used to animate only the selected row
+    // dirty fix, find a better solution
+    private static int currentSelectedIndex = -1;
     public interface OnItemClickListener {
         void onItemClick(View view, Message obj, int position);
     }
@@ -57,15 +71,18 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
         this.mOnItemClickListener = mItemClickListener;
     }
 
-    public AdapterListEmail(Context context, List<Message> items) {
+    public AdapterListEmail(Context context, List<Message> items, MessageAdapterListener listener) {
+        this.listener = listener;
         this.items = items;
         ctx = context;
         this.itemsfilter = items;
+        selectedItems = new SparseBooleanArray();
+        animationItemsIndex = new SparseBooleanArray();
     }
 
-    public class OriginalViewHolder extends RecyclerView.ViewHolder {
-        public ImageView image;
-        public ImageButton starred, delete;
+    public class OriginalViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
+        public CircularImageView image, imageback;
+        public ImageButton select, starred, delete;
         public TextView subject, message, nama, date;
         public View lyt_parent;
         public MaterialRippleLayout layout;
@@ -76,17 +93,27 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
             message = v.findViewById(R.id.message);
             date = v.findViewById(R.id.date);
             image =  v.findViewById(R.id.image);
+            imageback =  v.findViewById(R.id.imageback);
+            select =  v.findViewById(R.id.select);
             starred =  v.findViewById(R.id.starred);
             delete =  v.findViewById(R.id.delete);
             nama = (TextView) v.findViewById(R.id.nama);
             lyt_parent = (View) v.findViewById(R.id.lyt_parent);
             layout = v.findViewById(R.id.layout_email);
+            v.setOnLongClickListener(this);
+        }
+
+        @Override
+        public boolean onLongClick(View view) {
+            listener.onRowLongClicked(getAdapterPosition());
+            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+            return true;
         }
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        RecyclerView.ViewHolder vh;
+    public OriginalViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        OriginalViewHolder vh;
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list_email, parent, false);
         vh = new OriginalViewHolder(v);
         return vh;
@@ -94,12 +121,67 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+    public void onBindViewHolder(final OriginalViewHolder view, final int position) {
         final Message p = itemsfilter.get(position);
-        if (holder instanceof OriginalViewHolder) {
-            final OriginalViewHolder view = (OriginalViewHolder) holder;
+//        if (holder instanceof OriginalViewHolder) {
+//            final OriginalViewHolder view = (OriginalViewHolder) holder;
             SimpleDateFormat formatapi=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             SimpleDateFormat format=new SimpleDateFormat("dd MMM yy");
+
+
+            Glide.with(ctx).load(R.drawable.ic_person).into(view.image);
+            Glide.with(ctx).load(R.drawable.ic_check_circle).into(view.imageback);
+            // change the row state to activated
+            view.itemView.setActivated(selectedItems.get(position, false));
+
+            view.lyt_parent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.onMessageRowClicked(position);
+                }
+            });
+
+            view.lyt_parent.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    listener.onRowLongClicked(position);
+                    view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+                    return true;
+                }
+            });
+
+            applyIconAnimation(view,position);
+//            view.lyt_parent.setOnLongClickListener(new View.OnLongClickListener() {
+//                @Override
+//                public boolean onLongClick(View v) {
+//                    view.image.setVisibility(View.GONE);
+//                    view.select.setVisibility(View.VISIBLE);
+//                    return false;
+//                }
+//            });
+//            view.image.setVisibility(p.isChecked() ? View.VISIBLE : View.GONE);
+//            view.select.setVisibility(!p.isChecked() ? View.VISIBLE : View.GONE);
+//            textView.setText(employee.getName());
+//
+//            itemView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    employee.setChecked(!employee.isChecked());
+//                    imageView.setVisibility(employee.isChecked() ? View.VISIBLE : View.GONE);
+//                }
+//            });
+
+//            view.select.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    if(p.isChecked()){
+//                        p.setChecked(false);
+//                    }
+//                    else{
+//                        p.setChecked(true);
+//                    }
+//                }
+//            });
 
             if(!p.isRead()){
                 view.nama.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
@@ -872,7 +954,7 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
                     });
                 }
             });
-        }
+//        }
     }
 
     @Override
@@ -1008,5 +1090,97 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
         });
 
+
+    }
+    @Override
+    public long getItemId(int position) {
+        return itemsfilter.get(position).getMessageID();
+    }
+
+    private void applyIconAnimation(final OriginalViewHolder holder, final int position) {
+        if (selectedItems.get(position, false)) {
+            holder.image.setVisibility(View.GONE);
+            resetIconYAxis(holder.imageback);
+            holder.imageback.setVisibility(View.VISIBLE);
+//            holder.imageback.setAlpha(1);
+            Glide.with(ctx).load(R.drawable.ic_check_circle).into(holder.imageback);
+            if (currentSelectedIndex == position) {
+//                holder.image.setVisibility(View.VISIBLE);
+//                holder.select.setVisibility(View.GONE);
+                FlipAnimator.flipView(ctx, holder.imageback, holder.image, true);
+                resetCurrentIndex();
+            }
+        } else {
+            holder.imageback.setVisibility(View.GONE);
+            resetIconYAxis(holder.image);
+            holder.image.setVisibility(View.VISIBLE);
+            Glide.with(ctx).load(R.drawable.ic_person).into(holder.image);
+//            holder.image.setAlpha(1);
+            if ((reverseAllAnimations && animationItemsIndex.get(position, false)) || currentSelectedIndex == position) {
+//                holder.image.setVisibility(View.GONE);
+//                holder.select.setVisibility(View.VISIBLE);
+                FlipAnimator.flipView(ctx, holder.imageback, holder.image, false);
+                resetCurrentIndex();
+            }
+        }
+    }
+
+    private void resetIconYAxis(View view) {
+        if (view.getRotationY() != 0) {
+            view.setRotationY(0);
+        }
+    }
+
+    public void resetAnimationIndex() {
+        reverseAllAnimations = false;
+        animationItemsIndex.clear();
+    }
+
+    public void toggleSelection(int pos) {
+        currentSelectedIndex = pos;
+        if (selectedItems.get(pos, false)) {
+            selectedItems.delete(pos);
+            animationItemsIndex.delete(pos);
+        } else {
+            selectedItems.put(pos, true);
+            animationItemsIndex.put(pos, true);
+        }
+        notifyItemChanged(pos);
+    }
+
+    public void clearSelections() {
+        reverseAllAnimations = true;
+        selectedItems.clear();
+        notifyDataSetChanged();
+    }
+
+    public int getSelectedItemCount() {
+        return selectedItems.size();
+    }
+
+    public List<Integer> getSelectedItems() {
+        List<Integer> items =
+                new ArrayList<>(selectedItems.size());
+        for (int i = 0; i < selectedItems.size(); i++) {
+            items.add(selectedItems.keyAt(i));
+        }
+        return items;
+    }
+
+    public void removeData(int position) {
+        itemsfilter.remove(position);
+        resetCurrentIndex();
+    }
+
+    private void resetCurrentIndex() {
+        currentSelectedIndex = -1;
+    }
+
+    public interface MessageAdapterListener {
+        void onIconClicked(int position);
+
+        void onMessageRowClicked(int position);
+
+        void onRowLongClicked(int position);
     }
 }

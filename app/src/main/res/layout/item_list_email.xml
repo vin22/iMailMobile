@@ -28,7 +28,23 @@
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_person"
                 app:civ_border_color="@android:color/holo_blue_dark"/>
-
+            <com.mikhaellopez.circularimageview.CircularImageView
+                android:visibility="gone"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="@dimen/dp8"
+                android:layout_marginRight="@dimen/dp8"
+                android:id="@+id/imageback"
+                android:layout_gravity="center"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_check_circle"/>
+            <ImageButton
+                android:visibility="gone"
+                android:id="@+id/select"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/ic_check_box_outline"
+                android:layout_gravity="center"/>
             <LinearLayout
                 android:layout_margin="2sp"
                 android:layout_width="match_parent"

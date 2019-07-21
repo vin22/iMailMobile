@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,6 +15,7 @@ import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -63,7 +65,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class InboxActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, AdapterListEmail.MessageAdapterListener {
     AdapterListContact adapter_contact;
     AdapterListEmail adapter_inbox,adapter_spam, adapter_sent, adapter_starred, adapter_trash, adapter_draft;
     RecyclerView recyclerView_inbox, recyclerView_spam, recyclerView_starred, recyclerView_sent, recyclerView_trash, recyclerView_draft, recyclerView_contact;
@@ -86,6 +88,11 @@ public class InboxActivity extends AppCompatActivity
     ContactService contactService;
     MessageService messageService;
     ProgressDialog pd;
+
+    AppBarLayout appbar;
+    Menu tempmenu;
+    private ActionModeCallback actionModeCallback;
+    private ActionMode actionMode;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +100,7 @@ public class InboxActivity extends AppCompatActivity
         sessionManager = SessionManager.with(this);
 //        Toolbar toolbar = findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
+        appbar=findViewById(R.id.appbar);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
         setSupportActionBar(toolbar);
@@ -103,6 +111,9 @@ public class InboxActivity extends AppCompatActivity
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.setStatusBarColor(InboxActivity.this.getResources().getColor(R.color.colorPrimary));
         }
+
+        actionModeCallback = new ActionModeCallback();
+
         initToolbar(folder);
         parent_view=findViewById(R.id.parent_view);
         swipeinbox=findViewById(R.id.swipeinbox);
@@ -459,7 +470,7 @@ public class InboxActivity extends AppCompatActivity
 //                        }
 //                        else{
                         Collections.sort(itemsinbox);
-                            adapter_inbox=new AdapterListEmail(InboxActivity.this,itemsinbox);
+                            adapter_inbox=new AdapterListEmail(InboxActivity.this,itemsinbox,InboxActivity.this);
                             recyclerView_inbox.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
                             recyclerView_inbox.setHasFixedSize(true);
                             recyclerView_inbox.setAdapter(adapter_inbox);
@@ -576,7 +587,7 @@ public class InboxActivity extends AppCompatActivity
 //                        }
 //                        else{
                         Collections.sort(itemsspam);
-                        adapter_spam=new AdapterListEmail(InboxActivity.this,itemsspam);
+                        adapter_spam=new AdapterListEmail(InboxActivity.this,itemsspam,InboxActivity.this);
                         recyclerView_spam.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
                         recyclerView_spam.setHasFixedSize(true);
                         recyclerView_spam.setAdapter(adapter_spam);
@@ -730,7 +741,7 @@ public class InboxActivity extends AppCompatActivity
 //                            recyclerView_starred.setAdapter(adapter_starred);
 //                        }
 //                        else{
-                            adapter_starred=new AdapterListEmail(InboxActivity.this,itemsstarred);
+                            adapter_starred=new AdapterListEmail(InboxActivity.this,itemsstarred, InboxActivity.this);
                             recyclerView_starred.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
                             recyclerView_starred.setHasFixedSize(true);
                             recyclerView_starred.setAdapter(adapter_starred);
@@ -816,7 +827,7 @@ public class InboxActivity extends AppCompatActivity
 //                        }
 //                        else{
                         Collections.sort(itemssent);
-                        adapter_sent=new AdapterListEmail(InboxActivity.this,itemssent);
+                        adapter_sent=new AdapterListEmail(InboxActivity.this,itemssent, InboxActivity.this);
                         recyclerView_sent.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
                         recyclerView_sent.setHasFixedSize(true);
                         recyclerView_sent.setAdapter(adapter_sent);
@@ -944,7 +955,7 @@ public class InboxActivity extends AppCompatActivity
 //                        }
 //                        else{
                         Collections.sort(itemstrash);
-                            adapter_trash=new AdapterListEmail(InboxActivity.this,itemstrash);
+                            adapter_trash=new AdapterListEmail(InboxActivity.this,itemstrash, InboxActivity.this);
                             recyclerView_trash.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
                             recyclerView_trash.setHasFixedSize(true);
                             recyclerView_trash.setAdapter(adapter_trash);
@@ -1061,7 +1072,7 @@ public class InboxActivity extends AppCompatActivity
 //                        }
 //                        else{
                         Collections.sort(itemsdraft);
-                            adapter_draft=new AdapterListEmail(InboxActivity.this,itemsdraft);
+                            adapter_draft=new AdapterListEmail(InboxActivity.this,itemsdraft, InboxActivity.this);
                             recyclerView_draft.setLayoutManager(new LinearLayoutManager(InboxActivity.this));
                             recyclerView_draft.setHasFixedSize(true);
                             recyclerView_draft.setAdapter(adapter_draft);
@@ -1314,6 +1325,7 @@ public class InboxActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_search, menu);
+        tempmenu=menu;
         MenuItem item = menu.findItem(R.id.action_search);
 
         searchView.setMenuItem(item);
@@ -1568,6 +1580,233 @@ public class InboxActivity extends AppCompatActivity
                     setEmailTrash();
                 }
             }
+        }
+    }
+
+    @Override
+    public void onIconClicked(int position) {
+        if (actionMode == null) {
+            actionMode = startSupportActionMode(actionModeCallback);
+        }
+
+        toggleSelection(position);
+    }
+
+    @Override
+    public void onMessageRowClicked(int position) {
+        // verify whether action mode is enabled or not
+        // if enabled, change the row state to activated
+        if(folder.equals("Inbox")) {
+            if (adapter_inbox.getSelectedItemCount() > 0) {
+                enableActionMode(position);
+            } else {
+                // read the message which removes bold from the row
+                Message message = itemsinbox.get(position);
+                message.setRead(true);
+                itemsinbox.set(position, message);
+                adapter_inbox.notifyDataSetChanged();
+
+                Toast.makeText(getApplicationContext(), "Read: " + message.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }else if(folder.equals("Spam")) {
+            if (adapter_spam.getSelectedItemCount() > 0) {
+                enableActionMode(position);
+            } else {
+                // read the message which removes bold from the row
+                Message message = itemsspam.get(position);
+                message.setRead(true);
+                itemsspam.set(position, message);
+                adapter_spam.notifyDataSetChanged();
+
+                Toast.makeText(getApplicationContext(), "Read: " + message.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+    @Override
+    public void onRowLongClicked(int position) {
+        // long press is performed, enable action mode
+        enableActionMode(position);
+    }
+
+    private void enableActionMode(int position) {
+        if (actionMode == null) {
+            actionMode = startSupportActionMode(actionModeCallback);
+        }
+        toggleSelection(position);
+    }
+    private void toggleSelection(int position) {
+        if(folder.equals("Inbox")) {
+            adapter_inbox.toggleSelection(position);
+            int count = adapter_inbox.getSelectedItemCount();
+
+            if (count == 0) {
+                actionMode.finish();
+            } else {
+                actionMode.setTitle(String.valueOf(count) + " selected");
+                actionMode.invalidate();
+            }
+        }
+        else if(folder.equals("Spam")) {
+            adapter_spam.toggleSelection(position);
+            int count = adapter_spam.getSelectedItemCount();
+
+            if (count == 0) {
+                actionMode.finish();
+            } else {
+                actionMode.setTitle(String.valueOf(count) + " selected");
+                actionMode.invalidate();
+            }
+        }
+    }
+    private class ActionModeCallback implements ActionMode.Callback {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) parent_view.getLayoutParams();
+            params.setBehavior(null);
+            parent_view.requestLayout();
+            appbar.setVisibility(View.GONE);
+            mode.getMenuInflater().inflate(R.menu.menu_action_mode, menu);
+            // disable swipe refresh if action mode is enabled
+            if(folder.equals("Inbox")) {
+                swipeinbox.setEnabled(false);
+            }
+            else if(folder.equals("Spam")) {
+                swipespam.setEnabled(false);
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.action_delete:
+                    // delete all the selected messages
+                    deleteMessages();
+                    mode.finish();
+                    return true;
+                case R.id.action_filter:
+                    // delete all the selected messages
+                    if(folder.equals("Inbox")) {
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(InboxActivity.this);
+                        dialog.setTitle("Mark message as spam");
+                        dialog.setMessage("Are you sure to mark message as spam?");
+                        dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                                mode.finish();
+                            }
+                        });
+                        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                                mode.finish();
+                            }
+                        });
+                        dialog.show();
+                    }
+                    else if(folder.equals("Spam")) {
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(InboxActivity.this);
+                        dialog.setTitle("Mark spam as non spam");
+                        dialog.setMessage("Are you sure to mark spam as non spam?");
+                        dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                                mode.finish();
+                            }
+                        });
+                        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                                mode.finish();
+                            }
+                        });
+                        dialog.show();
+                    }
+
+
+                    return true;
+                case R.id.action_move:
+                    // delete all the selected messages
+                    AlertDialog.Builder dialogs=new AlertDialog.Builder(InboxActivity.this);
+                    dialogs.setTitle("Move message to");
+                    String[] items={"Draft"};
+                    dialogs.setItems(items, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                            mode.finish();
+                        }
+                    });
+                    dialogs.show();
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) parent_view.getLayoutParams();
+            params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
+            parent_view.requestLayout();
+            appbar.setVisibility(View.VISIBLE);
+//            toolbar.setVisibility(View.VISIBLE);
+//            getSupportActionBar().show();
+            if(folder.equals("Inbox")) {
+                adapter_inbox.clearSelections();
+                swipeinbox.setEnabled(true);
+                actionMode = null;
+                recyclerView_inbox.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter_inbox.resetAnimationIndex();
+                        // mAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+            else if(folder.equals("Spam")) {
+                adapter_spam.clearSelections();
+                swipespam.setEnabled(true);
+                actionMode = null;
+                recyclerView_spam.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter_spam.resetAnimationIndex();
+                        // mAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        }
+    }
+
+    // deleting the messages from recycler view
+    private void deleteMessages() {
+        if(folder.equals("Inbox")) {
+            adapter_inbox.resetAnimationIndex();
+            List<Integer> selectedItemPositions =
+                    adapter_inbox.getSelectedItems();
+            for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
+                adapter_inbox.removeData(selectedItemPositions.get(i));
+            }
+            adapter_inbox.notifyDataSetChanged();
+        }
+        else if(folder.equals("Spam")){
+            adapter_spam.resetAnimationIndex();
+            List<Integer> selectedItemPositions =
+                    adapter_spam.getSelectedItems();
+            for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
+                adapter_spam.removeData(selectedItemPositions.get(i));
+            }
+            adapter_spam.notifyDataSetChanged();
         }
     }
 }

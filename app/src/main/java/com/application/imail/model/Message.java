@@ -7,6 +7,24 @@ public class Message implements Comparable<Message>{
     public String Sendername, Sender, Receiver, Reply, Forward, Subject, Body, Attachment, Cc, Bcc, Folder, Date;
     public boolean Dlt, isRead, isTrash, Starred;
     public String status, message;
+    public boolean isChecked=false;
+    public boolean isLongClick=false;
+
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
+    }
+
+    public boolean isLongClick() {
+        return isLongClick;
+    }
+
+    public void setLongClick(boolean longClick) {
+        isLongClick = longClick;
+    }
 
     public String getSendername() {
         return Sendername;
