@@ -444,7 +444,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
                 }
             }
 
-            Call<Message> call = messageService.adddraft(spinnerfrom.getText().toString(),receiver, "","",subject.getText().toString(),
+            Call<Message> call = messageService.adddraft(sessionManager.getuserloggedin().getUserID(),spinnerfrom.getText().toString(),receiver, "","",subject.getText().toString(),
                     mPreview.getText().toString(),cc,bcc,"");
             call.enqueue(new Callback<Message>() {
                 @Override
@@ -535,51 +535,56 @@ public class ComposeMessageActivity extends AppCompatActivity {
         else {
 //            Call<Message> call = messageService.send(sessionManager.getuserloggedin().getUserID(), spinnerfrom.getText().toString(), sessionManager.getuserloggedin().getName(), receiver, subject.getText().toString(),
 ////                    message.getText().toString(), cc, bcc);
-            Call<Message> call = messageService.send(sessionManager.getuserloggedin().getUserID(), spinnerfrom.getText().toString(), sessionManager.getuserloggedin().getName(), receiver, subject.getText().toString(),
-                    mPreview.getText().toString(), cc, bcc);
-            call.enqueue(new Callback<Message>() {
-                @Override
-                public void onResponse(Call<Message> call, Response<Message> response) {
-                    if (response.isSuccessful()) {
-                        String status = response.body().getStatus();
-                        String statusmessage = response.body().getMessage();
-                        if (status.equals("true")) {
-                            Toast.makeText(ComposeMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
-                            chips_to.clearSelectedChips();
-                            chips_bcc.clearSelectedChips();
-                            chips_cc.clearSelectedChips();
-                            subject.setText("");
-                            message.setText("");
-                            mEditor.setHtml(null);
-                            mPreview.setText("");
-                            getContacts();
-                            isinput=false;
-                            if(pd.isShowing()){
-                                pd.dismiss();
+            if(receiver.contains("com.tylersuehr.chips")){
+                Toast.makeText(ComposeMessageActivity.this, "Harap di enter email tujuan", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Call<Message> call = messageService.send(sessionManager.getuserloggedin().getUserID(), spinnerfrom.getText().toString(), sessionManager.getuserloggedin().getName(), receiver, subject.getText().toString(),
+                        mPreview.getText().toString(), cc, bcc);
+                call.enqueue(new Callback<Message>() {
+                    @Override
+                    public void onResponse(Call<Message> call, Response<Message> response) {
+                        if (response.isSuccessful()) {
+                            String status = response.body().getStatus();
+                            String statusmessage = response.body().getMessage();
+                            if (status.equals("true")) {
+                                Toast.makeText(ComposeMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                chips_to.clearSelectedChips();
+                                chips_bcc.clearSelectedChips();
+                                chips_cc.clearSelectedChips();
+                                subject.setText("");
+                                message.setText("");
+                                mEditor.setHtml(null);
+                                mPreview.setText("");
+                                getContacts();
+                                isinput = false;
+                                if (pd.isShowing()) {
+                                    pd.dismiss();
+                                }
+                            } else {
+                                if (pd.isShowing()) {
+                                    pd.dismiss();
+                                }
+                                Toast.makeText(ComposeMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
                             }
                         } else {
-                            if(pd.isShowing()){
+                            if (pd.isShowing()) {
                                 pd.dismiss();
                             }
-                            Toast.makeText(ComposeMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ComposeMessageActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
                         }
-                    } else {
-                        if(pd.isShowing()){
+                    }
+
+                    @Override
+                    public void onFailure(Call<Message> call, Throwable t) {
+                        if (pd.isShowing()) {
                             pd.dismiss();
                         }
-                        Toast.makeText(ComposeMessageActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                        Log.e("USER ACTIVITY ERROR", t.getMessage());
+                        Toast.makeText(ComposeMessageActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
                     }
-                }
-
-                @Override
-                public void onFailure(Call<Message> call, Throwable t) {
-                    if(pd.isShowing()){
-                        pd.dismiss();
-                    }
-                    Log.e("USER ACTIVITY ERROR", t.getMessage());
-                    Toast.makeText(ComposeMessageActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
-                }
-            });
+                });
+            }
         }
 
     }

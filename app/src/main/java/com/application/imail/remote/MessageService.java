@@ -13,11 +13,11 @@ import retrofit2.http.POST;
 public interface MessageService {
     @FormUrlEncoded
     @POST("getdraft/")
-    Call<List<Message>> getdraft(@Field("Sender") String sender);
+    Call<List<Message>> getdraft(@Field("UserID") int userid);
 
     @FormUrlEncoded
     @POST("adddraft/")
-    Call<Message> adddraft(@Field("Sender") String sender, @Field("Receiver") String receiver, @Field("Reply") String reply,
+    Call<Message> adddraft(@Field("UserID") int userid, @Field("Sender") String sender, @Field("Receiver") String receiver, @Field("Reply") String reply,
                            @Field("Forward") String forward, @Field("Subject") String subject, @Field("Body") String body,
                            @Field("Cc") String cc,@Field("Bcc") String bcc,@Field("Attachment") String attachment);
 
@@ -40,11 +40,11 @@ public interface MessageService {
 
     @FormUrlEncoded
     @POST("read/")
-    Call<List<Message>> read(@Field("Email") String email, @Field("Password") String password);
+    Call<List<Message>> read(@Field("UserID") int userid, @Field("Email") String email, @Field("Password") String password);
 
     @FormUrlEncoded
     @POST("readspam/")
-    Call<List<Message>> readspam(@Field("Email") String email, @Field("Password") String password);
+    Call<List<Message>> readspam(@Field("UserID") int userid, @Field("Email") String email, @Field("Password") String password);
 
     @FormUrlEncoded
     @POST("readinbox/")
@@ -60,7 +60,7 @@ public interface MessageService {
 
     @FormUrlEncoded
     @POST("getsent/")
-    Call<List<Message>> getsent(@Field("Sender") String sender);
+    Call<List<Message>> getsent(@Field("UserID") int userid);
 
     @FormUrlEncoded
     @POST("deletesent/")
@@ -68,7 +68,7 @@ public interface MessageService {
 
     @FormUrlEncoded
     @POST("gettrash/")
-    Call<List<Message>> gettrash(@Field("Sender") String sender);
+    Call<List<Message>> gettrash(@Field("UserID") int userid);
 
     @FormUrlEncoded
     @POST("deletetrash/")
@@ -76,7 +76,7 @@ public interface MessageService {
 
     @FormUrlEncoded
     @POST("getstarred/")
-    Call<List<Message>> getstarred(@Field("Sender") String sender);
+    Call<List<Message>> getstarred(@Field("UserID") int userid);
 
     @FormUrlEncoded
     @POST("starred/")

@@ -429,7 +429,7 @@ public class InboxActivity extends AppCompatActivity
         if(adapter_inbox!=null){
             adapter_inbox.notifyDataSetChanged();
         }
-        Call<List<Message>> call = messageService.read(sessionManager.getuserloggedin().getEmail(), sessionManager.getuserloggedin().getPassword());
+        Call<List<Message>> call = messageService.read(sessionManager.getuserloggedin().getUserID(), sessionManager.getuserloggedin().getEmail(), sessionManager.getuserloggedin().getPassword());
         call.enqueue(new Callback<List<Message>>() {
             @Override
             public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
@@ -546,7 +546,7 @@ public class InboxActivity extends AppCompatActivity
         if(adapter_spam!=null){
             adapter_spam.notifyDataSetChanged();
         }
-        Call<List<Message>> call = messageService.readspam(sessionManager.getuserloggedin().getEmail(), sessionManager.getuserloggedin().getPassword());
+        Call<List<Message>> call = messageService.readspam(sessionManager.getuserloggedin().getUserID(),sessionManager.getuserloggedin().getEmail(), sessionManager.getuserloggedin().getPassword());
         call.enqueue(new Callback<List<Message>>() {
             @Override
             public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
@@ -706,7 +706,7 @@ public class InboxActivity extends AppCompatActivity
 //            }
 //        }
         SessionManager sessionManager = SessionManager.with(InboxActivity.this);
-        Call<List<Message>> call = messageService.getstarred(sessionManager.getuserloggedin().getEmail());
+        Call<List<Message>> call = messageService.getstarred(sessionManager.getuserloggedin().getUserID());
         call.enqueue(new Callback<List<Message>>() {
             @Override
             public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
@@ -793,7 +793,7 @@ public class InboxActivity extends AppCompatActivity
             adapter_sent.notifyDataSetChanged();
         }
         SessionManager sessionManager = SessionManager.with(InboxActivity.this);
-        Call<List<Message>> call = messageService.getsent(sessionManager.getuserloggedin().getEmail());
+        Call<List<Message>> call = messageService.getsent(sessionManager.getuserloggedin().getUserID());
         call.enqueue(new Callback<List<Message>>() {
             @Override
             public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
@@ -920,7 +920,7 @@ public class InboxActivity extends AppCompatActivity
             adapter_trash.notifyDataSetChanged();
         }
         SessionManager sessionManager = SessionManager.with(InboxActivity.this);
-        Call<List<Message>> call = messageService.gettrash(sessionManager.getuserloggedin().getEmail());
+        Call<List<Message>> call = messageService.gettrash(sessionManager.getuserloggedin().getUserID());
         call.enqueue(new Callback<List<Message>>() {
             @Override
             public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
@@ -1035,7 +1035,7 @@ public class InboxActivity extends AppCompatActivity
             adapter_draft.notifyDataSetChanged();
         }
         SessionManager sessionManager = SessionManager.with(InboxActivity.this);
-        Call<List<Message>> call = messageService.getdraft(sessionManager.getuserloggedin().getEmail());
+        Call<List<Message>> call = messageService.getdraft(sessionManager.getuserloggedin().getUserID());
         call.enqueue(new Callback<List<Message>>() {
             @Override
             public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {

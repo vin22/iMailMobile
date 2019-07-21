@@ -245,7 +245,7 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
                                                 Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
                                                 dialog.dismiss();
                                                 SessionManager sessionManager = SessionManager.with(ctx);
-                                                Call<List<Message>> call1 = messageService.read(sessionManager.getuserloggedin().getEmail(), sessionManager.getuserloggedin().getPassword());
+                                                Call<List<Message>> call1 = messageService.read(sessionManager.getuserloggedin().getUserID(),sessionManager.getuserloggedin().getEmail(), sessionManager.getuserloggedin().getPassword());
                                                 call1.enqueue(new Callback<List<Message>>() {
                                                     @Override
                                                     public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
@@ -356,7 +356,7 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
                                                 Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
                                                 dialog.dismiss();
                                                 SessionManager sessionManager = SessionManager.with(ctx);
-                                                Call<List<Message>> call1 = messageService.readspam(sessionManager.getuserloggedin().getEmail(), sessionManager.getuserloggedin().getPassword());
+                                                Call<List<Message>> call1 = messageService.readspam(sessionManager.getuserloggedin().getUserID(),sessionManager.getuserloggedin().getEmail(), sessionManager.getuserloggedin().getPassword());
                                                 call1.enqueue(new Callback<List<Message>>() {
                                                     @Override
                                                     public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
@@ -467,7 +467,7 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
                                                 Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
                                                 dialog.dismiss();
                                                 SessionManager sessionManager = SessionManager.with(ctx);
-                                                Call<List<Message>> call1 = messageService.getsent(sessionManager.getuserloggedin().getEmail());
+                                                Call<List<Message>> call1 = messageService.getsent(sessionManager.getuserloggedin().getUserID());
                                                 call1.enqueue(new Callback<List<Message>>() {
                                                     @Override
                                                     public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
@@ -582,7 +582,7 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
                                                 Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
                                                 dialog.dismiss();
                                                 SessionManager sessionManager = SessionManager.with(ctx);
-                                                Call<List<Message>> call1 = messageService.getdraft(sessionManager.getuserloggedin().getEmail());
+                                                Call<List<Message>> call1 = messageService.getdraft(sessionManager.getuserloggedin().getUserID());
                                                 call1.enqueue(new Callback<List<Message>>() {
                                                     @Override
                                                     public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
@@ -693,7 +693,7 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
                                                 Toast.makeText(ctx, statusmessage, Toast.LENGTH_SHORT).show();
                                                 dialog.dismiss();
                                                 SessionManager sessionManager = SessionManager.with(ctx);
-                                                Call<List<Message>> call1 = messageService.gettrash(sessionManager.getuserloggedin().getEmail());
+                                                Call<List<Message>> call1 = messageService.gettrash(sessionManager.getuserloggedin().getUserID());
                                                 call1.enqueue(new Callback<List<Message>>() {
                                                     @Override
                                                     public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
@@ -953,7 +953,7 @@ public class AdapterListEmail extends RecyclerView.Adapter<RecyclerView.ViewHold
                     if (status.equals("true")) {
                         if(folder.equals("Starred")) {
                             SessionManager sessionManager = SessionManager.with(ctx);
-                            Call<List<Message>> call1 = messageService.getstarred(sessionManager.getuserloggedin().getEmail());
+                            Call<List<Message>> call1 = messageService.getstarred(sessionManager.getuserloggedin().getUserID());
                             call1.enqueue(new Callback<List<Message>>() {
                                 @Override
                                 public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
