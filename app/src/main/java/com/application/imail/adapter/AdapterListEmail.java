@@ -1158,14 +1158,23 @@ public class AdapterListEmail extends RecyclerView.Adapter<AdapterListEmail.Orig
         return selectedItems.size();
     }
 
-    public List<Integer> getSelectedItems() {
-        List<Integer> items =
-                new ArrayList<>(selectedItems.size());
+    public List<Message> getSelectedItems() {
+        List<Message> items =
+                new ArrayList<>();
         for (int i = 0; i < selectedItems.size(); i++) {
-            items.add(selectedItems.keyAt(i));
+            items.add(itemsfilter.get(selectedItems.keyAt(i)));
         }
         return items;
     }
+
+//    public List<Integer> getSelectedItems() {
+//        List<Integer> items =
+//                new ArrayList<>(selectedItems.size());
+//        for (int i = 0; i < selectedItems.size(); i++) {
+//            items.add(selectedItems.keyAt(i));
+//        }
+//        return items;
+//    }
 
     public void removeData(int position) {
         itemsfilter.remove(position);

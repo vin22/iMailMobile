@@ -1698,6 +1698,7 @@ public class InboxActivity extends AppCompatActivity
                         dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
+                                markMessagesasspam();
                                 dialogInterface.dismiss();
                                 mode.finish();
                             }
@@ -1718,6 +1719,7 @@ public class InboxActivity extends AppCompatActivity
                         dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
+                                markSpamasnonspam();
                                 dialogInterface.dismiss();
                                 mode.finish();
                             }
@@ -1789,24 +1791,252 @@ public class InboxActivity extends AppCompatActivity
     }
 
     // deleting the messages from recycler view
+    private void markMessagesasspam() {
+        final List<Message> selectedItemPositions = adapter_inbox.getSelectedItems();
+        for(int i=0;i<selectedItemPositions.size();i++) {
+            Log.e("MessageID", String.valueOf(selectedItemPositions.get(i).getMessageID()));
+            if (i+1==selectedItemPositions.size()){
+                Call<Message> call = messageService.markasspam(selectedItemPositions.get(i).getMessageID(), sessionManager.getuserloggedin().getUserID());
+                call.enqueue(new Callback<Message>() {
+                    @Override
+                    public void onResponse(Call<Message> call, Response<Message> response) {
+                        if (response.isSuccessful()) {
+                            String status = response.body().getStatus();
+                            String statusmessage = response.body().getMessage();
+                            if (status.equals("true")) {
+                                Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
+                                    adapter_inbox.removeData(i);
+                                }
+                                adapter_inbox.notifyDataSetChanged();
+                            } else {
+                                Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Message> call, Throwable t) {
+                        Log.e("USER ACTIVITY ERROR", t.getMessage());
+                        Toast.makeText(InboxActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+            else{
+                Call<Message> call = messageService.markasspam(selectedItemPositions.get(i).getMessageID(), sessionManager.getuserloggedin().getUserID());
+                call.enqueue(new Callback<Message>() {
+                    @Override
+                    public void onResponse(Call<Message> call, Response<Message> response) {
+                        if (response.isSuccessful()) {
+                            String status = response.body().getStatus();
+                            String statusmessage = response.body().getMessage();
+                            if (status.equals("true")) {
+//                                Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                            } else {
+//                                Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+//                            Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Message> call, Throwable t) {
+                        Log.e("USER ACTIVITY ERROR", t.getMessage());
+                    }
+                });
+            }
+        }
+
+    }
+
+    // deleting the messages from recycler view
+    private void markSpamasnonspam() {
+        final List<Message> selectedItemPositions = adapter_spam.getSelectedItems();
+        for(int i=0;i<selectedItemPositions.size();i++) {
+            Log.e("MessageID", String.valueOf(selectedItemPositions.get(i).getMessageID()));
+            if (i+1==selectedItemPositions.size()){
+                Call<Message> call = messageService.markasnonspam(selectedItemPositions.get(i).getMessageID(), sessionManager.getuserloggedin().getUserID());
+                call.enqueue(new Callback<Message>() {
+                    @Override
+                    public void onResponse(Call<Message> call, Response<Message> response) {
+                        if (response.isSuccessful()) {
+                            String status = response.body().getStatus();
+                            String statusmessage = response.body().getMessage();
+                            if (status.equals("true")) {
+                                Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
+                                    adapter_spam.removeData(i);
+                                }
+                                adapter_spam.notifyDataSetChanged();
+                            } else {
+                                Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Message> call, Throwable t) {
+                        Log.e("USER ACTIVITY ERROR", t.getMessage());
+                        Toast.makeText(InboxActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+            else{
+                Call<Message> call = messageService.markasnonspam(selectedItemPositions.get(i).getMessageID(), sessionManager.getuserloggedin().getUserID());
+                call.enqueue(new Callback<Message>() {
+                    @Override
+                    public void onResponse(Call<Message> call, Response<Message> response) {
+                        if (response.isSuccessful()) {
+                            String status = response.body().getStatus();
+                            String statusmessage = response.body().getMessage();
+                            if (status.equals("true")) {
+//                                Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                            } else {
+//                                Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+//                            Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Message> call, Throwable t) {
+                        Log.e("USER ACTIVITY ERROR", t.getMessage());
+                    }
+                });
+            }
+        }
+
+    }
+
+    // deleting the messages from recycler view
     private void deleteMessages() {
         if(folder.equals("Inbox")) {
             adapter_inbox.resetAnimationIndex();
-            List<Integer> selectedItemPositions =
-                    adapter_inbox.getSelectedItems();
-            for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
-                adapter_inbox.removeData(selectedItemPositions.get(i));
+            final List<Message> selectedItemPositions = adapter_inbox.getSelectedItems();
+
+            for(int i=0;i<selectedItemPositions.size();i++) {
+                Log.e("MessageID", String.valueOf(selectedItemPositions.get(i).getMessageID()));
+                if (i+1==selectedItemPositions.size()){
+                    Call<Message> call = messageService.deleteinbox(selectedItemPositions.get(i).getMessageID());
+                    call.enqueue(new Callback<Message>() {
+                        @Override
+                        public void onResponse(Call<Message> call, Response<Message> response) {
+                            if (response.isSuccessful()) {
+                                String status = response.body().getStatus();
+                                String statusmessage = response.body().getMessage();
+                                if (status.equals("true")) {
+                                    Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                    for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
+                                        adapter_inbox.removeData(i);
+                                    }
+                                    adapter_inbox.notifyDataSetChanged();
+                                } else {
+                                    Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Message> call, Throwable t) {
+                            Log.e("USER ACTIVITY ERROR", t.getMessage());
+                            Toast.makeText(InboxActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                else{
+                    Call<Message> call = messageService.deleteinbox(selectedItemPositions.get(i).getMessageID());
+                    call.enqueue(new Callback<Message>() {
+                        @Override
+                        public void onResponse(Call<Message> call, Response<Message> response) {
+                            if (response.isSuccessful()) {
+                                String status = response.body().getStatus();
+                                String statusmessage = response.body().getMessage();
+                                if (status.equals("true")) {
+//                                Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                } else {
+//                                Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+//                            Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Message> call, Throwable t) {
+                            Log.e("USER ACTIVITY ERROR", t.getMessage());
+                        }
+                    });
+                }
             }
-            adapter_inbox.notifyDataSetChanged();
         }
         else if(folder.equals("Spam")){
             adapter_spam.resetAnimationIndex();
-            List<Integer> selectedItemPositions =
-                    adapter_spam.getSelectedItems();
-            for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
-                adapter_spam.removeData(selectedItemPositions.get(i));
+            final List<Message> selectedItemPositions = adapter_spam.getSelectedItems();
+
+            for(int i=0;i<selectedItemPositions.size();i++) {
+                Log.e("MessageID", String.valueOf(selectedItemPositions.get(i).getMessageID()));
+                if (i+1==selectedItemPositions.size()){
+                    Call<Message> call = messageService.deletespam(selectedItemPositions.get(i).getMessageID());
+                    call.enqueue(new Callback<Message>() {
+                        @Override
+                        public void onResponse(Call<Message> call, Response<Message> response) {
+                            if (response.isSuccessful()) {
+                                String status = response.body().getStatus();
+                                String statusmessage = response.body().getMessage();
+                                if (status.equals("true")) {
+                                    Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                    for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
+                                        adapter_spam.removeData(i);
+                                    }
+                                    adapter_spam.notifyDataSetChanged();
+                                } else {
+                                    Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Message> call, Throwable t) {
+                            Log.e("USER ACTIVITY ERROR", t.getMessage());
+                            Toast.makeText(InboxActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                else{
+                    Call<Message> call = messageService.deletespam(selectedItemPositions.get(i).getMessageID());
+                    call.enqueue(new Callback<Message>() {
+                        @Override
+                        public void onResponse(Call<Message> call, Response<Message> response) {
+                            if (response.isSuccessful()) {
+                                String status = response.body().getStatus();
+                                String statusmessage = response.body().getMessage();
+                                if (status.equals("true")) {
+//                                Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                } else {
+//                                Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+//                            Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Message> call, Throwable t) {
+                            Log.e("USER ACTIVITY ERROR", t.getMessage());
+                        }
+                    });
+                }
             }
-            adapter_spam.notifyDataSetChanged();
         }
     }
 }

@@ -81,4 +81,12 @@ public interface MessageService {
     @FormUrlEncoded
     @POST("starred/")
     Call<Message> starred(@Field("MessageID") int messageid);
+
+    @FormUrlEncoded
+    @POST("markasspam/")
+    Call<Message> markasspam(@Field("MessageID") int messageid, @Field("UserID") int userid);
+
+    @FormUrlEncoded
+    @POST("markasnonspam/")
+    Call<Message> markasnonspam(@Field("MessageID") int messageid, @Field("UserID") int userid);
 }
