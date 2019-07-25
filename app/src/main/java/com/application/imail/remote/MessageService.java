@@ -22,6 +22,10 @@ public interface MessageService {
                            @Field("Cc") String cc,@Field("Bcc") String bcc,@Field("Attachment") String attachment);
 
     @FormUrlEncoded
+    @POST("movedraft/")
+    Call<Message> movedraft(@Field("MessageID") int MessageID);
+
+    @FormUrlEncoded
     @POST("deletedraft/")
     Call<Message> deletedraft(@Field("MessageID") int messageid);
 
@@ -51,6 +55,10 @@ public interface MessageService {
     Call<Message> readinbox(@Field("MessageID") int MessageID);
 
     @FormUrlEncoded
+    @POST("moveinbox/")
+    Call<Message> moveinbox(@Field("MessageID") int MessageID);
+
+    @FormUrlEncoded
     @POST("deleteinbox/")
     Call<Message> deleteinbox(@Field("MessageID") int MessageID);
 
@@ -61,6 +69,10 @@ public interface MessageService {
     @FormUrlEncoded
     @POST("getsent/")
     Call<List<Message>> getsent(@Field("UserID") int userid);
+
+    @FormUrlEncoded
+    @POST("movesent/")
+    Call<Message> movesent(@Field("MessageID") int MessageID);
 
     @FormUrlEncoded
     @POST("deletesent/")

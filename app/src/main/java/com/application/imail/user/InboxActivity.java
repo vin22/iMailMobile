@@ -1608,7 +1608,8 @@ public class InboxActivity extends AppCompatActivity
 
                 Toast.makeText(getApplicationContext(), "Read: " + message.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        }else if(folder.equals("Spam")) {
+        }
+        else if(folder.equals("Spam")) {
             if (adapter_spam.getSelectedItemCount() > 0) {
                 enableActionMode(position);
             } else {
@@ -1617,6 +1618,45 @@ public class InboxActivity extends AppCompatActivity
                 message.setRead(true);
                 itemsspam.set(position, message);
                 adapter_spam.notifyDataSetChanged();
+
+                Toast.makeText(getApplicationContext(), "Read: " + message.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
+        else if(folder.equals("Sent")) {
+            if (adapter_sent.getSelectedItemCount() > 0) {
+                enableActionMode(position);
+            } else {
+                // read the message which removes bold from the row
+                Message message = itemssent.get(position);
+                message.setRead(true);
+                itemssent.set(position, message);
+                adapter_sent.notifyDataSetChanged();
+
+                Toast.makeText(getApplicationContext(), "Read: " + message.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
+        else if(folder.equals("Draft")) {
+            if (adapter_draft.getSelectedItemCount() > 0) {
+                enableActionMode(position);
+            } else {
+                // read the message which removes bold from the row
+                Message message = itemsdraft.get(position);
+                message.setRead(true);
+                itemsdraft.set(position, message);
+                adapter_draft.notifyDataSetChanged();
+
+                Toast.makeText(getApplicationContext(), "Read: " + message.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
+        else if(folder.equals("Trash")) {
+            if (adapter_trash.getSelectedItemCount() > 0) {
+                enableActionMode(position);
+            } else {
+                // read the message which removes bold from the row
+                Message message = itemstrash.get(position);
+                message.setRead(true);
+                itemstrash.set(position, message);
+                adapter_trash.notifyDataSetChanged();
 
                 Toast.makeText(getApplicationContext(), "Read: " + message.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -1657,6 +1697,39 @@ public class InboxActivity extends AppCompatActivity
                 actionMode.invalidate();
             }
         }
+        else if(folder.equals("Sent")) {
+            adapter_sent.toggleSelection(position);
+            int count = adapter_sent.getSelectedItemCount();
+
+            if (count == 0) {
+                actionMode.finish();
+            } else {
+                actionMode.setTitle(String.valueOf(count) + " selected");
+                actionMode.invalidate();
+            }
+        }
+        else if(folder.equals("Draft")) {
+            adapter_draft.toggleSelection(position);
+            int count = adapter_draft.getSelectedItemCount();
+
+            if (count == 0) {
+                actionMode.finish();
+            } else {
+                actionMode.setTitle(String.valueOf(count) + " selected");
+                actionMode.invalidate();
+            }
+        }
+        else if(folder.equals("Trash")) {
+            adapter_trash.toggleSelection(position);
+            int count = adapter_trash.getSelectedItemCount();
+
+            if (count == 0) {
+                actionMode.finish();
+            } else {
+                actionMode.setTitle(String.valueOf(count) + " selected");
+                actionMode.invalidate();
+            }
+        }
     }
     private class ActionModeCallback implements ActionMode.Callback {
         @Override
@@ -1672,6 +1745,18 @@ public class InboxActivity extends AppCompatActivity
             }
             else if(folder.equals("Spam")) {
                 swipespam.setEnabled(false);
+            }
+            else if(folder.equals("Sent")) {
+                swipesent.setEnabled(false);
+                menu.findItem(R.id.action_filter).setVisible(false);
+            }
+            else if(folder.equals("Draft")) {
+                swipedraft.setEnabled(false);
+                menu.findItem(R.id.action_filter).setVisible(false);
+            }
+            else if(folder.equals("Trash")) {
+                swipetrash.setEnabled(false);
+                menu.findItem(R.id.action_filter).setVisible(false);
             }
             return true;
         }
@@ -1733,22 +1818,37 @@ public class InboxActivity extends AppCompatActivity
                         });
                         dialog.show();
                     }
-
-
                     return true;
                 case R.id.action_move:
                     // delete all the selected messages
-                    AlertDialog.Builder dialogs=new AlertDialog.Builder(InboxActivity.this);
-                    dialogs.setTitle("Move message to");
-                    String[] items={"Draft"};
-                    dialogs.setItems(items, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                            mode.finish();
-                        }
-                    });
-                    dialogs.show();
+                    if(folder.equals("Inbox") || folder.equals("Sent")) {
+                        AlertDialog.Builder dialogs = new AlertDialog.Builder(InboxActivity.this);
+                        dialogs.setTitle("Move message to");
+                        String[] items = {"Draft"};
+                        dialogs.setItems(items, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                moveMessages();
+                                dialogInterface.dismiss();
+                                mode.finish();
+                            }
+                        });
+                        dialogs.show();
+                    }
+                    else if(folder.equals("Draft")) {
+                        AlertDialog.Builder dialogs = new AlertDialog.Builder(InboxActivity.this);
+                        dialogs.setTitle("Move message to");
+                        String[] items = {"Inbox"};
+                        dialogs.setItems(items, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                moveMessages();
+                                dialogInterface.dismiss();
+                                mode.finish();
+                            }
+                        });
+                        dialogs.show();
+                    }
                     return true;
                 default:
                     return false;
@@ -1912,6 +2012,193 @@ public class InboxActivity extends AppCompatActivity
             }
         }
 
+    }
+
+    // deleting the messages from recycler view
+    private void moveMessages() {
+        if(folder.equals("Inbox")) {
+            adapter_inbox.resetAnimationIndex();
+            final List<Message> selectedItemPositions = adapter_inbox.getSelectedItems();
+
+            for(int i=0;i<selectedItemPositions.size();i++) {
+                Log.e("MessageID", String.valueOf(selectedItemPositions.get(i).getMessageID()));
+                if (i+1==selectedItemPositions.size()){
+                    Call<Message> call = messageService.moveinbox(selectedItemPositions.get(i).getMessageID());
+                    call.enqueue(new Callback<Message>() {
+                        @Override
+                        public void onResponse(Call<Message> call, Response<Message> response) {
+                            if (response.isSuccessful()) {
+                                String status = response.body().getStatus();
+                                String statusmessage = response.body().getMessage();
+                                if (status.equals("true")) {
+                                    Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                    for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
+                                        adapter_inbox.removeData(i);
+                                    }
+                                    adapter_inbox.notifyDataSetChanged();
+                                } else {
+                                    Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Message> call, Throwable t) {
+                            Log.e("USER ACTIVITY ERROR", t.getMessage());
+                            Toast.makeText(InboxActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                else{
+                    Call<Message> call = messageService.moveinbox(selectedItemPositions.get(i).getMessageID());
+                    call.enqueue(new Callback<Message>() {
+                        @Override
+                        public void onResponse(Call<Message> call, Response<Message> response) {
+                            if (response.isSuccessful()) {
+                                String status = response.body().getStatus();
+                                String statusmessage = response.body().getMessage();
+                                if (status.equals("true")) {
+//                                Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                } else {
+//                                Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+//                            Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Message> call, Throwable t) {
+                            Log.e("USER ACTIVITY ERROR", t.getMessage());
+                        }
+                    });
+                }
+            }
+        }
+        else if(folder.equals("Sent")){
+            adapter_sent.resetAnimationIndex();
+            final List<Message> selectedItemPositions = adapter_sent.getSelectedItems();
+
+            for(int i=0;i<selectedItemPositions.size();i++) {
+                Log.e("MessageID", String.valueOf(selectedItemPositions.get(i).getMessageID()));
+                if (i+1==selectedItemPositions.size()){
+                    Call<Message> call = messageService.movesent(selectedItemPositions.get(i).getMessageID());
+                    call.enqueue(new Callback<Message>() {
+                        @Override
+                        public void onResponse(Call<Message> call, Response<Message> response) {
+                            if (response.isSuccessful()) {
+                                String status = response.body().getStatus();
+                                String statusmessage = response.body().getMessage();
+                                if (status.equals("true")) {
+                                    Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                    for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
+                                        adapter_sent.removeData(i);
+                                    }
+                                    adapter_sent.notifyDataSetChanged();
+                                } else {
+                                    Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Message> call, Throwable t) {
+                            Log.e("USER ACTIVITY ERROR", t.getMessage());
+                            Toast.makeText(InboxActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                else{
+                    Call<Message> call = messageService.movesent(selectedItemPositions.get(i).getMessageID());
+                    call.enqueue(new Callback<Message>() {
+                        @Override
+                        public void onResponse(Call<Message> call, Response<Message> response) {
+                            if (response.isSuccessful()) {
+                                String status = response.body().getStatus();
+                                String statusmessage = response.body().getMessage();
+                                if (status.equals("true")) {
+//                                Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                } else {
+//                                Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+//                            Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Message> call, Throwable t) {
+                            Log.e("USER ACTIVITY ERROR", t.getMessage());
+                        }
+                    });
+                }
+            }
+        }
+        else if(folder.equals("Draft")){
+            adapter_draft.resetAnimationIndex();
+            final List<Message> selectedItemPositions = adapter_draft.getSelectedItems();
+
+            for(int i=0;i<selectedItemPositions.size();i++) {
+                Log.e("MessageID", String.valueOf(selectedItemPositions.get(i).getMessageID()));
+                if (i+1==selectedItemPositions.size()){
+                    Call<Message> call = messageService.movedraft(selectedItemPositions.get(i).getMessageID());
+                    call.enqueue(new Callback<Message>() {
+                        @Override
+                        public void onResponse(Call<Message> call, Response<Message> response) {
+                            if (response.isSuccessful()) {
+                                String status = response.body().getStatus();
+                                String statusmessage = response.body().getMessage();
+                                if (status.equals("true")) {
+                                    Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                    for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
+                                        adapter_draft.removeData(i);
+                                    }
+                                    adapter_draft.notifyDataSetChanged();
+                                } else {
+                                    Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Message> call, Throwable t) {
+                            Log.e("USER ACTIVITY ERROR", t.getMessage());
+                            Toast.makeText(InboxActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                else{
+                    Call<Message> call = messageService.movedraft(selectedItemPositions.get(i).getMessageID());
+                    call.enqueue(new Callback<Message>() {
+                        @Override
+                        public void onResponse(Call<Message> call, Response<Message> response) {
+                            if (response.isSuccessful()) {
+                                String status = response.body().getStatus();
+                                String statusmessage = response.body().getMessage();
+                                if (status.equals("true")) {
+//                                Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                } else {
+//                                Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+//                            Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Message> call, Throwable t) {
+                            Log.e("USER ACTIVITY ERROR", t.getMessage());
+                        }
+                    });
+                }
+            }
+        }
     }
 
     // deleting the messages from recycler view
