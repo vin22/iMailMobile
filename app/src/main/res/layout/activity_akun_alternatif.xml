@@ -69,8 +69,8 @@
                     android:textColorHint="@android:color/white"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:maxLength="50"
-                    android:inputType="textEmailAddress"
+                    android:maxLength="20"
+                    android:inputType="text"
                     android:textColor="@android:color/white" />
             </android.support.design.widget.TextInputLayout>
             <com.jaredrummler.materialspinner.MaterialSpinner
@@ -106,7 +106,7 @@
                 android:textColorHint="@android:color/white"
                 android:inputType="textPassword"
                 android:maxLines="1"
-                android:maxLength="50"
+                android:maxLength="30"
                 android:textColor="@android:color/white" />
         </android.support.design.widget.TextInputLayout>
 

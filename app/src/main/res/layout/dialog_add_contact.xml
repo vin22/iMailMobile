@@ -31,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:drawablePadding="@dimen/dp4"
                 android:hint="Email"
-                android:maxLength="50"
+                android:maxLength="30"
                 android:maxLines="1"
                 android:inputType="textEmailAddress"
                 android:singleLine="true"
@@ -51,9 +51,10 @@
                 android:layout_height="wrap_content"
                 android:drawablePadding="@dimen/dp4"
                 android:hint="Name"
-                android:maxLength="50"
+                android:maxLength="20"
                 android:maxLines="1"
                 android:singleLine="true"
+                android:inputType="textPersonName"
                 android:textColor="@android:color/white"
                 android:textColorHint="@android:color/white" />
         </android.support.design.widget.TextInputLayout>
@@ -72,9 +73,9 @@
                 android:layout_height="wrap_content"
                 android:hint="Phone Number"
                 android:textColorHint="@android:color/white"
-                android:inputType="number"
+                android:inputType="phone"
                 android:maxLines="1"
-                android:maxLength="50"
+                android:maxLength="15"
                 android:textColor="@android:color/white" />
         </android.support.design.widget.TextInputLayout>
         <LinearLayout

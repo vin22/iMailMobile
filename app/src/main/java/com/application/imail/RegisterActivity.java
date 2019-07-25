@@ -170,6 +170,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 if (!inputValidation.isInputEditTextFilled(textInputEditTextConfirmPassword, textInputLayoutConfirmPassword,getString(R.string.error_message_confirmpasswordkosong))) {
                     return;
                 }
+                if (!inputValidation.isInputEditTextisValidPassword(textInputEditTextPassword, textInputLayoutPassword,getString(R.string.error_message_passwordkosong))) {
+                    return;
+                }
                 if (!inputValidation.isInputEditTextSamePassword(textInputEditTextPassword, textInputEditTextConfirmPassword, textInputLayoutPassword,getString(R.string.error_message_samepassword))) {
                     return;
                 }

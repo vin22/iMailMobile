@@ -38,7 +38,8 @@
                 android:textColorHint="@android:color/white"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:maxLength="50"
+                android:inputType="textPersonName"
+                android:maxLength="20"
                 android:textColor="@android:color/white" />
         </android.support.design.widget.TextInputLayout>
 
@@ -64,8 +65,8 @@
                     android:textColorHint="@android:color/white"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:maxLength="50"
-                    android:inputType="textEmailAddress"
+                    android:maxLength="20"
+                    android:inputType="text"
                     android:textColor="@android:color/white" />
             </android.support.design.widget.TextInputLayout>
             <com.jaredrummler.materialspinner.MaterialSpinner
@@ -73,7 +74,9 @@
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:padding="@dimen/dp8"
+                android:paddingRight="@dimen/dp8"
+                android:paddingTop="@dimen/dp8"
+                android:paddingBottom="@dimen/dp8"
                 android:text="@string/hintdomain"
                 android:textColor="@android:color/white"
                 app:ms_background_color="@android:color/transparent"
@@ -101,7 +104,7 @@
                 android:textColorHint="@android:color/white"
                 android:inputType="textPassword"
                 android:maxLines="1"
-                android:maxLength="50"
+                android:maxLength="30"
                 android:textColor="@android:color/white" />
         </android.support.design.widget.TextInputLayout>
 
@@ -124,7 +127,7 @@
                 android:textColorHint="@android:color/white"
                 android:inputType="textPassword"
                 android:maxLines="1"
-                android:maxLength="50"
+                android:maxLength="30"
                 android:textColor="@android:color/white" />
         </android.support.design.widget.TextInputLayout>
 

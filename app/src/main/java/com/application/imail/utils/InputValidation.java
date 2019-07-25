@@ -8,6 +8,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class InputValidation {
     private Context context;
 
@@ -117,6 +120,24 @@ public class InputValidation {
         }
         return true;
     }
+    //Password valid
+    public boolean isInputEditTextisValidPassword(TextInputEditText textInputEditText, TextInputLayout textInputLayout, String message) {
+        String value = textInputEditText.getText().toString().trim();
+        Pattern pattern;
+        Matcher matcher;
+
+        final String PASSWORD_PATTERN = "(?=.*[0-9])(?=.*[A-Za-z])(?=\\S+$)";
+
+        pattern = Pattern.compile(PASSWORD_PATTERN);
+        matcher = pattern.matcher(value);
+        if (matcher.matches()) {
+            textInputLayout.setError(message);
+            hideKeyboardFrom(textInputEditText);
+            return false;
+        }
+        return true;
+    }
+
     //Password lama dan Password baru wajib berbeda
     public boolean isInputEditTextSamePassword(TextInputEditText textInputEditText, TextInputEditText textInputEditText1, TextInputLayout textInputLayout, String message) {
         String value = textInputEditText.getText().toString().trim();
