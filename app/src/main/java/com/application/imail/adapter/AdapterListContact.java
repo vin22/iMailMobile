@@ -119,7 +119,10 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
                             if (!inputValidation.isInputEditTextFilled(textInputEditTextName, textInputLayoutName, ctx.getString(R.string.error_message_name))) {
                                 return;
                             }
-                            if (!inputValidation.isInputEditTextFilled(textInputEditTextPhone, textInputLayoutPhone,ctx.getString(R.string.error_message_passwordkosong))) {
+                            if (!inputValidation.isInputEditTextFilled(textInputEditTextPhone, textInputLayoutPhone,ctx.getString(R.string.error_message_phone))) {
+                                return;
+                            }
+                            if (!inputValidation.isInputEditTextLengthName(textInputEditTextName, textInputLayoutName, ctx.getString(R.string.error_message_name_length))) {
                                 return;
                             }
                             else{

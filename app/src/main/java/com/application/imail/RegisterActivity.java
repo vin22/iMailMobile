@@ -161,7 +161,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 if (!inputValidation.isInputEditTextFilled(textInputEditTextFullName, textInputLayoutFullName, getString(R.string.error_message_name))) {
                     return;
                 }
-                if (!inputValidation.isInputEditTextFilled(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_email))) {
+                if (!inputValidation.isInputEditTextFilled(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_username))) {
                     return;
                 }
                 if (!inputValidation.isInputEditTextFilled(textInputEditTextPassword, textInputLayoutPassword,getString(R.string.error_message_passwordkosong))) {
@@ -170,9 +170,37 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 if (!inputValidation.isInputEditTextFilled(textInputEditTextConfirmPassword, textInputLayoutConfirmPassword,getString(R.string.error_message_confirmpasswordkosong))) {
                     return;
                 }
-                if (!inputValidation.isInputEditTextisValidPassword(textInputEditTextPassword, textInputLayoutPassword,getString(R.string.error_message_passwordkosong))) {
+
+                if (!inputValidation.isInputEditTextLengthName(textInputEditTextFullName, textInputLayoutFullName, getString(R.string.error_message_name_length))) {
                     return;
                 }
+
+                if (!inputValidation.isInputEditTextLengthEmail(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_username_length))) {
+                    return;
+                }
+                if (!inputValidation.isInputEditTextFirstAlphabetEmail(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_username_first_alphabet))) {
+                    return;
+                }
+                if (!inputValidation.isInputEditTextAlphabetEmail(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_username_alphabet))) {
+                    return;
+                }
+                if (!inputValidation.isInputEditTextNumberEmail(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_username_number))) {
+                    return;
+                }
+
+                if (!inputValidation.isInputEditTextLengthPassword(textInputEditTextPassword, textInputLayoutPassword,getString(R.string.error_message_password_length))) {
+                    return;
+                }
+                if (!inputValidation.isInputEditTextisValidNumberPassword(textInputEditTextPassword, textInputLayoutPassword,getString(R.string.error_message_password_number))) {
+                    return;
+                }
+                if (!inputValidation.isInputEditTextisValidLowerPassword(textInputEditTextPassword, textInputLayoutPassword,getString(R.string.error_message_password_lower_case))) {
+                    return;
+                }
+                if (!inputValidation.isInputEditTextisValidUpperPassword(textInputEditTextPassword, textInputLayoutPassword,getString(R.string.error_message_password_upper_case))) {
+                    return;
+                }
+
                 if (!inputValidation.isInputEditTextSamePassword(textInputEditTextPassword, textInputEditTextConfirmPassword, textInputLayoutPassword,getString(R.string.error_message_samepassword))) {
                     return;
                 }

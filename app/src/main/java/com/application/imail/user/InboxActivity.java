@@ -167,9 +167,24 @@ public class InboxActivity extends AppCompatActivity
                             if (!inputValidation.isInputEditTextFilled(textInputEditTextName, textInputLayoutName, getString(R.string.error_message_name))) {
                                 return;
                             }
-                            if (!inputValidation.isInputEditTextFilled(textInputEditTextPhone, textInputLayoutPhone,getString(R.string.error_message_passwordkosong))) {
+                            if (!inputValidation.isInputEditTextFilled(textInputEditTextPhone, textInputLayoutPhone,getString(R.string.error_message_phone))) {
                                 return;
                             }
+
+                            if (!inputValidation.isInputEditTextFirstAlphabetEmail(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_email_first_alphabet))) {
+                                return;
+                            }
+                            if (!inputValidation.isInputEditTextAlphabetEmail(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_email_alphabet))) {
+                                return;
+                            }
+                            if (!inputValidation.isInputEditTextNumberEmail(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_email_number))) {
+                                return;
+                            }
+
+                            if (!inputValidation.isInputEditTextLengthName(textInputEditTextName, textInputLayoutName, getString(R.string.error_message_name_length))) {
+                                return;
+                            }
+
                             else{
                                 if(pd!=null){
                                     pd.setTitle("Please Wait");

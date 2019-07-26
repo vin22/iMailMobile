@@ -44,7 +44,7 @@
                     android:textColorHint="@android:color/white"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:maxLength="20"
+                    android:maxLength="30"
                     android:textColor="@android:color/white" />
             </android.support.design.widget.TextInputLayout>
             <com.jaredrummler.materialspinner.MaterialSpinner

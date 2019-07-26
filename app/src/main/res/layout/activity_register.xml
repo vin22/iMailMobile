@@ -39,7 +39,7 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 android:inputType="textPersonName"
-                android:maxLength="20"
+                android:maxLength="30"
                 android:textColor="@android:color/white" />
         </android.support.design.widget.TextInputLayout>
 
@@ -61,11 +61,11 @@
                     android:id="@+id/textInputEditTextEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Email"
+                    android:hint="Username"
                     android:textColorHint="@android:color/white"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:maxLength="20"
+                    android:maxLength="30"
                     android:inputType="text"
                     android:textColor="@android:color/white" />
             </android.support.design.widget.TextInputLayout>
