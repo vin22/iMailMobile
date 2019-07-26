@@ -1742,9 +1742,12 @@ public class InboxActivity extends AppCompatActivity
             // disable swipe refresh if action mode is enabled
             if(folder.equals("Inbox")) {
                 swipeinbox.setEnabled(false);
+                menu.findItem(R.id.action_filter).setVisible(true);
             }
             else if(folder.equals("Spam")) {
                 swipespam.setEnabled(false);
+                menu.findItem(R.id.action_filter).setVisible(true);
+                menu.findItem(R.id.action_move).setVisible(false);
             }
             else if(folder.equals("Sent")) {
                 swipesent.setEnabled(false);
@@ -1757,6 +1760,7 @@ public class InboxActivity extends AppCompatActivity
             else if(folder.equals("Trash")) {
                 swipetrash.setEnabled(false);
                 menu.findItem(R.id.action_filter).setVisible(false);
+                menu.findItem(R.id.action_move).setVisible(false);
             }
             return true;
         }
@@ -1771,8 +1775,26 @@ public class InboxActivity extends AppCompatActivity
             switch (item.getItemId()) {
                 case R.id.action_delete:
                     // delete all the selected messages
-                    deleteMessages();
-                    mode.finish();
+                    AlertDialog.Builder dialogd = new AlertDialog.Builder(InboxActivity.this);
+                    dialogd.setTitle("Delete message");
+                    dialogd.setMessage("Are you sure to delete this message?");
+                    dialogd.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                            deleteMessages();
+                            mode.finish();
+                        }
+                    });
+                    dialogd.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                            mode.finish();
+                        }
+                    });
+                    dialogd.show();
+
                     return true;
                 case R.id.action_filter:
                     // delete all the selected messages
@@ -1883,6 +1905,42 @@ public class InboxActivity extends AppCompatActivity
                     @Override
                     public void run() {
                         adapter_spam.resetAnimationIndex();
+                        // mAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+            else if(folder.equals("Sent")) {
+                adapter_sent.clearSelections();
+                swipesent.setEnabled(true);
+                actionMode = null;
+                recyclerView_sent.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter_sent.resetAnimationIndex();
+                        // mAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+            else if(folder.equals("Draft")) {
+                adapter_draft.clearSelections();
+                swipedraft.setEnabled(true);
+                actionMode = null;
+                recyclerView_draft.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter_draft.resetAnimationIndex();
+                        // mAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+            else if(folder.equals("Trash")) {
+                adapter_trash.clearSelections();
+                swipetrash.setEnabled(true);
+                actionMode = null;
+                recyclerView_trash.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter_trash.resetAnimationIndex();
                         // mAdapter.notifyDataSetChanged();
                     }
                 });
@@ -2301,6 +2359,189 @@ public class InboxActivity extends AppCompatActivity
                 }
                 else{
                     Call<Message> call = messageService.deletespam(selectedItemPositions.get(i).getMessageID());
+                    call.enqueue(new Callback<Message>() {
+                        @Override
+                        public void onResponse(Call<Message> call, Response<Message> response) {
+                            if (response.isSuccessful()) {
+                                String status = response.body().getStatus();
+                                String statusmessage = response.body().getMessage();
+                                if (status.equals("true")) {
+//                                Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                } else {
+//                                Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+//                            Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Message> call, Throwable t) {
+                            Log.e("USER ACTIVITY ERROR", t.getMessage());
+                        }
+                    });
+                }
+            }
+        }
+        else if(folder.equals("Sent")){
+            adapter_sent.resetAnimationIndex();
+            final List<Message> selectedItemPositions = adapter_sent.getSelectedItems();
+
+            for(int i=0;i<selectedItemPositions.size();i++) {
+                Log.e("MessageID", String.valueOf(selectedItemPositions.get(i).getMessageID()));
+                if (i+1==selectedItemPositions.size()){
+                    Call<Message> call = messageService.deletesent(selectedItemPositions.get(i).getMessageID());
+                    call.enqueue(new Callback<Message>() {
+                        @Override
+                        public void onResponse(Call<Message> call, Response<Message> response) {
+                            if (response.isSuccessful()) {
+                                String status = response.body().getStatus();
+                                String statusmessage = response.body().getMessage();
+                                if (status.equals("true")) {
+                                    Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                    for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
+                                        adapter_sent.removeData(i);
+                                    }
+                                    adapter_sent.notifyDataSetChanged();
+                                } else {
+                                    Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Message> call, Throwable t) {
+                            Log.e("USER ACTIVITY ERROR", t.getMessage());
+                            Toast.makeText(InboxActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                else{
+                    Call<Message> call = messageService.deletesent(selectedItemPositions.get(i).getMessageID());
+                    call.enqueue(new Callback<Message>() {
+                        @Override
+                        public void onResponse(Call<Message> call, Response<Message> response) {
+                            if (response.isSuccessful()) {
+                                String status = response.body().getStatus();
+                                String statusmessage = response.body().getMessage();
+                                if (status.equals("true")) {
+//                                Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                } else {
+//                                Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+//                            Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Message> call, Throwable t) {
+                            Log.e("USER ACTIVITY ERROR", t.getMessage());
+                        }
+                    });
+                }
+            }
+        }
+        else if(folder.equals("Draft")){
+            adapter_draft.resetAnimationIndex();
+            final List<Message> selectedItemPositions = adapter_draft.getSelectedItems();
+
+            for(int i=0;i<selectedItemPositions.size();i++) {
+                Log.e("MessageID", String.valueOf(selectedItemPositions.get(i).getMessageID()));
+                if (i+1==selectedItemPositions.size()){
+                    Call<Message> call = messageService.deletedraft(selectedItemPositions.get(i).getMessageID());
+                    call.enqueue(new Callback<Message>() {
+                        @Override
+                        public void onResponse(Call<Message> call, Response<Message> response) {
+                            if (response.isSuccessful()) {
+                                String status = response.body().getStatus();
+                                String statusmessage = response.body().getMessage();
+                                if (status.equals("true")) {
+                                    Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                    for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
+                                        adapter_draft.removeData(i);
+                                    }
+                                    adapter_draft.notifyDataSetChanged();
+                                } else {
+                                    Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Message> call, Throwable t) {
+                            Log.e("USER ACTIVITY ERROR", t.getMessage());
+                            Toast.makeText(InboxActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                else{
+                    Call<Message> call = messageService.deletedraft(selectedItemPositions.get(i).getMessageID());
+                    call.enqueue(new Callback<Message>() {
+                        @Override
+                        public void onResponse(Call<Message> call, Response<Message> response) {
+                            if (response.isSuccessful()) {
+                                String status = response.body().getStatus();
+                                String statusmessage = response.body().getMessage();
+                                if (status.equals("true")) {
+//                                Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                } else {
+//                                Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+//                            Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Message> call, Throwable t) {
+                            Log.e("USER ACTIVITY ERROR", t.getMessage());
+                        }
+                    });
+                }
+            }
+        }
+        else if(folder.equals("Trash")){
+            adapter_trash.resetAnimationIndex();
+            final List<Message> selectedItemPositions = adapter_trash.getSelectedItems();
+
+            for(int i=0;i<selectedItemPositions.size();i++) {
+                Log.e("MessageID", String.valueOf(selectedItemPositions.get(i).getMessageID()));
+                if (i+1==selectedItemPositions.size()){
+                    Call<Message> call = messageService.deletetrash(selectedItemPositions.get(i).getMessageID());
+                    call.enqueue(new Callback<Message>() {
+                        @Override
+                        public void onResponse(Call<Message> call, Response<Message> response) {
+                            if (response.isSuccessful()) {
+                                String status = response.body().getStatus();
+                                String statusmessage = response.body().getMessage();
+                                if (status.equals("true")) {
+                                    Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                    for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
+                                        adapter_trash.removeData(i);
+                                    }
+                                    adapter_trash.notifyDataSetChanged();
+                                } else {
+                                    Toast.makeText(InboxActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(InboxActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Message> call, Throwable t) {
+                            Log.e("USER ACTIVITY ERROR", t.getMessage());
+                            Toast.makeText(InboxActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                else{
+                    Call<Message> call = messageService.deletetrash(selectedItemPositions.get(i).getMessageID());
                     call.enqueue(new Callback<Message>() {
                         @Override
                         public void onResponse(Call<Message> call, Response<Message> response) {

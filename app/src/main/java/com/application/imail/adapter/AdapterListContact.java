@@ -111,6 +111,8 @@ public class AdapterListContact extends RecyclerView.Adapter<RecyclerView.ViewHo
                     final TextInputEditText textInputEditTextPhone = (TextInputEditText) dialog.findViewById(R.id.textInputEditTextPhoneNumber);
                     final AppCompatButton appCompatButtonEdit = (AppCompatButton) dialog.findViewById(R.id.appCompatButtonEdit);
                     final AppCompatButton appCompatButtonCancel = (AppCompatButton) dialog.findViewById(R.id.appCompatButtonCancel);
+                    textInputEditTextName.setText(p.getName());
+                    textInputEditTextPhone.setText(p.getPhone());
                     appCompatButtonEdit.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
