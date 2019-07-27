@@ -59,6 +59,14 @@ public interface MessageService {
     Call<Message> moveinbox(@Field("MessageID") int MessageID);
 
     @FormUrlEncoded
+    @POST("movetoinbox/")
+    Call<Message> movetoinbox(@Field("MessageID") int MessageID);
+
+    @FormUrlEncoded
+    @POST("movetodraft/")
+    Call<Message> movetodraft(@Field("MessageID") int MessageID);
+
+    @FormUrlEncoded
     @POST("deleteinbox/")
     Call<Message> deleteinbox(@Field("MessageID") int MessageID);
 
