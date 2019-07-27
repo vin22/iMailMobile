@@ -22,7 +22,6 @@ public class InputValidation {
     public InputValidation(Context context) {
         this.context = context;
     }
-
     /**
      * method to check InputEditText filled .
      *
@@ -43,8 +42,6 @@ public class InputValidation {
 
         return true;
     }
-
-
     /**
      * method to check InputEditText has valid norekening .
      *
@@ -120,13 +117,147 @@ public class InputValidation {
         }
         return true;
     }
-    //Password valid
-    public boolean isInputEditTextisValidPassword(TextInputEditText textInputEditText, TextInputLayout textInputLayout, String message) {
+    //panjang Password 8
+    public boolean isInputEditTextLengthPassword(TextInputEditText textInputEditText, TextInputLayout textInputLayout, String message) {
+        String value = textInputEditText.getText().toString().trim();
+        if (value.length()<8) {
+            textInputLayout.setError(message);
+            hideKeyboardFrom(textInputEditText);
+            return false;
+        }
+        return true;
+    }
+    //panjang Name 2
+    public boolean isInputEditTextLengthName(TextInputEditText textInputEditText, TextInputLayout textInputLayout, String message) {
+        String value = textInputEditText.getText().toString().trim();
+        if (value.length()<2) {
+            textInputLayout.setError(message);
+            hideKeyboardFrom(textInputEditText);
+            return false;
+        }
+        return true;
+    }
+    //panjang Username first alphabet
+    public boolean isInputEditTextFirstAlphabetEmail(TextInputEditText textInputEditText, TextInputLayout textInputLayout, String message) {
         String value = textInputEditText.getText().toString().trim();
         Pattern pattern;
         Matcher matcher;
 
-        final String PASSWORD_PATTERN = "(?=.*[0-9])(?=.*[A-Za-z])(?=\\S+$)";
+        final String PASSWORD_PATTERN = "^";
+
+        pattern = Pattern.compile(PASSWORD_PATTERN);
+        matcher = pattern.matcher(value);
+        if (matcher.matches()) {
+            textInputLayout.setError(message);
+            hideKeyboardFrom(textInputEditText);
+            return false;
+        }
+        return true;
+    }
+    //panjang Username
+    public boolean isInputEditTextAlphabetEmail(TextInputEditText textInputEditText, TextInputLayout textInputLayout, String message) {
+        String value = textInputEditText.getText().toString().trim();
+        Pattern pattern;
+        Matcher matcher;
+
+        final String PASSWORD_PATTERN = "(?=.*[a-zA-Z])";
+
+        pattern = Pattern.compile(PASSWORD_PATTERN);
+        matcher = pattern.matcher(value);
+        if (matcher.matches()) {
+            textInputLayout.setError(message);
+            hideKeyboardFrom(textInputEditText);
+            return false;
+        }
+        return true;
+    }
+    //panjang Username alphabet and char
+    public boolean isInputEditTextNumberEmail(TextInputEditText textInputEditText, TextInputLayout textInputLayout, String message) {
+        String value = textInputEditText.getText().toString().trim();
+        Pattern pattern;
+        Matcher matcher;
+
+        final String PASSWORD_PATTERN = "(?=.*[0-9])";
+
+        pattern = Pattern.compile(PASSWORD_PATTERN);
+        matcher = pattern.matcher(value);
+        if (matcher.matches()) {
+            textInputLayout.setError(message);
+            hideKeyboardFrom(textInputEditText);
+            return false;
+        }
+        return true;
+    }
+    //panjang Email 6
+    public boolean isInputEditTextLengthEmail(TextInputEditText textInputEditText, TextInputLayout textInputLayout, String message) {
+        String value = textInputEditText.getText().toString().trim();
+        if (value.length()<6) {
+            textInputLayout.setError(message);
+            hideKeyboardFrom(textInputEditText);
+            return false;
+        }
+        return true;
+    }
+    //Password valid
+    public boolean isInputEditTextisValidFirstStringPassword(TextInputEditText textInputEditText, TextInputLayout textInputLayout, String message) {
+        String value = textInputEditText.getText().toString().trim();
+        Pattern pattern;
+        Matcher matcher;
+
+        final String PASSWORD_PATTERN = "^";
+
+        pattern = Pattern.compile(PASSWORD_PATTERN);
+        matcher = pattern.matcher(value);
+        if (matcher.matches()) {
+            textInputLayout.setError(message);
+            hideKeyboardFrom(textInputEditText);
+            return false;
+        }
+        return true;
+    }
+    //Password valid
+    public boolean isInputEditTextisValidNumberPassword(TextInputEditText textInputEditText, TextInputLayout textInputLayout, String message) {
+        String value = textInputEditText.getText().toString().trim();
+        Pattern pattern;
+        Matcher matcher;
+
+        final String PASSWORD_PATTERN = "(?=.*[0-9])";
+
+        pattern = Pattern.compile(PASSWORD_PATTERN);
+        matcher = pattern.matcher(value);
+        if (matcher.matches()) {
+            textInputLayout.setError(message);
+            hideKeyboardFrom(textInputEditText);
+            return false;
+        }
+        return true;
+    }
+
+    //Password valid
+    public boolean isInputEditTextisValidUpperPassword(TextInputEditText textInputEditText, TextInputLayout textInputLayout, String message) {
+        String value = textInputEditText.getText().toString().trim();
+        Pattern pattern;
+        Matcher matcher;
+
+        final String PASSWORD_PATTERN = "(?=.*[A-Z])";
+
+        pattern = Pattern.compile(PASSWORD_PATTERN);
+        matcher = pattern.matcher(value);
+        if (matcher.matches()) {
+            textInputLayout.setError(message);
+            hideKeyboardFrom(textInputEditText);
+            return false;
+        }
+        return true;
+    }
+    //Password valid
+    public boolean isInputEditTextisValidLowerPassword(TextInputEditText textInputEditText, TextInputLayout textInputLayout, String message) {
+        String value = textInputEditText.getText().toString().trim();
+        Pattern pattern;
+        Matcher matcher;
+
+//        final String PASSWORD_PATTERN = "(?=.*[0-9])(?=.*[A-Za-z])(?=\\S+$)";
+        final String PASSWORD_PATTERN = "(?=.*[a-z])";
 
         pattern = Pattern.compile(PASSWORD_PATTERN);
         matcher = pattern.matcher(value);

@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:drawablePadding="@dimen/dp4"
                 android:hint="Name"
-                android:maxLength="20"
+                android:maxLength="30"
                 android:maxLines="1"
                 android:inputType="textPersonName"
                 android:singleLine="true"

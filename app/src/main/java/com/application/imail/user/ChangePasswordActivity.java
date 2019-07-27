@@ -109,9 +109,37 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
                 if (!inputValidation.isInputEditTextFilled(textInputEditTextOldPassword, textInputLayoutOldPassword, getString(R.string.error_message_oldpasswordkosong))) {
                     return;
                 }
+
+                if (!inputValidation.isInputEditTextLengthPassword(textInputEditTextOldPassword, textInputLayoutOldPassword,getString(R.string.error_message_oldpassword_length))) {
+                    return;
+                }
+                if (!inputValidation.isInputEditTextisValidNumberPassword(textInputEditTextOldPassword, textInputLayoutOldPassword,getString(R.string.error_message_oldpassword_number))) {
+                    return;
+                }
+                if (!inputValidation.isInputEditTextisValidLowerPassword(textInputEditTextOldPassword, textInputLayoutOldPassword,getString(R.string.error_message_oldpassword_lower_case))) {
+                    return;
+                }
+                if (!inputValidation.isInputEditTextisValidUpperPassword(textInputEditTextOldPassword, textInputLayoutOldPassword,getString(R.string.error_message_oldpassword_upper_case))) {
+                    return;
+                }
+
                 if (!inputValidation.isInputEditTextFilled(textInputEditTextNewPassword, textInputLayoutNewPassword, getString(R.string.error_message_newpasswordkosong))) {
                     return;
                 }
+
+                if (!inputValidation.isInputEditTextLengthPassword(textInputEditTextNewPassword, textInputLayoutNewPassword,getString(R.string.error_message_newpassword_length))) {
+                    return;
+                }
+                if (!inputValidation.isInputEditTextisValidNumberPassword(textInputEditTextNewPassword, textInputLayoutNewPassword,getString(R.string.error_message_newpassword_number))) {
+                    return;
+                }
+                if (!inputValidation.isInputEditTextisValidLowerPassword(textInputEditTextNewPassword, textInputLayoutNewPassword,getString(R.string.error_message_newpassword_lower_case))) {
+                    return;
+                }
+                if (!inputValidation.isInputEditTextisValidUpperPassword(textInputEditTextNewPassword, textInputLayoutNewPassword,getString(R.string.error_message_newpassword_upper_case))) {
+                    return;
+                }
+
                 if (!inputValidation.isInputEditTextFilled(textInputEditTextConfirmPassword, textInputLayoutConfirmPassword,getString(R.string.error_message_confirmpasswordkosong))) {
                     return;
                 }

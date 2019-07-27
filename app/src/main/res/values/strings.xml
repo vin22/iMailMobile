@@ -49,10 +49,42 @@
     <string name="action_settings">Settings</string>
     <string name="no_hp">No Hp</string>
 
+    <string name="error_message_name_length">Name minimal 2 characters</string>
+
+    <string name="error_message_email_length">Email minimal 6 characters</string>
+    <string name="error_message_email_first_alphabet">First character of email must be alphabet</string>
+    <string name="error_message_email_alphabet">Email must contain at least one alphabet</string>
+    <string name="error_message_email_number">Email must contain at least one number</string>
+
+    <string name="error_message_aemail_first_alphabet">First character of alternate email must be alphabet</string>
+    <string name="error_message_aemail_alphabet">Alternate email must contain at least one alphabet</string>
+    <string name="error_message_aemail_number">Alternate email must contain at least one number</string>
+
+    <string name="error_message_username_length">Username minimal 6 characters</string>
+    <string name="error_message_username_first_alphabet">First character of username must be alphabet</string>
+    <string name="error_message_username_alphabet">Username must contain at least one alphabet</string>
+    <string name="error_message_username_number">Username must contain at least one number</string>
+
+    <string name="error_message_password_length">Password minimal 8 characters</string>
+    <string name="error_message_password_lower_case">Password must contain at least one lower case</string>
+    <string name="error_message_password_upper_case">Password must contain at least one upper case</string>
+    <string name="error_message_password_number">Password must contain at least one number</string>
+
+    <string name="error_message_oldpassword_length">Old Password minimal 8 characters</string>
+    <string name="error_message_oldpassword_lower_case">Old Password must contain at least one lower case</string>
+    <string name="error_message_oldpassword_upper_case">Old Password must contain at least one upper case</string>
+    <string name="error_message_oldpassword_number">Old Password must contain at least one number</string>
+
+    <string name="error_message_newpassword_length">Password minimal 8 characters</string>
+    <string name="error_message_newpassword_lower_case">Password must contain at least one lower case</string>
+    <string name="error_message_newpassword_upper_case">Password must contain at least one upper case</string>
+    <string name="error_message_newpassword_number">Password must contain at least one number</string>
+
     <string name="error_message_email_username">Enter Email/Username</string>
     <string name="error_message_username">Enter Username</string>
     <string name="error_message_samepassword">Password must same with Confirm Password</string>
     <string name="error_message_nohp">Enter No Hp</string>
+    <string name="error_message_phone">Enter Phone Number</string>
     <string name="error_message_newpin_oldpin">New PIN must different from Old PIN</string>
     <string name="error_message_newpin_confirmpin">New PIN must same with Confirm PIN</string>
     <string name="error_message_oldpinincorrect">Old PIN was incorrect</string>
