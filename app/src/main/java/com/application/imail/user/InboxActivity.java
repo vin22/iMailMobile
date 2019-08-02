@@ -174,12 +174,15 @@ public class InboxActivity extends AppCompatActivity
                             if (!inputValidation.isInputEditTextFirstAlphabetEmail(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_email_first_alphabet))) {
                                 return;
                             }
-                            if (!inputValidation.isInputEditTextAlphabetEmail(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_email_alphabet))) {
+                            if (!inputValidation.isInputEditTextValidEmail(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_valid_email))) {
                                 return;
                             }
-                            if (!inputValidation.isInputEditTextNumberEmail(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_email_number))) {
-                                return;
-                            }
+//                            if (!inputValidation.isInputEditTextAlphabetEmail(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_email_alphabet))) {
+//                                return;
+//                            }
+//                            if (!inputValidation.isInputEditTextNumberEmail(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_email_number))) {
+//                                return;
+//                            }
 
                             if (!inputValidation.isInputEditTextLengthName(textInputEditTextName, textInputLayoutName, getString(R.string.error_message_name_length))) {
                                 return;

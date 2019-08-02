@@ -489,7 +489,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
         boolean emailvalid=true;
         for (int i = 0; i < chips_to.getSelectedChips().size(); i++) {
             Log.e("Masuk", String.valueOf(chips_to.getSelectedChips()));
-            if(chips_to.getSelectedChipByPosition(i).equals(sessionManager.getuserloggedin().getEmail())){
+            if(chips_to.getSelectedChipByPosition(i).getTitle().equals(sessionManager.getuserloggedin().getEmail())){
                 emailvalid=false;
                 break;
             }
@@ -507,12 +507,12 @@ public class ComposeMessageActivity extends AppCompatActivity {
         for (int i = 0; i < chips_bcc.getSelectedChips().size(); i++) {
             Log.e("Masuk", String.valueOf(chips_bcc.getSelectedChips()));
             if (!select) {
-                bcc += String.valueOf(chips_bcc.getSelectedChipByPosition(i));
+                bcc += String.valueOf(chips_bcc.getSelectedChipByPosition(i).getTitle());
                 Log.e("Masuk", bcc);
                 select=true;
             }
             else if (select) {
-                bcc += ","+String.valueOf(chips_bcc.getSelectedChipByPosition(i));
+                bcc += ","+String.valueOf(chips_bcc.getSelectedChipByPosition(i).getTitle());
                 Log.e("Masuk", bcc);
             }
         }
@@ -520,18 +520,60 @@ public class ComposeMessageActivity extends AppCompatActivity {
         for (int i = 0; i < chips_cc.getSelectedChips().size(); i++) {
             Log.e("Masuk", String.valueOf(chips_cc.getSelectedChips()));
             if (!select) {
-                cc += String.valueOf(chips_cc.getSelectedChipByPosition(i));
+                cc += String.valueOf(chips_cc.getSelectedChipByPosition(i).getTitle());
                 Log.e("Masuk", cc);
                 select=true;
             }
             else if (select) {
-                cc += ","+String.valueOf(chips_cc.getSelectedChipByPosition(i));
+                cc += ","+String.valueOf(chips_cc.getSelectedChipByPosition(i).getTitle());
                 Log.e("Masuk", cc);
             }
         }
         if(!emailvalid){
             Toast.makeText(ComposeMessageActivity.this, "Email yang dituju merupakan email Anda", Toast.LENGTH_SHORT).show();
+            chips_to.clearSelectedChips();
+            chips_bcc.clearSelectedChips();
+            chips_cc.clearSelectedChips();
+            subject.setText("");
+            message.setText("");
+            mEditor.setHtml(null);
+            mPreview.setText("");
+            getContacts();
+            isinput = false;
+            if (pd.isShowing()) {
+                pd.dismiss();
+            }
         }
+        else if(receiver.equals("")){
+            Toast.makeText(ComposeMessageActivity.this, "Enter Receiver Email", Toast.LENGTH_SHORT).show();
+            chips_to.clearSelectedChips();
+            chips_bcc.clearSelectedChips();
+            chips_cc.clearSelectedChips();
+            subject.setText("");
+            message.setText("");
+            mEditor.setHtml(null);
+            mPreview.setText("");
+            getContacts();
+            isinput = false;
+            if (pd.isShowing()) {
+                pd.dismiss();
+            }
+        }
+//        else if(subject.equals("") && mEditor.getHtml().equals("")){
+//            Toast.makeText(ComposeMessageActivity.this, "Enter Subject or Message", Toast.LENGTH_SHORT).show();
+//            chips_to.clearSelectedChips();
+//            chips_bcc.clearSelectedChips();
+//            chips_cc.clearSelectedChips();
+//            subject.setText("");
+//            message.setText("");
+//            mEditor.setHtml(null);
+//            mPreview.setText("");
+//            getContacts();
+//            isinput = false;
+//            if (pd.isShowing()) {
+//                pd.dismiss();
+//            }
+//        }
         else {
 //            Call<Message> call = messageService.send(sessionManager.getuserloggedin().getUserID(), spinnerfrom.getText().toString(), sessionManager.getuserloggedin().getName(), receiver, subject.getText().toString(),
 ////                    message.getText().toString(), cc, bcc);
@@ -562,10 +604,19 @@ public class ComposeMessageActivity extends AppCompatActivity {
                                     pd.dismiss();
                                 }
                             } else {
+                                Toast.makeText(ComposeMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                                chips_to.clearSelectedChips();
+                                chips_bcc.clearSelectedChips();
+                                chips_cc.clearSelectedChips();
+                                subject.setText("");
+                                message.setText("");
+                                mEditor.setHtml(null);
+                                mPreview.setText("");
+                                getContacts();
+                                isinput = false;
                                 if (pd.isShowing()) {
                                     pd.dismiss();
                                 }
-                                Toast.makeText(ComposeMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
                             }
                         } else {
                             if (pd.isShowing()) {

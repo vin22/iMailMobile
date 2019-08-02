@@ -170,12 +170,16 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
                 if (!inputValidation.isInputEditTextFirstAlphabetEmail(textInputEditTextAkunAlternatif, textInputLayoutAkunAlternatif, getString(R.string.error_message_aemail_first_alphabet))) {
                     return;
                 }
-                if (!inputValidation.isInputEditTextAlphabetEmail(textInputEditTextAkunAlternatif, textInputLayoutAkunAlternatif, getString(R.string.error_message_aemail_alphabet))) {
+                if (!inputValidation.isInputEditTextValidEmail(textInputEditTextAkunAlternatif, textInputLayoutAkunAlternatif, getString(R.string.error_message_valid_aemail))) {
                     return;
                 }
-                if (!inputValidation.isInputEditTextNumberEmail(textInputEditTextAkunAlternatif, textInputLayoutAkunAlternatif, getString(R.string.error_message_aemail_number))) {
-                    return;
-                }
+
+//                if (!inputValidation.isInputEditTextAlphabetEmail(textInputEditTextAkunAlternatif, textInputLayoutAkunAlternatif, getString(R.string.error_message_aemail_alphabet))) {
+//                    return;
+//                }
+//                if (!inputValidation.isInputEditTextNumberEmail(textInputEditTextAkunAlternatif, textInputLayoutAkunAlternatif, getString(R.string.error_message_aemail_number))) {
+//                    return;
+//                }
 //                if(textInputEditTextUsername.getText().toString().equals("") && textInputEditTextPassword.getText().toString().equals("")){
 //                    emptyInputEditText();
 //                }

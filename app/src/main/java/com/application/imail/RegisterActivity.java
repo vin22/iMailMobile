@@ -181,25 +181,28 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 if (!inputValidation.isInputEditTextFirstAlphabetEmail(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_username_first_alphabet))) {
                     return;
                 }
-                if (!inputValidation.isInputEditTextAlphabetEmail(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_username_alphabet))) {
+                if (!inputValidation.isInputEditTextValidEmail(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_valid_username))) {
                     return;
                 }
-                if (!inputValidation.isInputEditTextNumberEmail(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_username_number))) {
-                    return;
-                }
+//                if (!inputValidation.isInputEditTextNumberEmail(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_username_number))) {
+//                    return;
+//                }
 
                 if (!inputValidation.isInputEditTextLengthPassword(textInputEditTextPassword, textInputLayoutPassword,getString(R.string.error_message_password_length))) {
                     return;
                 }
-                if (!inputValidation.isInputEditTextisValidNumberPassword(textInputEditTextPassword, textInputLayoutPassword,getString(R.string.error_message_password_number))) {
+                if (!inputValidation.isInputEditTextValidPassword(textInputEditTextPassword, textInputLayoutPassword,getString(R.string.error_message_valid_password))) {
                     return;
                 }
-                if (!inputValidation.isInputEditTextisValidLowerPassword(textInputEditTextPassword, textInputLayoutPassword,getString(R.string.error_message_password_lower_case))) {
-                    return;
-                }
-                if (!inputValidation.isInputEditTextisValidUpperPassword(textInputEditTextPassword, textInputLayoutPassword,getString(R.string.error_message_password_upper_case))) {
-                    return;
-                }
+//                if (!inputValidation.isInputEditTextisValidNumberPassword(textInputEditTextPassword, textInputLayoutPassword,getString(R.string.error_message_password_number))) {
+//                    return;
+//                }
+//                if (!inputValidation.isInputEditTextisValidLowerPassword(textInputEditTextPassword, textInputLayoutPassword,getString(R.string.error_message_password_lower_case))) {
+//                    return;
+//                }
+//                if (!inputValidation.isInputEditTextisValidUpperPassword(textInputEditTextPassword, textInputLayoutPassword,getString(R.string.error_message_password_upper_case))) {
+//                    return;
+//                }
 
                 if (!inputValidation.isInputEditTextSamePassword(textInputEditTextPassword, textInputEditTextConfirmPassword, textInputLayoutPassword,getString(R.string.error_message_samepassword))) {
                     return;
