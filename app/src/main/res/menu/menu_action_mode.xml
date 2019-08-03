@@ -7,13 +7,13 @@
         android:id="@+id/action_move"
         android:icon="@drawable/ic_move_white"
         android:orderInCategory="100"
-        android:title="Delete"
+        android:title="Move"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_filter"
         android:icon="@drawable/ic_filter_list"
         android:orderInCategory="100"
-        android:title="Delete"
+        android:title="Filter"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_delete"

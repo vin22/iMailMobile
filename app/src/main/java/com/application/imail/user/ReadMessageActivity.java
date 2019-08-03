@@ -46,6 +46,7 @@ public class ReadMessageActivity extends AppCompatActivity {
     AppCompatButton reply, forward;
     MessageService messageService;
     ArrayList<String>email;
+    SessionManager sessionManager;
     boolean action=false;
     boolean isStarred=false;
     @Override
@@ -55,6 +56,7 @@ public class ReadMessageActivity extends AppCompatActivity {
         initToolbar();
         initComponent();
         initListener();
+        sessionManager=SessionManager.with(ReadMessageActivity.this);
         email=getIntent().getStringArrayListExtra("email");
         setEmail();
 
@@ -239,20 +241,22 @@ public class ReadMessageActivity extends AppCompatActivity {
         else if(id==R.id.action_move){
             AlertDialog.Builder dialog=new AlertDialog.Builder(ReadMessageActivity.this);
             dialog.setTitle("Move message to folder");
-            if(email.get(2).equals("Inbox") || email.get(2).equals("Sent") || email.get(2).equals("Spam")){
+            if(email.get(2).equals("Inbox")){
                 String[] items1={"Draft"};
                 dialog.setItems(items1, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        moveMessages();
                         dialogInterface.dismiss();
                     }
                 });
             }
-            else if(email.get(2).equals("Draft")) {
+            else if(email.get(2).equals("Draft") || email.get(2).equals("Sent")) {
                 String[] items1 = {"Inbox"};
                 dialog.setItems(items1, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        moveMessages();
                         dialogInterface.dismiss();
                     }
                 });
@@ -260,17 +264,64 @@ public class ReadMessageActivity extends AppCompatActivity {
             else if(email.get(2).equals("Starred")){
 
             }
-            else{
+            else if(email.get(2).equals("Spam")){
                 String[] items1={"Inbox","Draft"};
                 dialog.setItems(items1, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
+                        if(i==0) {
+                            moveMessages();
+                            dialogInterface.dismiss();
+                        }
+                        else{
+                            moveSpamtoDraft();
+                            dialogInterface.dismiss();
+                        }
                     }
                 });
             }
             dialog.show();
             return true;
+        }
+        else if(id==R.id.action_filter) {
+            // delete all the selected messages
+            if (email.get(2).equals("Inbox")) {
+                android.support.v7.app.AlertDialog.Builder dialog = new android.support.v7.app.AlertDialog.Builder(ReadMessageActivity.this);
+                dialog.setTitle("Mark message as spam");
+                dialog.setMessage("Are you sure to mark message as spam?");
+                dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        markMessagesasspam();
+                        dialogInterface.dismiss();
+                    }
+                });
+                dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                dialog.show();
+            } else if (email.get(2).equals("Spam")) {
+                android.support.v7.app.AlertDialog.Builder dialog = new android.support.v7.app.AlertDialog.Builder(ReadMessageActivity.this);
+                dialog.setTitle("Mark spam as non spam");
+                dialog.setMessage("Are you sure to mark spam as non spam?");
+                dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        markSpamasnonspam();
+                        dialogInterface.dismiss();
+                    }
+                });
+                dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                dialog.show();
+            }
         }
         else if(id==R.id.action_trash){
             delete();
@@ -290,6 +341,186 @@ public class ReadMessageActivity extends AppCompatActivity {
         else{
             finish();
         }
+    }
+    private void moveMessages() {
+        if(email.get(2).equals("Inbox")) {
+            Call<Message> call = messageService.moveinbox(Integer.parseInt(email.get(7)));
+            call.enqueue(new Callback<Message>() {
+                @Override
+                public void onResponse(Call<Message> call, Response<Message> response) {
+                    if (response.isSuccessful()) {
+                        String status = response.body().getStatus();
+                        String statusmessage = response.body().getMessage();
+                        if (status.equals("true")) {
+                            Toast.makeText(ReadMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(ReadMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(ReadMessageActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                @Override
+                public void onFailure(Call<Message> call, Throwable t) {
+                    Log.e("USER ACTIVITY ERROR", t.getMessage());
+                    Toast.makeText(ReadMessageActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        else if(email.get(2).equals("Sent")){
+            Call<Message> call = messageService.movesent(Integer.parseInt(email.get(7)));
+            call.enqueue(new Callback<Message>() {
+                @Override
+                public void onResponse(Call<Message> call, Response<Message> response) {
+                    if (response.isSuccessful()) {
+                        String status = response.body().getStatus();
+                        String statusmessage = response.body().getMessage();
+                        if (status.equals("true")) {
+                            Toast.makeText(ReadMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(ReadMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(ReadMessageActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Message> call, Throwable t) {
+                    Log.e("USER ACTIVITY ERROR", t.getMessage());
+                    Toast.makeText(ReadMessageActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        else if(email.get(2).equals("Draft")){
+            Call<Message> call = messageService.movedraft(Integer.parseInt(email.get(7)));
+            call.enqueue(new Callback<Message>() {
+                @Override
+                public void onResponse(Call<Message> call, Response<Message> response) {
+                    if (response.isSuccessful()) {
+                        String status = response.body().getStatus();
+                        String statusmessage = response.body().getMessage();
+                        if (status.equals("true")) {
+                            Toast.makeText(ReadMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(ReadMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(ReadMessageActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Message> call, Throwable t) {
+                    Log.e("USER ACTIVITY ERROR", t.getMessage());
+                    Toast.makeText(ReadMessageActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        else if(email.get(2).equals("Spam")){
+            Call<Message> call = messageService.movetoinbox(Integer.parseInt(email.get(7)));
+            call.enqueue(new Callback<Message>() {
+                @Override
+                public void onResponse(Call<Message> call, Response<Message> response) {
+                    if (response.isSuccessful()) {
+                        String status = response.body().getStatus();
+                        String statusmessage = response.body().getMessage();
+                        if (status.equals("true")) {
+                            Toast.makeText(ReadMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(ReadMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(ReadMessageActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Message> call, Throwable t) {
+                    Log.e("USER ACTIVITY ERROR", t.getMessage());
+                    Toast.makeText(ReadMessageActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    private void moveSpamtoDraft() {
+        Call<Message> call = messageService.movetodraft(Integer.parseInt(email.get(7)));
+        call.enqueue(new Callback<Message>() {
+            @Override
+            public void onResponse(Call<Message> call, Response<Message> response) {
+                if (response.isSuccessful()) {
+                    String status = response.body().getStatus();
+                    String statusmessage = response.body().getMessage();
+                    if (status.equals("true")) {
+                        Toast.makeText(ReadMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(ReadMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(ReadMessageActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Message> call, Throwable t) {
+                Log.e("USER ACTIVITY ERROR", t.getMessage());
+                Toast.makeText(ReadMessageActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void markMessagesasspam() {
+        Call<Message> call = messageService.markasspam(Integer.parseInt(email.get(7)), sessionManager.getuserloggedin().getUserID());
+        call.enqueue(new Callback<Message>() {
+            @Override
+            public void onResponse(Call<Message> call, Response<Message> response) {
+                if (response.isSuccessful()) {
+                    String status = response.body().getStatus();
+                    String statusmessage = response.body().getMessage();
+                    if (status.equals("true")) {
+                        Toast.makeText(ReadMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(ReadMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(ReadMessageActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Message> call, Throwable t) {
+                Log.e("USER ACTIVITY ERROR", t.getMessage());
+                Toast.makeText(ReadMessageActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void markSpamasnonspam() {
+        Call<Message> call = messageService.markasnonspam(Integer.parseInt(email.get(7)), sessionManager.getuserloggedin().getUserID());
+        call.enqueue(new Callback<Message>() {
+            @Override
+            public void onResponse(Call<Message> call, Response<Message> response) {
+                if (response.isSuccessful()) {
+                    String status = response.body().getStatus();
+                    String statusmessage = response.body().getMessage();
+                    if (status.equals("true")) {
+                        Toast.makeText(ReadMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(ReadMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(ReadMessageActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Message> call, Throwable t) {
+                Log.e("USER ACTIVITY ERROR", t.getMessage());
+                Toast.makeText(ReadMessageActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     public void delete(){

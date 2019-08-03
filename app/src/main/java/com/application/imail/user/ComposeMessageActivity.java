@@ -106,8 +106,8 @@ public class ComposeMessageActivity extends AppCompatActivity {
 
         mEditor.setPlaceholder("Message");
         mEditor.setEditorFontColor(Color.BLACK);
-        mEditor.setEditorFontSize(16);
-        mEditor.setFontSize(16);
+        mEditor.setEditorFontSize(20);
+        mEditor.setFontSize(20);
         mEditor.setOnTextChangeListener(new RichEditor.OnTextChangeListener() {
             @Override public void onTextChange(String text) {
                 isinput=true;

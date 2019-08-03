@@ -1,5 +1,6 @@
 package com.application.imail.user;
 
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -12,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -29,6 +31,7 @@ import com.tylersuehr.chips.ChipsInputLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.wasabeef.richeditor.RichEditor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -43,6 +46,7 @@ public class ForwardActivity extends AppCompatActivity {
     ContactService contactService;
     List<listcontact> itemscontact;
     List<listcontact> itemscont;
+    private RichEditor mEditor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +88,102 @@ public class ForwardActivity extends AppCompatActivity {
         chips_to = (ChipsInputLayout)findViewById(R.id.chips_to);
         chips_bcc = (ChipsInputLayout)findViewById(R.id.chips_bcc);
         chips_cc = (ChipsInputLayout)findViewById(R.id.chips_cc);
+
+        mEditor = (RichEditor) findViewById(R.id.editor);
+
+        mEditor.setPlaceholder("Message");
+        mEditor.setEditorFontColor(Color.BLACK);
+        mEditor.setEditorFontSize(20);
+        mEditor.setFontSize(20);
+        mEditor.setOnTextChangeListener(new RichEditor.OnTextChangeListener() {
+            @Override public void onTextChange(String text) {
+
+            }
+        });
+
+        findViewById(R.id.action_bold).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.setBold();
+            }
+        });
+
+        findViewById(R.id.action_italic).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.setItalic();
+            }
+        });
+
+        findViewById(R.id.action_underline).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.setUnderline();
+            }
+        });
+
+        findViewById(R.id.action_heading1).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.setHeading(1);
+            }
+        });
+
+        findViewById(R.id.action_heading2).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.setHeading(2);
+            }
+        });
+
+        findViewById(R.id.action_heading3).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.setHeading(3);
+            }
+        });
+
+        findViewById(R.id.action_heading4).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.setHeading(4);
+            }
+        });
+
+        findViewById(R.id.action_heading5).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.setHeading(5);
+            }
+        });
+
+        findViewById(R.id.action_heading6).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.setHeading(6);
+            }
+        });
+
+        findViewById(R.id.action_indent).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.setIndent();
+            }
+        });
+
+        findViewById(R.id.action_outdent).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.setOutdent();
+            }
+        });
+
+        findViewById(R.id.action_insert_bullets).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.setBullets();
+            }
+        });
+
+        findViewById(R.id.action_insert_numbers).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.setNumbers();
+            }
+        });
+
+        findViewById(R.id.action_insert_link).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mEditor.insertLink("https://github.com/wasabeef", "wasabeef");
+            }
+        });
     }
 
     private void initListener(){

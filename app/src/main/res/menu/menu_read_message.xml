@@ -7,9 +7,15 @@
         android:title="Search"
         app:showAsAction="always" />
     <item
+        android:id="@+id/action_filter"
+        android:icon="@drawable/ic_filter_list_black"
+        android:orderInCategory="100"
+        android:title="Filter"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/action_trash"
         android:icon="@drawable/ic_trash"
         android:orderInCategory="100"
-        android:title="Search"
+        android:title="Delete"
         app:showAsAction="always" />
 </menu>
