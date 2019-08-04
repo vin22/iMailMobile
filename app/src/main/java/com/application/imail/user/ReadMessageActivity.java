@@ -525,7 +525,7 @@ public class ReadMessageActivity extends AppCompatActivity {
 
     public void delete(){
         if(email.get(2).equals("Trash")){
-            AlertDialog.Builder dialogs=new AlertDialog.Builder(ReadMessageActivity.this).setTitle("Delete Email in Trash").setMessage("Are you sure to delete this email?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            AlertDialog.Builder dialogs=new AlertDialog.Builder(ReadMessageActivity.this).setTitle("Delete Email in Trash").setMessage("Are you sure to delete this email permanently?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(final DialogInterface dialog, int which) {
                     Call<Message> call = messageService.deletetrash(Integer.parseInt(email.get(7)));

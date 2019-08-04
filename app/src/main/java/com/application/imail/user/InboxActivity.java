@@ -1797,26 +1797,50 @@ public class InboxActivity extends AppCompatActivity
         public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_delete:
-                    // delete all the selected messages
-                    AlertDialog.Builder dialogd = new AlertDialog.Builder(InboxActivity.this);
-                    dialogd.setTitle("Delete message");
-                    dialogd.setMessage("Are you sure to delete this message?");
-                    dialogd.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                            deleteMessages();
-                            mode.finish();
-                        }
-                    });
-                    dialogd.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                            mode.finish();
-                        }
-                    });
-                    dialogd.show();
+                    if(folder.equals("Trash")) {
+                        // delete all the selected messages
+                        AlertDialog.Builder dialogd = new AlertDialog.Builder(InboxActivity.this);
+                        dialogd.setTitle("Delete message");
+                        dialogd.setMessage("Are you sure to delete this message permanently?");
+                        dialogd.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                                deleteMessages();
+                                mode.finish();
+                            }
+                        });
+                        dialogd.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                                mode.finish();
+                            }
+                        });
+                        dialogd.show();
+                    }
+                    else{
+                        // delete all the selected messages
+                        AlertDialog.Builder dialogd = new AlertDialog.Builder(InboxActivity.this);
+                        dialogd.setTitle("Delete message");
+                        dialogd.setMessage("Are you sure to delete this message?");
+                        dialogd.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                                deleteMessages();
+                                mode.finish();
+                            }
+                        });
+                        dialogd.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                                mode.finish();
+                            }
+                        });
+                        dialogd.show();
+                    }
 
                     return true;
                 case R.id.action_filter:
