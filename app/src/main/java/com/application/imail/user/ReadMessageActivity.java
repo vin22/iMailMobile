@@ -49,6 +49,7 @@ public class ReadMessageActivity extends AppCompatActivity {
     SessionManager sessionManager;
     boolean action=false;
     boolean isStarred=false;
+    String dateintent="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,8 +131,8 @@ public class ReadMessageActivity extends AppCompatActivity {
         }
         from.setText(email.get(3));
         to.setText(email.get(4));
-        SimpleDateFormat formatapi=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-        SimpleDateFormat format=new SimpleDateFormat("dd MMM yy");
+        final SimpleDateFormat formatapi=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        final SimpleDateFormat format=new SimpleDateFormat("dd MMM yy");
         try {
             date.setText(format.format(formatapi.parse(email.get(5))));
 //            if(email.get(2).equals("Inbox")){
@@ -143,8 +144,8 @@ public class ReadMessageActivity extends AppCompatActivity {
 //            }
         }catch (ParseException e){
             try {
-                formatapi = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                date.setText(format.format(formatapi.parse(email.get(5))));
+                SimpleDateFormat formatapis = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                date.setText(format.format(formatapis.parse(email.get(5))));
             }
             catch(ParseException e1){
                 e1.printStackTrace();
@@ -158,7 +159,7 @@ public class ReadMessageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(ReadMessageActivity.this,ReplyActivity.class);
-                intent.putExtra("to",email.get(8));
+                intent.putExtra("to",email.get(4));
                 intent.putExtra("subject",email.get(0));
                 intent.putExtra("message",email.get(6));
                 startActivity(intent);
@@ -169,9 +170,22 @@ public class ReadMessageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(ReadMessageActivity.this,ForwardActivity.class);
-                intent.putExtra("to",email.get(8));
-                intent.putExtra("subject",email.get(0));
-                intent.putExtra("message",email.get(6));
+                intent.putExtra("to",email.get(4));
+                intent.putExtra("subject","Fwd: "+email.get(0));
+                try {
+                    dateintent=format.format(formatapi.parse(email.get(5)));
+                }catch (ParseException e){
+                    try {
+                        SimpleDateFormat formatapis = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                        dateintent=format.format(formatapis.parse(email.get(5)));
+                    }
+                    catch(ParseException e1){
+                        e1.printStackTrace();
+                    }
+                    e.printStackTrace();
+
+                }
+                intent.putExtra("message","<p>-----Forwarded Message-----<br>From:"+email.get(3)+"<br>Date:"+dateintent+"<br>Subject:"+email.get(0)+"<br>To:"+email.get(4)+"<br><br>"+email.get(6)+"<br></p>");
                 startActivity(intent);
             }
         });

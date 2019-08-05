@@ -72,6 +72,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
         initListener();
         messageService= APIUtils.getMessageService();
         contactService= APIUtils.getContactService();
+        sessionManager=SessionManager.with(this);
         setEmail();
 	    getContacts();
     }
@@ -371,6 +372,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
 //        });
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -394,7 +396,6 @@ public class ComposeMessageActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
     @Override
     public void onBackPressed() {
         addDraft();
@@ -408,12 +409,12 @@ public class ComposeMessageActivity extends AppCompatActivity {
             for (int i = 0; i < chips_to.getSelectedChips().size(); i++) {
                 Log.e("Masuk", String.valueOf(chips_to.getSelectedChips()));
                 if (!select) {
-                    receiver += String.valueOf(chips_to.getSelectedChipByPosition(i));
+                    receiver += String.valueOf(chips_to.getSelectedChipByPosition(i).getTitle());
                     Log.e("Masuk", receiver);
                     select=true;
                 }
                 else if (select) {
-                    receiver += ","+String.valueOf(chips_to.getSelectedChipByPosition(i));
+                    receiver += ","+String.valueOf(chips_to.getSelectedChipByPosition(i).getTitle());
                     Log.e("Masuk", receiver);
                 }
             }
@@ -421,12 +422,12 @@ public class ComposeMessageActivity extends AppCompatActivity {
             for (int i = 0; i < chips_bcc.getSelectedChips().size(); i++) {
                 Log.e("Masuk", String.valueOf(chips_bcc.getSelectedChips()));
                 if (!select) {
-                    bcc += String.valueOf(chips_bcc.getSelectedChipByPosition(i));
+                    bcc += String.valueOf(chips_bcc.getSelectedChipByPosition(i).getTitle());
                     Log.e("Masuk", bcc);
                     select=true;
                 }
                 else if (select) {
-                    bcc += ","+String.valueOf(chips_bcc.getSelectedChipByPosition(i));
+                    bcc += ","+String.valueOf(chips_bcc.getSelectedChipByPosition(i).getTitle());
                     Log.e("Masuk", bcc);
                 }
             }
@@ -434,12 +435,12 @@ public class ComposeMessageActivity extends AppCompatActivity {
             for (int i = 0; i < chips_cc.getSelectedChips().size(); i++) {
                 Log.e("Masuk", String.valueOf(chips_cc.getSelectedChips()));
                 if (!select) {
-                    cc += String.valueOf(chips_cc.getSelectedChipByPosition(i));
+                    cc += String.valueOf(chips_cc.getSelectedChipByPosition(i).getTitle());
                     Log.e("Masuk", cc);
                     select=true;
                 }
                 else if (select) {
-                    cc += ","+String.valueOf(chips_cc.getSelectedChipByPosition(i));
+                    cc += ","+String.valueOf(chips_cc.getSelectedChipByPosition(i).getTitle());
                     Log.e("Masuk", cc);
                 }
             }

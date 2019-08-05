@@ -870,7 +870,7 @@ public class AdapterListEmail extends RecyclerView.Adapter<AdapterListEmail.Orig
                     itemsemail.add(view.subject.getText().toString());
                     itemsemail.add(String.valueOf(items.get(position).isStarred()));
                     itemsemail.add(items.get(position).getFolder());
-                    itemsemail.add(view.nama.getText().toString());
+                    itemsemail.add(view.nama.getText().toString()+"-"+p.getSender());
                     try{
                         if(items.get(position).getReceiver().equals("null")){
                             itemsemail.add("");
