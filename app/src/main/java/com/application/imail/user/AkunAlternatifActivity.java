@@ -160,6 +160,8 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
         switch (v.getId()) {
             //jika klik button login akan melakukan proses validasi
             case R.id.appCompatButtonAdd:
+                SessionManager sessionManager = SessionManager.with(AkunAlternatifActivity.this);
+                String alternate_email=textInputEditTextAkunAlternatif.getText().toString()+domain.getText().toString();
                 if (!inputValidation.isInputEditTextFilled(textInputEditTextAkunAlternatif, textInputLayoutAkunAlternatif, getString(R.string.error_message_akunalternatif))) {
                     return;
                 }
@@ -183,6 +185,9 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
 //                if(textInputEditTextUsername.getText().toString().equals("") && textInputEditTextPassword.getText().toString().equals("")){
 //                    emptyInputEditText();
 //                }
+                else if(alternate_email.equals(sessionManager.getuserloggedin().getEmail())){
+                    Toast.makeText(AkunAlternatifActivity.this, "Email akun alternatif yang ingin didaftarkan merupakan email utama Anda", Toast.LENGTH_SHORT).show();
+                }
                 else {
                     if(pd!=null){
                         pd.setTitle("Please Wait");
@@ -195,7 +200,7 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
                         pd.setMessage("Add your email account alternative");
                         pd.show();
                     }
-                    SessionManager sessionManager = SessionManager.with(AkunAlternatifActivity.this);
+
                     Call<User> call = userService.addakunalternatif(sessionManager.getuserloggedin().getEmail(), textInputEditTextPassword.getText().toString(),textInputEditTextAkunAlternatif.getText().toString()+domain.getText().toString());
                     call.enqueue(new Callback<User>() {
                         @Override

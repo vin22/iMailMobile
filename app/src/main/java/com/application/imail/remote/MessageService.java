@@ -35,6 +35,12 @@ public interface MessageService {
                             @Field("messagesubject") String subject, @Field("messagebody") String body,
                            @Field("messagecc") String cc,@Field("messagebcc") String bcc);
 
+    @FormUrlEncoded
+    @POST("reply/")
+    Call<Message> reply(@Field("UserID") int UserID, @Field("messagefrom") String sender, @Field("messagefromname") String sendername,@Field("messageto") String receiver,
+                       @Field("messagesubject") String subject, @Field("messagebody") String body,
+                       @Field("messagecc") String cc,@Field("messagebcc") String bcc, @Field("Reply") String Reply);
+
 //    @FormUrlEncoded
 //    @POST("send/")
 //    Call<Message> send(@Field("UserID") int UserID, @Field("Sender") String sender, @Field("Sendername") String sendername,@Field("Receiver") String receiver,

@@ -177,29 +177,16 @@
                 android:layout_height="2dp"
                 android:layout_margin="@dimen/dp4"
                 android:background="@color/grey_60"/>
-
-            <LinearLayout
-                android:layout_margin="@dimen/dp4"
+            <EditText
+                android:hint="Subject"
+                android:id="@+id/edittext_re"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:padding="@dimen/dp8"
+                android:background="@android:color/transparent"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                android:textColor="@color/grey_90" />
 
-                <TextView
-                    android:layout_width="48dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/dp8"
-                    android:text="Re"
-                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-                    android:textColor="@color/grey_60" />
-                <EditText
-                    android:id="@+id/edittext_re"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/dp8"
-                    android:background="@android:color/transparent"
-                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-                    android:textColor="@color/grey_90" />
-            </LinearLayout>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
@@ -207,6 +194,7 @@
                 android:background="@color/grey_60"/>
 
             <EditText
+                android:visibility="gone"
                 android:id="@+id/edittext_lastmessage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -214,6 +202,7 @@
                 android:textColor="@color/grey_90"
                 android:hint="Last Message" />
             <View
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_marginLeft="@dimen/dp4"
@@ -366,6 +355,13 @@
                 android:padding="@dimen/dp8"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/preview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:visibility="gone"
+                />
             <EditText
                 android:visibility="gone"
                 android:id="@+id/edittext_message"

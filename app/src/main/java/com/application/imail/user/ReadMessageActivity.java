@@ -60,7 +60,6 @@ public class ReadMessageActivity extends AppCompatActivity {
         sessionManager=SessionManager.with(ReadMessageActivity.this);
         email=getIntent().getStringArrayListExtra("email");
         setEmail();
-
     }
 
     private void initToolbar() {
@@ -159,9 +158,24 @@ public class ReadMessageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(ReadMessageActivity.this,ReplyActivity.class);
-                intent.putExtra("to",email.get(4));
-                intent.putExtra("subject",email.get(0));
-                intent.putExtra("message",email.get(6));
+                intent.putExtra("id",email.get(7));
+                intent.putExtra("from",email.get(3).split("-")[1]);
+                intent.putExtra("subject","Re: "+email.get(0));
+                try {
+                    dateintent=format.format(formatapi.parse(email.get(5)));
+                }
+                catch (ParseException e){
+                    try {
+                        SimpleDateFormat formatapis = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                        dateintent=format.format(formatapis.parse(email.get(5)));
+                    }
+                    catch(ParseException e1){
+                        e1.printStackTrace();
+                    }
+                    e.printStackTrace();
+
+                }
+                intent.putExtra("message","<p>On "+dateintent+", "+email.get(3)+" wrote:"+email.get(6)+"<br></p>");
                 startActivity(intent);
             }
         });
@@ -201,7 +215,6 @@ public class ReadMessageActivity extends AppCompatActivity {
 //            }
 //        });
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
