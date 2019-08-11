@@ -546,8 +546,8 @@ public class ReplyActivity extends AppCompatActivity {
                 Toast.makeText(ReplyActivity.this, "Harap di enter email tujuan", Toast.LENGTH_SHORT).show();
             }
             else {
-                Call<Message> call = messageService.reply(sessionManager.getuserloggedin().getUserID(), spinnerfrom.getText().toString(), sessionManager.getuserloggedin().getName(), receiver, re.getText().toString(),
-                        mPreview.getText().toString(), cc, bcc,getIntent().getStringExtra("id"));
+                Call<Message> call = messageService.send(sessionManager.getuserloggedin().getUserID(), spinnerfrom.getText().toString(), sessionManager.getuserloggedin().getName(), receiver, re.getText().toString(),
+                        mPreview.getText().toString(), cc, bcc);
                 call.enqueue(new Callback<Message>() {
                     @Override
                     public void onResponse(Call<Message> call, Response<Message> response) {

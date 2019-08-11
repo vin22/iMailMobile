@@ -120,14 +120,14 @@ public class ReadMessageActivity extends AppCompatActivity {
         }
 
         label.setText(email.get(2));
-        if(email.get(2).equals("Inbox")){
-            reply.setVisibility(View.VISIBLE);
-            forward.setVisibility(View.VISIBLE);
-        }
-        else{
-            reply.setVisibility(View.GONE);
-            forward.setVisibility(View.GONE);
-        }
+//        if(email.get(2).equals("Inbox")){
+//            reply.setVisibility(View.VISIBLE);
+//            forward.setVisibility(View.VISIBLE);
+//        }
+//        else{
+//            reply.setVisibility(View.GONE);
+//            forward.setVisibility(View.GONE);
+//        }
         from.setText(email.get(3));
         to.setText(email.get(4));
         final SimpleDateFormat formatapi=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
