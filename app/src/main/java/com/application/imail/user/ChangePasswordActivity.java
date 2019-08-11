@@ -45,6 +45,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
     ProgressDialog progress;
     InputValidation inputValidation;
     ProgressDialog pd;
+    SessionManager sessionManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,12 +111,12 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
                     return;
                 }
 
-                if (!inputValidation.isInputEditTextLengthPassword(textInputEditTextOldPassword, textInputLayoutOldPassword,getString(R.string.error_message_oldpassword_length))) {
-                    return;
-                }
-                if (!inputValidation.isInputEditTextValidPassword(textInputEditTextOldPassword, textInputLayoutOldPassword,getString(R.string.error_message_valid_oldpassword))) {
-                    return;
-                }
+//                if (!inputValidation.isInputEditTextLengthPassword(textInputEditTextOldPassword, textInputLayoutOldPassword,getString(R.string.error_message_oldpassword_length))) {
+//                    return;
+//                }
+//                if (!inputValidation.isInputEditTextValidPassword(textInputEditTextOldPassword, textInputLayoutOldPassword,getString(R.string.error_message_valid_oldpassword))) {
+//                    return;
+//                }
 //                if (!inputValidation.isInputEditTextisValidNumberPassword(textInputEditTextOldPassword, textInputLayoutOldPassword,getString(R.string.error_message_oldpassword_number))) {
 //                    return;
 //                }
@@ -167,7 +168,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
                         pd.setMessage("Changing your password");
                         pd.show();
                     }
-                    SessionManager sessionManager = SessionManager.with(ChangePasswordActivity.this);
+                    sessionManager = SessionManager.with(ChangePasswordActivity.this);
                     Call<User> call = userService.changepassword(sessionManager.getuserloggedin().getEmail(), textInputEditTextOldPassword.getText().toString(),textInputEditTextNewPassword.getText().toString());
                     call.enqueue(new Callback<User>() {
                         @Override
@@ -178,7 +179,13 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
                                 String status=response.body().getStatus();
                                 String statusmessage=response.body().getMessage();
                                 if (status.equals("true")) {
+                                    User user=sessionManager.getuserloggedin();
+                                    user.setPassword(textInputEditTextNewPassword.getText().toString());
+                                    sessionManager.updatesession(user);
                                     emptyInputEditText();
+                                    if(pd.isShowing()){
+                                        pd.dismiss();
+                                    }
                                     Toast.makeText(ChangePasswordActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
     //                                user.setEmail(response.body().getEmail());
     //                                user.setUsername(response.body().getName());
@@ -262,6 +269,11 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 //    /**
 //     * This method is to validate the input text fields and verify login credentials from SQLite

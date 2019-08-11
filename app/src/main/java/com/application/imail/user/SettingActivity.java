@@ -209,7 +209,7 @@ public class SettingActivity extends AppCompatActivity{
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        finish();
     }
 
     public void Logout(){

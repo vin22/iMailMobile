@@ -1,12 +1,14 @@
 package com.application.imail.user;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.Toolbar;
@@ -55,6 +57,7 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
     ProgressDialog progress;
     InputValidation inputValidation;
     ProgressDialog pd;
+    SessionManager sessionManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +67,7 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
         initListeners();
         initObjects();
         getDomain();
+        getAkunAlternatif();
     }
 
     private void initToolbar() {
@@ -90,6 +94,7 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
         textInputEditTextPassword = (TextInputEditText) findViewById(R.id.textInputEditTextPassword);
         domain = findViewById(R.id.domain);
         appCompatButtonAdd = (AppCompatButton) findViewById(R.id.appCompatButtonAdd);
+        sessionManager=SessionManager.with(AkunAlternatifActivity.this);
     }
 //    /**
 //     * This method is to initialize listeners
@@ -151,6 +156,35 @@ public class AkunAlternatifActivity extends AppCompatActivity implements View.On
             public void onFailure(Call<List<Domain>> call, Throwable t) {
                 Log.e("USER ACTIVITY ERROR", t.getMessage());
                 Toast.makeText(AkunAlternatifActivity.this, "Response failure", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void getAkunAlternatif(){
+        Call<User> call = userService.getakunalternatif(sessionManager.getuserloggedin().getUserID());
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if(response.isSuccessful()){
+                    Log.e("User","Masuk1");
+                    String status=response.body().getStatus();
+                    String statusmessage=response.body().getMessage();
+                    if (status.equals("true")) {
+                        String alternate_email=response.body().getAlternate_Email().split("@")[0];
+                        textInputEditTextAkunAlternatif.setText(alternate_email);
+                    } else {
+                        Toast.makeText(AkunAlternatifActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else{
+                    Toast.makeText(AkunAlternatifActivity.this, "Response failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.e("USER ACTIVITY ERROR", t.getMessage());
+                Toast.makeText(AkunAlternatifActivity.this, "Response failure", Toast.LENGTH_SHORT).show();
             }
         });
     }

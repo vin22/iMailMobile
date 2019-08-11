@@ -6,14 +6,23 @@ import java.util.List;
 public class User {
     public int UserID;
     public String Name;
-    public String Email;
+    public String Email, Alternate_Email;
     public String Password;
+    public String Reply;
     public String message, status;
     public static ArrayList<User> users = new ArrayList<>();
-    public static ArrayList<String> paket=new ArrayList<>();
+    public static List<User> emailparent=new ArrayList<>();
     public static List<listcontact> listcontacts=new ArrayList<>();
     public User(){
 
+    }
+
+    public static List<User> getEmailparent() {
+        return emailparent;
+    }
+
+    public static void setEmailparent(List<User> emailparent) {
+        User.emailparent = emailparent;
     }
 
     public static List<listcontact> getListcontacts() {
@@ -22,6 +31,22 @@ public class User {
 
     public static void setListcontacts(List<listcontact> listcontacts) {
         User.listcontacts = listcontacts;
+    }
+
+    public String getReply() {
+        return Reply;
+    }
+
+    public void setReply(String reply) {
+        Reply = reply;
+    }
+
+    public String getAlternate_Email() {
+        return Alternate_Email;
+    }
+
+    public void setAlternate_Email(String alternate_Email) {
+        Alternate_Email = alternate_Email;
     }
 
     public int getUserID() {
@@ -38,16 +63,6 @@ public class User {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public void pulsa(){
-        paket.clear();
-        paket.add("Pulsa Rp10000");
-        paket.add("Pulsa Rp25000");
-        paket.add("Pulsa Rp50000");
-        paket.add("Pulsa Rp100000");
-        paket.add("Pulsa Rp200000");
-        paket.add("Pulsa Rp500000");
     }
 
     public String getStatus() {

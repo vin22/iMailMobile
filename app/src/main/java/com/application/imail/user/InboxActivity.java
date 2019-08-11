@@ -438,6 +438,7 @@ public class InboxActivity extends AppCompatActivity
     }
 
     public void setEmailInbox(){
+        Log.e("Session",sessionManager.getuserloggedin().getEmail()+sessionManager.getuserloggedin().getPassword());
         if(pd!=null){
             pd.setTitle("Please Wait");
             pd.setMessage("Loading email in Inbox");
@@ -555,6 +556,7 @@ public class InboxActivity extends AppCompatActivity
     }
 
     public void setEmailSpam(){
+        Log.e("Session",sessionManager.getuserloggedin().getEmail()+sessionManager.getuserloggedin().getPassword());
         if(pd!=null){
             pd.setTitle("Please Wait");
             pd.setMessage("Loading email in Spam");
