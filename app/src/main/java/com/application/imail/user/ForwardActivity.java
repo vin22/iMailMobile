@@ -63,11 +63,11 @@ public class ForwardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_forward);
         initToolbar();
         initComponent();
-        initListener();
         messageService= APIUtils.getMessageService();
         contactService= APIUtils.getContactService();
         sessionManager=SessionManager.with(this);
         setEmail();
+        initListener();
         getContacts();
     }
 
@@ -107,6 +107,10 @@ public class ForwardActivity extends AppCompatActivity {
         mEditor.setEditorFontColor(Color.BLACK);
         mEditor.setEditorFontSize(20);
         mEditor.setFontSize(20);
+
+    }
+
+    private void initListener(){
         mEditor.setOnTextChangeListener(new RichEditor.OnTextChangeListener() {
             @Override public void onTextChange(String text) {
                 isinput=true;
@@ -242,14 +246,15 @@ public class ForwardActivity extends AppCompatActivity {
         });
     }
 
-    private void initListener(){
-
-    }
-
     public void setEmail(){
         spinnerfrom.setItems(sessionManager.getuserloggedin().getEmail());
 //        chips_to.setSelectedChipList();
-        itemscont=new ArrayList<>();
+        if(itemscont==null){
+            itemscont=new ArrayList<>();
+        }
+        else{
+            itemscont.clear();
+        }
         listcontact lc=new listcontact();
         lc.setEmail(getIntent().getStringExtra("to"));
         itemscont.add(lc);

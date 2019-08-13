@@ -63,11 +63,11 @@ public class ReplyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_reply);
         initToolbar();
         initComponent();
-        initListener();
         messageService= APIUtils.getMessageService();
         contactService= APIUtils.getContactService();
         sessionManager=SessionManager.with(this);
         setEmail();
+        initListener();
         getContacts();
 
     }
@@ -106,6 +106,11 @@ public class ReplyActivity extends AppCompatActivity {
         mEditor.setEditorFontColor(Color.BLACK);
         mEditor.setEditorFontSize(20);
         mEditor.setFontSize(20);
+
+
+    }
+
+    private void initListener(){
         mEditor.setOnTextChangeListener(new RichEditor.OnTextChangeListener() {
             @Override public void onTextChange(String text) {
                 isinput=true;
@@ -237,21 +242,21 @@ public class ReplyActivity extends AppCompatActivity {
                 isinput=true;
             }
         });
-
-    }
-
-    private void initListener(){
-
     }
 
     public void setEmail(){
-
         spinnerfrom.setItems(sessionManager.getuserloggedin().getEmail());
 //        chips_to.setSelectedChipList();
-        itemscont=new ArrayList<>();
+        if(itemscont==null){
+            itemscont=new ArrayList<>();
+        }
+        else{
+            itemscont.clear();
+        }
         listcontact lc=new listcontact();
         lc.setEmail(getIntent().getStringExtra("from"));
         itemscont.add(lc);
+
 
         re.setText(getIntent().getStringExtra("subject"));
         mEditor.setHtml(getIntent().getStringExtra("message"));
@@ -346,7 +351,7 @@ public class ReplyActivity extends AppCompatActivity {
                         chips_cc.setFilterableChipList(itemscontact);
                     } else {
 //                        Toast.makeText(ComposeMessageActivity.this, statusmessage, Toast.LENGTH_SHORT).show();
-
+                        chips_to.setSelectedChipList(itemscont);
                     }
                 }
                 else{

@@ -174,9 +174,9 @@ public class InboxActivity extends AppCompatActivity
                             if (!inputValidation.isInputEditTextFirstAlphabetEmail(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_email_first_alphabet))) {
                                 return;
                             }
-                            if (!inputValidation.isInputEditTextValidEmail(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_valid_email))) {
-                                return;
-                            }
+//                            if (!inputValidation.isInputEditTextValidEmail(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_valid_email))) {
+//                                return;
+//                            }
 //                            if (!inputValidation.isInputEditTextAlphabetEmail(textInputEditTextEmail, textInputLayoutEmail, getString(R.string.error_message_email_alphabet))) {
 //                                return;
 //                            }
@@ -201,7 +201,8 @@ public class InboxActivity extends AppCompatActivity
                                     pd.show();
                                 }
                                 SessionManager sessionManager = SessionManager.with(InboxActivity.this);
-                                Call<listcontact> call = contactService.addcontact(sessionManager.getuserloggedin().getUserID(),textInputEditTextEmail.getText().toString(),textInputEditTextName.getText().toString(),textInputEditTextPhone.getText().toString());
+                                Call<listcontact> call = contactService.addcontact(sessionManager.getuserloggedin().getUserID(),textInputEditTextEmail.getText().toString(),
+                                        textInputEditTextName.getText().toString(),textInputEditTextPhone.getText().toString(),"0000-00-00","");
                                 call.enqueue(new Callback<listcontact>() {
                                     @Override
                                     public void onResponse(Call<listcontact> call, Response<listcontact> response) {
