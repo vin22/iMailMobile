@@ -202,7 +202,7 @@ public class InboxActivity extends AppCompatActivity
                                 }
                                 SessionManager sessionManager = SessionManager.with(InboxActivity.this);
                                 Call<listcontact> call = contactService.addcontact(sessionManager.getuserloggedin().getUserID(),textInputEditTextEmail.getText().toString(),
-                                        textInputEditTextName.getText().toString(),textInputEditTextPhone.getText().toString(),"0000-00-00","");
+                                        textInputEditTextName.getText().toString(),textInputEditTextPhone.getText().toString(),"1997-01-01","Male");
                                 call.enqueue(new Callback<listcontact>() {
                                     @Override
                                     public void onResponse(Call<listcontact> call, Response<listcontact> response) {
