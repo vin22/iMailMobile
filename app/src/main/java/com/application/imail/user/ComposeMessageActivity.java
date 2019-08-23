@@ -444,7 +444,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
                     Log.e("Masuk", cc);
                 }
             }
-
+            Log.e("Masuk", receiver);
             Call<Message> call = messageService.adddraft(sessionManager.getuserloggedin().getUserID(),spinnerfrom.getText().toString(),receiver, "","",subject.getText().toString(),
                     mPreview.getText().toString(),cc,bcc,"");
             call.enqueue(new Callback<Message>() {
